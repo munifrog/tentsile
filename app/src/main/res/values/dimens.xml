@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="icon_tent_model">32dp</dimen>
+
+    <dimen name="pad_spinner_start">8dp</dimen>
+    <dimen name="pad_spinner_end">8dp</dimen>
+    <dimen name="pad_spinner_top">4dp</dimen>
+    <dimen name="pad_spinner_bottom">4dp</dimen>
+
+    <dimen name="text_tent_model">20sp</dimen>
+</resources>

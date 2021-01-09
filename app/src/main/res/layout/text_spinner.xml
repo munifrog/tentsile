@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/pad_spinner_start"
+    android:paddingStart="@dimen/pad_spinner_start"
+    android:paddingRight="@dimen/pad_spinner_end"
+    android:paddingEnd="@dimen/pad_spinner_end"
+    android:paddingTop="@dimen/pad_spinner_top"
+    android:paddingBottom="@dimen/pad_spinner_bottom"
+    android:textColor="@color/colorTextSpinner"
+    android:textSize="@dimen/text_tent_model"
+    android:textStyle="bold|italic"/>
