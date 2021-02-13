@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Tethered Tent Triangulator</string>
+    <string name="desc_clearing">Clearing Layout</string>
 </resources>

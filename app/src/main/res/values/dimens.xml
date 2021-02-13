@@ -8,4 +8,5 @@
     <dimen name="pad_spinner_bottom">4dp</dimen>
 
     <dimen name="text_tent_model">20sp</dimen>
+    <dimen name="text_span">20sp</dimen>
 </resources>

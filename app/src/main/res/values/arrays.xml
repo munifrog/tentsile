@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="tent_models">
-        <item>Una 1-Person Tent</item>
-        <item>Flite 2-Person Tent</item>
-        <item>Connect 2-Person Tent</item>
-        <item>T-Mini 2-Person Hammock</item>
-        <item>Stingray 3-Person Tent</item>
-        <item>Vista 3-Person Tent</item>
-        <item>Trillium 3-Person Hammock</item>
-        <item>Universe 5-Person Tent</item>
-        <item>Trilogy 6-Person Tent</item>
-        <item>Trillium XL 6-Person Hammock</item>
+        <item>Una (1) Tent</item>
+        <item>Flite (2) Tent</item>
+        <item>Connect (2) Tent</item>
+        <item>T-Mini (2) Hammock</item>
+        <item>Stingray (3) Tent</item>
+        <item>Vista (3) Tent</item>
+        <item>Trillium (3) Hammock</item>
+        <item>Universe (5) Tent</item>
+        <item>Trilogy (6) Tent</item>
+        <item>Trillium XL (6) Hammock</item>
         <item>Custom</item>
+    </string-array>
+
+    <string-array name="equilaterals">
+        <item>Stingray (3) Tent</item>
+        <item>Vista (3) Tent</item>
+        <item>Trillium (3) Hammock</item>
+        <item>Universe (5) Tent</item>
+        <item>Trilogy (6) Tent</item>
+        <item>Trillium XL (6) Hammock</item>
     </string-array>
 </resources>
