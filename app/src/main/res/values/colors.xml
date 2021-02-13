@@ -5,4 +5,5 @@
     <color name="colorAccent">#03DAC5</color>
 
     <color name="colorTextSpinner">#000000</color>
+    <color name="colorClearingBackground">#AFCA89</color>
 </resources>

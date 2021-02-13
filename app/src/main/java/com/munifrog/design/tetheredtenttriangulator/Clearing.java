@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -40,10 +41,10 @@ public class Clearing extends Drawable {
     private static final double MATH_ANGLE_FULL_CIRCLE = Math.PI * 2;
     private static final double MATH_RADIAN_2_DEGREE_MULTIPLIER = 180.0 / Math.PI;
 
-    private final Paint tetherPaint;
-    private final Paint perimeterPaint;
-    private final Paint treePaint;
-    private final Paint labelPaint;
+    private final Paint mTetherPaint;
+    private final Paint mPerimeterPaint;
+    private final Paint mTreePaint;
+    private final Paint mLabelPaint;
 
     private float mRadiusTetherSize;
     private float mRadiusSelectionSize;
@@ -54,6 +55,9 @@ public class Clearing extends Drawable {
     private float [] mTetherCenter = new float[2];
     private float [] mPlatformCoordinates = new float[2];
     private float [][] mTethers = new float[3][2];
+    private double mDist01; // c
+    private double mDist12; // a
+    private double mDist20; // b
 
     private int mStateConfiguration = STATE_CONFIG_EQUILATERAL;
     private int mStateRotation = STATE_ROTATION_ABC;
@@ -63,23 +67,24 @@ public class Clearing extends Drawable {
 
     public Clearing() {
         // Set up color and text size
-        tetherPaint = new Paint();
-        tetherPaint.setARGB(255, 127, 127, 127);
-        tetherPaint.setStrokeWidth(10);
+        mTetherPaint = new Paint();
+        mTetherPaint.setARGB(255, 127, 127, 127);
+        mTetherPaint.setStrokeWidth(10);
 
-        labelPaint = new Paint();
-        labelPaint.setARGB(255, 255, 0, 0);
-        labelPaint.setTextSize(64f);
-        labelPaint.setStrokeWidth(4);
+        mLabelPaint = new Paint();
+        mLabelPaint.setARGB(255, 0, 0, 0);
+        mLabelPaint.setTextSize(56f);
+        mLabelPaint.setStrokeWidth(4);
 
-        perimeterPaint = new Paint();
-        perimeterPaint.setARGB(255, 255, 0, 0);
-        perimeterPaint.setStyle(Paint.Style.STROKE);
-        perimeterPaint.setPathEffect(new DashPathEffect(new float[] {20f, 40f}, 10f));
-        perimeterPaint.setStrokeWidth(5);
+        mPerimeterPaint = new Paint();
+        mPerimeterPaint.setARGB(255, 92, 113, 72);
+        mPerimeterPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        mPerimeterPaint.setPathEffect(new DashPathEffect(new float[] {15f, 20f}, 0f));
+        mPerimeterPaint.setStrokeWidth(5);
+        mPerimeterPaint.setStrokeCap(Paint.Cap.ROUND);
 
-        treePaint = new Paint();
-        treePaint.setARGB(255, 193, 154, 107);
+        mTreePaint = new Paint();
+        mTreePaint.setARGB(255, 193, 154, 107);
 
         getPlatformCenterOccasionally();
     }
@@ -145,7 +150,7 @@ public class Clearing extends Drawable {
         mTetherCenter[0] = centerX;
         mTetherCenter[1] = centerY;
 
-        configEquilateral();
+        configDefault();
     }
 
     @Override
@@ -157,13 +162,20 @@ public class Clearing extends Drawable {
     }
 
     private void drawConnections(Canvas canvas) {
-        canvas.drawLine(mTethers[0][0], mTethers[0][1], mTethers[1][0], mTethers[1][1], perimeterPaint);
-        canvas.drawLine(mTethers[1][0], mTethers[1][1], mTethers[2][0], mTethers[2][1], perimeterPaint);
-        canvas.drawLine(mTethers[2][0], mTethers[2][1], mTethers[0][0], mTethers[0][1], perimeterPaint);
+        Path path = new Path();
+        path.moveTo(mTethers[0][0], mTethers[0][1]);
+        path.lineTo(mTethers[1][0], mTethers[1][1]);
+        path.lineTo(mTethers[2][0], mTethers[2][1]);
+        path.lineTo(mTethers[0][0], mTethers[0][1]);
+        canvas.drawPath(path, mPerimeterPaint);
 
         float [] mMid12 = { (mTethers[1][0] + mTethers[2][0]) / 2, (mTethers[1][1] + mTethers[2][1]) / 2 }; // a
         float [] mMid20 = { (mTethers[2][0] + mTethers[0][0]) / 2, (mTethers[2][1] + mTethers[0][1]) / 2 }; // b
         float [] mMid01 = { (mTethers[0][0] + mTethers[1][0]) / 2, (mTethers[0][1] + mTethers[1][1]) / 2 }; // c
+
+        canvas.drawText(Double.toString(forcePrecision(mDist12)), mMid12[0], mMid12[1], mLabelPaint);
+        canvas.drawText(Double.toString(forcePrecision(mDist20)), mMid20[0], mMid20[1], mLabelPaint);
+        canvas.drawText(Double.toString(forcePrecision(mDist01)), mMid01[0], mMid01[1], mLabelPaint);
     }
 
     private void drawStakes(Canvas canvas) {
@@ -174,22 +186,22 @@ public class Clearing extends Drawable {
                     mTethers[i][0],
                     mTethers[i][1],
                     mCurrentRadius,
-                    treePaint
+                    mTreePaint
             );
         }
     }
 
     private void drawTethers(Canvas canvas) {
         if (mStatePlatform == DRAW_PLATFORM_ENABLED) {
-            canvas.drawLine(mTethers[0][0], mTethers[0][1], mPlatformCoordinates[0], mPlatformCoordinates[1], tetherPaint);
-            canvas.drawLine(mTethers[1][0], mTethers[1][1], mPlatformCoordinates[0], mPlatformCoordinates[1], tetherPaint);
-            canvas.drawLine(mTethers[2][0], mTethers[2][1], mPlatformCoordinates[0], mPlatformCoordinates[1], tetherPaint);
+            canvas.drawLine(mTethers[0][0], mTethers[0][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
+            canvas.drawLine(mTethers[1][0], mTethers[1][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
+            canvas.drawLine(mTethers[2][0], mTethers[2][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
 
             canvas.drawCircle(
                     mPlatformCoordinates[0],
                     mPlatformCoordinates[1],
                     mRadiusTetherSize / 2,
-                    tetherPaint
+                    mTetherPaint
             );
         }
     }
@@ -231,13 +243,13 @@ public class Clearing extends Drawable {
         double dist01sq = diff01x * diff01x + diff01y * diff01y;
         double dist12sq = diff12x * diff12x + diff12y * diff12y;
         double dist20sq = diff20x * diff20x + diff20y * diff20y;
-        double dist01 = Math.sqrt(dist01sq); // c
-        double dist12 = Math.sqrt(dist12sq); // a
-        double dist20 = Math.sqrt(dist20sq); // b
+        mDist01 = Math.sqrt(dist01sq); // c
+        mDist12 = Math.sqrt(dist12sq); // a
+        mDist20 = Math.sqrt(dist20sq); // b
 
-        double angle102 = Math.acos((dist20sq + dist01sq - dist12sq) / 2.0 / dist20 / dist01);  // A = 0
-        double angle210  = Math.acos((dist12sq + dist01sq - dist20sq) / 2.0 / dist12 / dist01); // B = 1
-        double angle021 = Math.acos((dist12sq + dist20sq - dist01sq) / 2.0 / dist12 / dist20);  // C = 2
+        double angle102 = Math.acos((dist20sq + dist01sq - dist12sq) / 2.0 / mDist20 / mDist01);  // A = 0
+        double angle210  = Math.acos((dist12sq + dist01sq - dist20sq) / 2.0 / mDist12 / mDist01); // B = 1
+        double angle021 = Math.acos((dist12sq + dist20sq - dist01sq) / 2.0 / mDist12 / mDist20);  // C = 2
         if (angle102 < threshold && angle210 < threshold && angle021 < threshold) {
             mStatePlatform = DRAW_PLATFORM_ENABLED;
 
@@ -251,17 +263,17 @@ public class Clearing extends Drawable {
             //double sine0P1 = Math.sin(angle0P1);
 
             double angleTheta =  MATH_ANGLE_FULL_CIRCLE - angle2P0 - angle1P2 - angle021;
-            double angleP12 = Math.atan(dist20 * Math.sin(angleTheta) * sine1P2 / (dist12 * sine2P0 + dist20 * sine1P2 * Math.cos(angleTheta)));
+            double angleP12 = Math.atan(mDist20 * Math.sin(angleTheta) * sine1P2 / (mDist12 * sine2P0 + mDist20 * sine1P2 * Math.cos(angleTheta)));
             double angleP21 = Math.PI - angleP12 - angle1P2;
             double angleP20 = angle021 - angleP21;
 
-            //double dist0P = dist20 * Math.sin(angleP20) / sine2P0;
-            //double dist1P = dist12 * Math.sin(angleP21) / sine1P2;
-            double dist2P = dist12 * Math.sin(angleP12) / sine1P2;
+            //double dist0P = mDist20 * Math.sin(angleP20) / sine2P0;
+            //double dist1P = mDist12 * Math.sin(angleP21) / sine1P2;
+            double dist2P = mDist12 * Math.sin(angleP12) / sine1P2;
 
             // Determine the location of the platform center (Q is for quadrant or Y=0 line)
-            double angleQ21 = getDirection(dist12, diff12x, diff12y);
-            double angleQ20 = getDirection(dist20, -diff20x, -diff20y);
+            double angleQ21 = getDirection(mDist12, diff12x, diff12y);
+            double angleQ20 = getDirection(mDist20, -diff20x, -diff20y);
 
             // If adding lambda1 to angle CA, then subtracting lambda2 from angle CB
             // If subtracting lambda1 from angle CA, then adding lambda2 to angle CB
@@ -305,6 +317,17 @@ public class Clearing extends Drawable {
             return (Math.abs(MATH_ANGLE_FULL_CIRCLE - rawDelta) < MATH_ANGLE_PRECISION_ALLOWANCE);
         }
         return false;
+    }
+
+    private void configDefault() {
+        double lengthReference = MATH_BASE_LENGTH_N * 2;
+        double offset = -15 * Math.PI / 180;
+        double currentAngle;
+        for (int i = 0; i < 3; i++) {
+            currentAngle = offset + MATH_ANGLE_FULL_CIRCLE / 3 * i;
+            mTethers[i][0] = (float)(mTetherCenter[0] + lengthReference * Math.cos(currentAngle));
+            mTethers[i][1] = (float)(mTetherCenter[1] + lengthReference * Math.sin(currentAngle));
+        }
     }
 
     private void configEquilateral() {
