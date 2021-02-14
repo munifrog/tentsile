@@ -38,13 +38,16 @@ public class MainActivity extends AppCompatActivity {
         knownConfigurations.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mClearing.nextConfiguration();
+                mClearing.rotatePlatform();
             }
         });
 
         ImageView iv_clearing = findViewById(R.id.iv_clearing);
         iv_clearing.setImageDrawable(mClearing);
         iv_clearing.setContentDescription(getResources().getString(R.string.desc_clearing));
+
+        // Set the angle for the Trillium 3-person Tent
+        mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
     }
 
     @Override

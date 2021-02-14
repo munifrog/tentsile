@@ -58,6 +58,9 @@ public class Clearing extends Drawable {
     private double mDist01; // c
     private double mDist12; // a
     private double mDist20; // b
+    private double mThreshold0P1;
+    private double mThreshold1P2;
+    private double mThreshold2P0;
 
     private int mStateConfiguration = STATE_CONFIG_EQUILATERAL;
     private int mStateRotation = STATE_ROTATION_ABC;
@@ -86,6 +89,7 @@ public class Clearing extends Drawable {
         mTreePaint = new Paint();
         mTreePaint.setARGB(255, 193, 154, 107);
 
+        setPlatformSymmetricAngle(2 * Math.PI / 3);
         getPlatformCenterOccasionally();
     }
 
@@ -232,8 +236,6 @@ public class Clearing extends Drawable {
     }
 
     private void getPlatformCenter() {
-        double threshold = MATH_ANGLE_FULL_CIRCLE / 3.0;
-
         double diff01x = mTethers[0][0] - mTethers[1][0]; // Ax - Bx
         double diff01y = mTethers[0][1] - mTethers[1][1]; // Ay - By
         double diff12x = mTethers[1][0] - mTethers[2][0]; // Bx - Cx
@@ -250,21 +252,20 @@ public class Clearing extends Drawable {
         double angle102 = Math.acos((dist20sq + dist01sq - dist12sq) / 2.0 / mDist20 / mDist01);  // A = 0
         double angle210  = Math.acos((dist12sq + dist01sq - dist20sq) / 2.0 / mDist12 / mDist01); // B = 1
         double angle021 = Math.acos((dist12sq + dist20sq - dist01sq) / 2.0 / mDist12 / mDist20);  // C = 2
-        if (angle102 < threshold && angle210 < threshold && angle021 < threshold) {
+
+        if (angle102 < mThreshold1P2 && angle210 < mThreshold2P0 && angle021 < mThreshold0P1) {
             mStatePlatform = DRAW_PLATFORM_ENABLED;
 
             // Equilateral triangle (simple) case: 2P0, 1P2 and 0P1 are all 120(o) or 2 * PI / 3
             // Rather than computing the sines of these angles, could compute them ahead of time and load per tent
-            double angle2P0 = MATH_ANGLE_FULL_CIRCLE / 3.0; // rho
-            double sine2P0 = Math.sin(angle2P0);
-            double angle1P2 = MATH_ANGLE_FULL_CIRCLE / 3.0; // lambda
-            double sine1P2 = Math.sin(angle1P2);
-            //double angle0P1 = MATH_ANGLE_FULL_CIRCLE / 3.0; // psi
-            //double sine0P1 = Math.sin(angle0P1);
 
-            double angleTheta =  MATH_ANGLE_FULL_CIRCLE - angle2P0 - angle1P2 - angle021;
+            double sine2P0 = Math.sin(mThreshold2P0); // rho
+            double sine1P2 = Math.sin(mThreshold1P2); // lambda
+            //double sine0P1 = Math.sin(mThreshold0P1); // psi
+
+            double angleTheta =  MATH_ANGLE_FULL_CIRCLE - mThreshold2P0 - mThreshold1P2 - angle021;
             double angleP12 = Math.atan(mDist20 * Math.sin(angleTheta) * sine1P2 / (mDist12 * sine2P0 + mDist20 * sine1P2 * Math.cos(angleTheta)));
-            double angleP21 = Math.PI - angleP12 - angle1P2;
+            double angleP21 = Math.PI - angleP12 - mThreshold1P2;
             double angleP20 = angle021 - angleP21;
 
             //double dist0P = mDist20 * Math.sin(angleP20) / sine2P0;
@@ -415,6 +416,18 @@ public class Clearing extends Drawable {
                     break;
             }
         }
+        invalidateSelf();
+    }
+
+    public void setPlatformSymmetricAngle(double angle) {
+        mThreshold0P1 = angle;
+        mThreshold1P2 = angle;
+        mThreshold2P0 = MATH_ANGLE_FULL_CIRCLE - mThreshold0P1 - mThreshold1P2;
+        invalidateSelf();
+    }
+
+    public void rotatePlatform() {
+        configRotate();
         invalidateSelf();
     }
 
