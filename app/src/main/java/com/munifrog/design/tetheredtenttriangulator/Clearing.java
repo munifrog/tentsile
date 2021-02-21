@@ -51,6 +51,7 @@ public class Clearing extends Drawable {
     // When calculating the distance to the nearest tree, we can skip the square root computation
     // knowing that (x1-x0)^2 + (y1-y0)^2 <= selectionRadius^2
     private float mRadiusSelectionRangeSquared; // Avoiding computation by leaving squared
+    float mSmallestDimen;
 
     private float [] mTetherCenter = new float[2];
     private float [] mPlatformCoordinates = new float[2];
@@ -81,7 +82,7 @@ public class Clearing extends Drawable {
 
         mPerimeterPaint = new Paint();
         mPerimeterPaint.setARGB(255, 92, 113, 72);
-        mPerimeterPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        mPerimeterPaint.setStyle(Paint.Style.STROKE);
         mPerimeterPaint.setPathEffect(new DashPathEffect(new float[] {15f, 20f}, 0f));
         mPerimeterPaint.setStrokeWidth(5);
         mPerimeterPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -143,11 +144,11 @@ public class Clearing extends Drawable {
 
         int width = getBounds().width();
         int height = getBounds().height();
-        float mSmallestDimen = Math.min(width, height) / 2.0f;
+        mSmallestDimen = Math.min(width, height);
 
         int centerX = width/2;
         int centerY = height/2;
-        mRadiusTetherSize = mSmallestDimen / 25;
+        mRadiusTetherSize = mSmallestDimen / 50;
         mRadiusSelectionSize = mRadiusTetherSize * 2;
         mRadiusSelectionRangeSquared = mRadiusTetherSize * mRadiusTetherSize * 9;
 
@@ -321,7 +322,7 @@ public class Clearing extends Drawable {
     }
 
     private void configDefault() {
-        double lengthReference = MATH_BASE_LENGTH_N * 2;
+        double lengthReference = 5 * mSmallestDimen / 12;
         double offset = -15 * Math.PI / 180;
         double currentAngle;
         for (int i = 0; i < 3; i++) {

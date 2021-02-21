@@ -2,20 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <ImageButton
-        android:id="@+id/im_tents"
-        android:layout_width="@dimen/icon_tent_model"
-        android:layout_height="@dimen/icon_tent_model"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
 
     <Spinner
         android:id="@+id/sp_models"
@@ -23,11 +11,47 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
+        android:entries="@array/tent_models"
+        app:layout_constraintBottom_toBottomOf="@+id/im_rotate"
+        app:layout_constraintEnd_toStartOf="@+id/im_rotate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/im_rotate" />
+
+    <ImageButton
+        android:id="@+id/im_rotate"
+        android:layout_width="@dimen/icon_btn_rotate"
+        android:layout_height="@dimen/icon_btn_rotate"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:entries="@array/tent_models"
-        app:layout_constraintBottom_toBottomOf="@+id/im_tents"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorPrimaryDark"
+        android:contentDescription="@string/desc_rotate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/im_tents"
-        app:layout_constraintTop_toTopOf="@+id/im_tents" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_rotate" />
+
+    <ImageButton
+        android:id="@+id/im_units"
+        android:layout_width="@dimen/icon_btn_units"
+        android:layout_height="@dimen/icon_btn_units"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorPrimaryDark"
+        android:contentDescription="@string/desc_meters"
+        android:text="@string/unit_meters"
+        app:layout_constraintEnd_toEndOf="@+id/im_rotate"
+        app:layout_constraintTop_toBottomOf="@+id/im_rotate" />
+
+    <SeekBar
+        android:id="@+id/sk_scale"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/im_units"
+        app:layout_constraintEnd_toStartOf="@+id/im_units"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/im_units" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

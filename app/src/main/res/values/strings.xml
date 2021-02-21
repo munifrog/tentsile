@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">Tethered Tent Triangulator</string>
     <string name="desc_clearing">Clearing Layout</string>
+
+    <string name="desc_rotate">Rotate Tent or Platform</string>
+
+    <string name="unit_meters">m</string>
+    <string name="desc_meters">Meters</string>
+
+    <string name="unit_imperial">ft</string>
+    <string name="desc_imperial">Imperial (feet)</string>
+
+    <string name="default_selection_model">Stingray (3) Tent</string>
 </resources>
