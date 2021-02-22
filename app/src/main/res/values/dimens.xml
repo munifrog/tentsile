@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="icon_tent_model">32dp</dimen>
-    <dimen name="icon_btn_rotate">40dp</dimen>
-    <dimen name="icon_btn_units">40dp</dimen>
+    <dimen name="icon_tent_model">28dp</dimen>
+    <dimen name="icon_btn_rotate">48dp</dimen>
+    <dimen name="icon_btn_units">48dp</dimen>
 
     <dimen name="pad_spinner_start">8dp</dimen>
     <dimen name="pad_spinner_end">8dp</dimen>
     <dimen name="pad_spinner_top">4dp</dimen>
     <dimen name="pad_spinner_bottom">4dp</dimen>
 
-    <dimen name="text_tent_model">20sp</dimen>
+    <dimen name="text_tent_model">32sp</dimen>
     <dimen name="text_span">20sp</dimen>
 </resources>

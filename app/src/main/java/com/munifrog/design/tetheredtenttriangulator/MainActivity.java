@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private final Clearing mClearing = new Clearing();
 
     private int mPlatformSelection;
+    private ImageButton mPlatformRotation;
 
     private int mCanvasLeft = 0;
     private int mCanvasTop = 0;
@@ -41,8 +42,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         int platformSelection = arrayAdapter.getPosition(getString(R.string.default_selection_model));
         models.setSelection(platformSelection);
 
-        ImageButton platformRotation = findViewById(R.id.im_rotate);
-        platformRotation.setOnClickListener(new View.OnClickListener() {
+        mPlatformRotation = findViewById(R.id.im_rotate);
+        mPlatformRotation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mClearing.rotatePlatform();
@@ -99,34 +100,44 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String platform = (String) adapterView.getItemAtPosition(position);
         // These should match the strings in the arrays
         if (platform.equals("Stingray (3) Tent")) {
-            mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
+            setEquilateral();
         } else if (platform.equals("Vista (3) Tent")) {
-            mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
+            setEquilateral();
         } else if (platform.equals("Trillium (3) Hammock")) {
-            mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
+            setEquilateral();
         } else if (platform.equals("Universe (5) Tent")) {
-            mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
+            setEquilateral();
         } else if (platform.equals("Trilogy (6) Tent")) {
-            mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
+            setEquilateral();
         } else if (platform.equals("Trillium XL (6) Hammock")) {
-            mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
+            setEquilateral();
         } else if (platform.equals("Una (1) Tent")) {
-            mClearing.setPlatformSymmetricAngle(140 * Math.PI / 180);
+            setIsosceles(140);
         } else if (platform.equals("Flite (2) Tent")) {
-            mClearing.setPlatformSymmetricAngle(140 * Math.PI / 180);
+            setIsosceles(140);
         } else if (platform.equals("Connect (2) Tent")) {
-            mClearing.setPlatformSymmetricAngle(140 * Math.PI / 180);
+            setIsosceles(140);
         } else if (platform.equals("T-Mini (2) Hammock")) {
-            mClearing.setPlatformSymmetricAngle(140 * Math.PI / 180);
+            setIsosceles(140);
         } else if (platform.equals("Custom")) {
-            mClearing.setPlatformSymmetricAngle(140 * Math.PI / 180);
+            setIsosceles(140);
         } else {
-            mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
+            setEquilateral();
         }
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
         // This should not happen
+    }
+
+    private void setEquilateral() {
+        mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
+        mPlatformRotation.setVisibility(View.GONE);
+    }
+
+    private void setIsosceles(double angle) {
+        mClearing.setPlatformSymmetricAngle(angle * Math.PI / 180);
+        mPlatformRotation.setVisibility(View.VISIBLE);
     }
 }

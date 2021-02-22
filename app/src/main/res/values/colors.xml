@@ -6,4 +6,5 @@
 
     <color name="colorTextSpinner">#000000</color>
     <color name="colorClearingBackground">#AFCA89</color>
+    <color name="colorButton">#5B659811</color>
 </resources>
