@@ -11,4 +11,7 @@
     <string name="desc_imperial">Imperial (feet)</string>
 
     <string name="default_selection_model">Stingray (3) Tent</string>
+
+    <string name="menu_default_tether">Reset Tether Points</string>
+    <string name="menu_browser_tentsile">Tentsile Website</string>
 </resources>

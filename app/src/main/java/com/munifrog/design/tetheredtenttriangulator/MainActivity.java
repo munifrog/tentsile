@@ -1,10 +1,17 @@
 package com.munifrog.design.tetheredtenttriangulator;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,6 +34,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = findViewById(R.id.tb_main);
+        setSupportActionBar(toolbar);
 
         Spinner models = findViewById(R.id.sp_models);
         mPlatformSelection = R.array.tent_models;
@@ -60,6 +70,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         ImageView iv_clearing = findViewById(R.id.iv_clearing);
         iv_clearing.setImageDrawable(mClearing);
         iv_clearing.setContentDescription(getResources().getString(R.string.desc_clearing));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.toolbar, menu);
+        return true;
     }
 
     @Override
@@ -129,6 +146,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
         // This should not happen
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_default_tether_points:
+                return true;
+            case R.id.action_browser_tentsile:
+                return launchTentsile();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private boolean launchTentsile() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.tentsile.com/"));
+        startActivity(browserIntent);
+        return true;
     }
 
     private void setEquilateral() {
