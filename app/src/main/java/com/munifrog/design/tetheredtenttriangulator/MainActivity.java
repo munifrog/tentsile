@@ -151,18 +151,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_default_tether_points:
+                mClearing.configDefault();
                 return true;
             case R.id.action_browser_tentsile:
-                return launchTentsile();
+                launchTentsile();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private boolean launchTentsile() {
+    private void launchTentsile() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_tentsile_website_main)));
         startActivity(browserIntent);
-        return true;
     }
 
     private void setEquilateral() {

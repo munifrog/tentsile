@@ -303,7 +303,7 @@ public class Clearing extends Drawable {
         return false;
     }
 
-    private void configDefault() {
+    public void configDefault() {
         double lengthReference = 5 * mSmallestDimen / 12;
         double offset = -15 * Math.PI / 180;
         double currentAngle;
