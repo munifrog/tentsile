@@ -22,24 +22,8 @@ public class Clearing extends Drawable {
     private static final int DRAW_PLATFORM_TOO_CLOSE = 0;
     private static final int DRAW_PLATFORM_ENABLED = 1;
 
-    private static final int STATE_CONFIG_EQUILATERAL = 0;
-    private static final int STATE_CONFIG_ISOSCELES = 1;
-    private static final int STATE_CONFIG_SCALENE = 2;
-    private static final int STATE_CONFIG_MAX = STATE_CONFIG_SCALENE;
-    private static final int STATE_ROTATION_ABC = 0;
-    private static final int STATE_ROTATION_BCA = 1;
-    private static final int STATE_ROTATION_CAB = 2;
-    private static final int STATE_ROTATION_ACB = 3;
-    private static final int STATE_ROTATION_CBA = 4;
-    private static final int STATE_ROTATION_BAC = 5;
-    private static final int STATE_ROTATION_MAX = STATE_ROTATION_BAC;
-
-    private static final double MATH_SQUARE_ROOT_OF_THREE = Math.sqrt(3);
-    private static final double MATH_BASE_LENGTH_N = 200;
-
     private static final double MATH_ANGLE_PRECISION_ALLOWANCE = 0.001;
     private static final double MATH_ANGLE_FULL_CIRCLE = Math.PI * 2;
-    private static final double MATH_RADIAN_2_DEGREE_MULTIPLIER = 180.0 / Math.PI;
 
     private final Paint mTetherPaint;
     private final Paint mPerimeterPaint;
@@ -63,8 +47,6 @@ public class Clearing extends Drawable {
     private double mThreshold1P2;
     private double mThreshold2P0;
 
-    private int mStateConfiguration = STATE_CONFIG_EQUILATERAL;
-    private int mStateRotation = STATE_ROTATION_ABC;
     private int mStateTether = TETHER_SELECTION_NONE;
     private int mStatePlatform = DRAW_PLATFORM_ENABLED;
     private long mPreviousComputation;
@@ -330,33 +312,7 @@ public class Clearing extends Drawable {
             mTethers[i][0] = (float)(mTetherCenter[0] + lengthReference * Math.cos(currentAngle));
             mTethers[i][1] = (float)(mTetherCenter[1] + lengthReference * Math.sin(currentAngle));
         }
-    }
-
-    private void configEquilateral() {
-        mTethers[0][0] = (float)(mTetherCenter[0]);
-        mTethers[0][1] = (float)(mTetherCenter[1] + MATH_BASE_LENGTH_N);
-        mTethers[1][0] = (float)(mTetherCenter[0] - MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N / 2);
-        mTethers[1][1] = (float)(mTetherCenter[1] - MATH_BASE_LENGTH_N / 2);
-        mTethers[2][0] = (float)(mTetherCenter[0] + MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N / 2);
-        mTethers[2][1] = (float)(mTetherCenter[1] - MATH_BASE_LENGTH_N / 2);
-    }
-
-    private void configScalene() {
-        mTethers[0][0] = (float)(mTetherCenter[0] - MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N / 2);
-        mTethers[0][1] = (float)(mTetherCenter[1] + MATH_BASE_LENGTH_N + MATH_BASE_LENGTH_N / 2);
-        mTethers[1][0] = (float)(mTetherCenter[0] + MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N);
-        mTethers[1][1] = (float)(mTetherCenter[1] + MATH_BASE_LENGTH_N + MATH_BASE_LENGTH_N);
-        mTethers[2][0] = (float)(mTetherCenter[0]);
-        mTethers[2][1] = (float)(mTetherCenter[1] + MATH_BASE_LENGTH_N - 3 * MATH_BASE_LENGTH_N);
-    }
-
-    private void configIsosceles() {
-        mTethers[0][0] = (float)(mTetherCenter[0] - MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N);
-        mTethers[0][1] = (float)(mTetherCenter[1] + MATH_BASE_LENGTH_N + MATH_BASE_LENGTH_N);
-        mTethers[1][0] = (float)(mTetherCenter[0] + MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N);
-        mTethers[1][1] = (float)(mTetherCenter[1] + MATH_BASE_LENGTH_N + MATH_BASE_LENGTH_N);
-        mTethers[2][0] = (float)(mTetherCenter[0]);
-        mTethers[2][1] = (float)(mTetherCenter[1] + MATH_BASE_LENGTH_N - 3 * MATH_BASE_LENGTH_N);
+        invalidateSelf();
     }
 
     private void configRotate() {
@@ -370,56 +326,6 @@ public class Clearing extends Drawable {
         mTethers[2][1] = tempY;
     }
 
-    private void configFlip() {
-        // Switching any two corners is sufficient to flip the orientation; rotate afterwards
-        float tempX = mTethers[0][0];
-        float tempY = mTethers[0][1];
-        mTethers[0][0] = mTethers[2][0];
-        mTethers[0][1] = mTethers[2][1];
-        mTethers[2][0] = tempX;
-        mTethers[2][1] = tempY;
-    }
-
-    public void nextConfiguration() {
-        mStateRotation++;
-        if (mStateRotation > STATE_ROTATION_MAX) {
-            mStateRotation = STATE_ROTATION_ABC;
-            mStateConfiguration++;
-            if (mStateConfiguration > STATE_CONFIG_MAX) {
-                mStateConfiguration = STATE_CONFIG_EQUILATERAL;
-                configEquilateral();
-            } else {
-                switch(mStateConfiguration) {
-                    default:
-                    case STATE_CONFIG_EQUILATERAL:
-                        break;
-                    case STATE_CONFIG_ISOSCELES:
-                        configIsosceles();
-                        break;
-                    case STATE_CONFIG_SCALENE:
-                        configScalene();
-                        break;
-                }
-            }
-        } else {
-            switch (mStateRotation) {
-                default:
-                case STATE_ROTATION_ABC:
-                    break;
-                case STATE_ROTATION_BCA:
-                case STATE_ROTATION_CAB:
-                case STATE_ROTATION_CBA:
-                case STATE_ROTATION_BAC:
-                    configRotate();
-                    break;
-                case STATE_ROTATION_ACB:
-                    configFlip(); // only one flip is necessary
-                    break;
-            }
-        }
-        invalidateSelf();
-    }
-
     public void setPlatformSymmetricAngle(double angle) {
         mThreshold0P1 = angle;
         mThreshold1P2 = angle;
@@ -430,10 +336,6 @@ public class Clearing extends Drawable {
     public void rotatePlatform() {
         configRotate();
         invalidateSelf();
-    }
-
-    private double radians2Degrees(double radians) {
-        return forcePrecision(radians * MATH_RADIAN_2_DEGREE_MULTIPLIER);
     }
 
     private double forcePrecision(double input) {
