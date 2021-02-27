@@ -115,28 +115,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
         String platform = (String) adapterView.getItemAtPosition(position);
-        // These should match the strings in the arrays
-        if (platform.equals("Stingray (3) Tent")) {
+        if (platform.equals(getString(R.string.tentsile_tent_stingray))) {
             setEquilateral();
-        } else if (platform.equals("Vista (3) Tent")) {
+        } else if (platform.equals(getString(R.string.tenstile_tent_vista))) {
             setEquilateral();
-        } else if (platform.equals("Trillium (3) Hammock")) {
+        } else if (platform.equals(getString(R.string.tentsile_base_trillium))) {
             setEquilateral();
-        } else if (platform.equals("Universe (5) Tent")) {
+        } else if (platform.equals(getString(R.string.tentsile_test_universe))) {
             setEquilateral();
-        } else if (platform.equals("Trilogy (6) Tent")) {
+        } else if (platform.equals(getString(R.string.tentsile_tent_trilogy))) {
             setEquilateral();
-        } else if (platform.equals("Trillium XL (6) Hammock")) {
+        } else if (platform.equals(getString(R.string.tentsile_base_trillium_xl))) {
             setEquilateral();
-        } else if (platform.equals("Una (1) Tent")) {
+        } else if (platform.equals(getString(R.string.tentsile_tent_una))) {
             setIsosceles(140);
-        } else if (platform.equals("Flite (2) Tent")) {
+        } else if (platform.equals(getString(R.string.tentsile_tent_flite))) {
             setIsosceles(140);
-        } else if (platform.equals("Connect (2) Tent")) {
+        } else if (platform.equals(getString(R.string.tentsile_tent_connect))) {
             setIsosceles(140);
-        } else if (platform.equals("T-Mini (2) Hammock")) {
+        } else if (platform.equals(getString(R.string.tentsile_base_t_mini))) {
             setIsosceles(140);
-        } else if (platform.equals("Custom")) {
+        } else if (platform.equals(getString(R.string.none_custom))) {
             setIsosceles(140);
         } else {
             setEquilateral();
@@ -161,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private boolean launchTentsile() {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.tentsile.com/"));
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_tentsile_website_main)));
         startActivity(browserIntent);
         return true;
     }
