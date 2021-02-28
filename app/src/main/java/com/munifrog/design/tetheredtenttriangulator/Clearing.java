@@ -350,6 +350,15 @@ public class Clearing extends Drawable {
         invalidateSelf();
     }
 
+    public boolean getIsImperial() {
+        return mIsImperial;
+    }
+
+    public void setIsImperial(boolean imperial) {
+        mIsImperial = imperial;
+        invalidateSelf();
+    }
+
     public void setSliderScale(double slider) {
         mScaleSlider = slider;
         invalidateSelf();

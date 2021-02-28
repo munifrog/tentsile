@@ -35,7 +35,7 @@
         app:layout_constraintStart_toEndOf="@+id/sp_models"
         app:srcCompat="@android:drawable/ic_menu_rotate" />
 
-    <ImageButton
+    <Button
         android:id="@+id/im_units"
         android:layout_width="@dimen/icon_btn_units"
         android:layout_height="@dimen/icon_btn_units"

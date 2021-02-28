@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private int mPlatformSelection;
     private ImageButton mPlatformRotation;
+    private Button mUnitToggle;
     private SeekBar mSeekBar;
 
     private int mCanvasLeft = 0;
@@ -70,12 +72,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-        ImageButton changeScaleUnits = findViewById(R.id.im_units);
-        changeScaleUnits.setOnClickListener(new View.OnClickListener() {
+        mUnitToggle = findViewById(R.id.im_units);
+        mUnitToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                toggleUnits();
             }
         });
+        initializeUnits();
 
         mSeekBar = findViewById(R.id.sk_scale);
         setSeekBarPosition(MATH_SEEKBAR_INITIAL);
@@ -199,6 +203,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void launchTentsile() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_tentsile_website_main)));
         startActivity(browserIntent);
+    }
+
+    private void initializeUnits() {
+        setUnits(false);
+    }
+
+    private void toggleUnits() {
+        setUnits(!mClearing.getIsImperial());
+    }
+
+    private void setUnits(boolean isImperial) {
+        mClearing.setIsImperial(isImperial);
+        // The unit displayed should be what it will become if pushed, not what it currently is
+        mUnitToggle.setText(mClearing.getIsImperial() ? R.string.unit_meters : R.string.unit_imperial);
     }
 
     private void setEquilateral() {
