@@ -24,6 +24,11 @@ public class Clearing extends Drawable {
 
     private static final double MATH_ANGLE_PRECISION_ALLOWANCE = 0.001;
     private static final double MATH_ANGLE_FULL_CIRCLE = Math.PI * 2;
+    private static final double MATH_METERS_TO_FEET_CONVERSION = 3.2808399;
+    private static final double MATH_METERS_ACROSS_SMALLEST_DIMEN = 5.0;
+    private static final int MATH_DEGREES_OF_PRECISION = 1;
+
+    private boolean mIsImperial;
 
     private final Paint mTetherPaint;
     private final Paint mPerimeterPaint;
@@ -43,6 +48,8 @@ public class Clearing extends Drawable {
     private double mDist01; // c
     private double mDist12; // a
     private double mDist20; // b
+    private double mScaleBase; // Units per pixel
+    private double mScaleSlider; // Scaled multiplier
     private double mThreshold0P1;
     private double mThreshold1P2;
     private double mThreshold2P0;
@@ -71,6 +78,9 @@ public class Clearing extends Drawable {
 
         mTreePaint = new Paint();
         mTreePaint.setARGB(255, 193, 154, 107);
+
+        mIsImperial = false;
+        mScaleSlider = 1.0;
 
         setPlatformSymmetricAngle(2 * Math.PI / 3);
         getPlatformCenterOccasionally();
@@ -134,6 +144,8 @@ public class Clearing extends Drawable {
         mRadiusSelectionSize = mRadiusTetherSize * 2;
         mRadiusSelectionRangeSquared = mRadiusTetherSize * mRadiusTetherSize * 9;
 
+        mScaleBase = MATH_METERS_ACROSS_SMALLEST_DIMEN / mSmallestDimen;
+
         mTetherCenter[0] = centerX;
         mTetherCenter[1] = centerY;
 
@@ -160,9 +172,9 @@ public class Clearing extends Drawable {
         float [] mMid20 = { (mTethers[2][0] + mTethers[0][0]) / 2, (mTethers[2][1] + mTethers[0][1]) / 2 }; // b
         float [] mMid01 = { (mTethers[0][0] + mTethers[1][0]) / 2, (mTethers[0][1] + mTethers[1][1]) / 2 }; // c
 
-        canvas.drawText(Double.toString(forcePrecision(mDist12)), mMid12[0], mMid12[1], mLabelPaint);
-        canvas.drawText(Double.toString(forcePrecision(mDist20)), mMid20[0], mMid20[1], mLabelPaint);
-        canvas.drawText(Double.toString(forcePrecision(mDist01)), mMid01[0], mMid01[1], mLabelPaint);
+        canvas.drawText(Double.toString(scaledDimension(mDist12)), mMid12[0], mMid12[1], mLabelPaint);
+        canvas.drawText(Double.toString(scaledDimension(mDist20)), mMid20[0], mMid20[1], mLabelPaint);
+        canvas.drawText(Double.toString(scaledDimension(mDist01)), mMid01[0], mMid01[1], mLabelPaint);
     }
 
     private void drawStakes(Canvas canvas) {
@@ -338,8 +350,19 @@ public class Clearing extends Drawable {
         invalidateSelf();
     }
 
+    public void setSliderScale(double slider) {
+        mScaleSlider = slider;
+        invalidateSelf();
+    }
+
+    private double scaledDimension(double input) {
+        return forcePrecision(input * mScaleBase * mScaleSlider *
+                (mIsImperial ? MATH_METERS_TO_FEET_CONVERSION : 1)
+        );
+    }
+
     private double forcePrecision(double input) {
-        double precision = Math.pow(10, 2);
+        double precision = Math.pow(10, MATH_DEGREES_OF_PRECISION);
         return Math.round(precision * input) / precision;
     }
 }

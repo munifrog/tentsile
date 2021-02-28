@@ -18,13 +18,23 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private final Clearing mClearing = new Clearing();
 
+    private static final double MATH_SEEKBAR_MIN = 0.0;
+    private static final double MATH_SEEKBAR_MAX = 100.0;
+    private static final double MATH_SCALE_MIN = 1.0;
+    private static final double MATH_SCALE_MAX = 30.0;
+    private static final double MATH_SCALE_QUOTIENT =
+            (MATH_SCALE_MAX - MATH_SCALE_MIN) / (MATH_SEEKBAR_MAX - MATH_SEEKBAR_MIN);
+    private static final int MATH_SEEKBAR_INITIAL = 25;
+
     private int mPlatformSelection;
     private ImageButton mPlatformRotation;
+    private SeekBar mSeekBar;
 
     private int mCanvasLeft = 0;
     private int mCanvasTop = 0;
@@ -64,6 +74,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         changeScaleUnits.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+            }
+        });
+
+        mSeekBar = findViewById(R.id.sk_scale);
+        setSeekBarPosition(MATH_SEEKBAR_INITIAL);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int position, boolean b) {
+                // Setting minimum requires API 26, so scale values for ourselves:
+                mClearing.setSliderScale(MATH_SCALE_MIN + MATH_SCALE_QUOTIENT * position);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Unnecessary at this time
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Unnecessary at this time
             }
         });
 
@@ -159,6 +189,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void setSeekBarPosition(int position) {
+        mSeekBar.setProgress(position);
+        mClearing.setSliderScale(MATH_SCALE_MIN + MATH_SCALE_QUOTIENT * position);
     }
 
     private void launchTentsile() {
