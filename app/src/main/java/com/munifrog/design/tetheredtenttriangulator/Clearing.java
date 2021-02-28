@@ -28,19 +28,22 @@ public class Clearing extends Drawable {
     private static final double MATH_METERS_ACROSS_SMALLEST_DIMEN = 5.0;
     private static final int MATH_DEGREES_OF_PRECISION = 1;
 
-    private boolean mIsImperial;
-
     private final Paint mTetherPaint;
     private final Paint mPerimeterPaint;
     private final Paint mTreePaint;
     private final Paint mLabelPaint;
+
+    private boolean mIsImperial;
 
     private float mRadiusTetherSize;
     private float mRadiusSelectionSize;
     // When calculating the distance to the nearest tree, we can skip the square root computation
     // knowing that (x1-x0)^2 + (y1-y0)^2 <= selectionRadius^2
     private float mRadiusSelectionRangeSquared; // Avoiding computation by leaving squared
-    float mSmallestDimen;
+    private float mSmallestDimen;
+
+    private String mStringMeters;
+    private String mStringImperial;
 
     private float [] mTetherCenter = new float[2];
     private float [] mPlatformCoordinates = new float[2];
@@ -84,6 +87,11 @@ public class Clearing extends Drawable {
 
         setPlatformSymmetricAngle(2 * Math.PI / 3);
         getPlatformCenterOccasionally();
+    }
+
+    public void setUnitStrings(String meters, String imperial) {
+        mStringMeters = meters;
+        mStringImperial = imperial;
     }
 
     public void selectTether(int x, int y) {
@@ -172,9 +180,10 @@ public class Clearing extends Drawable {
         float [] mMid20 = { (mTethers[2][0] + mTethers[0][0]) / 2, (mTethers[2][1] + mTethers[0][1]) / 2 }; // b
         float [] mMid01 = { (mTethers[0][0] + mTethers[1][0]) / 2, (mTethers[0][1] + mTethers[1][1]) / 2 }; // c
 
-        canvas.drawText(Double.toString(scaledDimension(mDist12)), mMid12[0], mMid12[1], mLabelPaint);
-        canvas.drawText(Double.toString(scaledDimension(mDist20)), mMid20[0], mMid20[1], mLabelPaint);
-        canvas.drawText(Double.toString(scaledDimension(mDist01)), mMid01[0], mMid01[1], mLabelPaint);
+        String units = " " + (mIsImperial ? mStringImperial : mStringMeters);
+        canvas.drawText(String.format(units, scaledDimension(mDist12)), mMid12[0], mMid12[1], mLabelPaint);
+        canvas.drawText(String.format(units, scaledDimension(mDist20)), mMid20[0], mMid20[1], mLabelPaint);
+        canvas.drawText(String.format(units, scaledDimension(mDist01)), mMid01[0], mMid01[1], mLabelPaint);
     }
 
     private void drawStakes(Canvas canvas) {

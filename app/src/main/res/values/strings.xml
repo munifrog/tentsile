@@ -5,9 +5,11 @@
     <string name="desc_rotate">Rotate Tent or Platform</string>
 
     <string name="unit_meters">m</string>
+    <string name="unit_meters_with_number">%1$s m</string>
     <string name="desc_meters">Meters</string>
 
     <string name="unit_imperial">ft</string>
+    <string name="unit_imperial_with_number">%1$s ft</string>
     <string name="desc_imperial">Imperial (feet)</string>
 
     <string name="menu_default_tether">Reset Tether Points</string>

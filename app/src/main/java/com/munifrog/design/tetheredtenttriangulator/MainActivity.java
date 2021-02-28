@@ -47,6 +47,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mClearing.setUnitStrings(
+                getString(R.string.unit_meters_with_number),
+                getString(R.string.unit_imperial_with_number)
+        );
+
         Toolbar toolbar = findViewById(R.id.tb_main);
         setSupportActionBar(toolbar);
 
