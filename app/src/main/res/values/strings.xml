@@ -14,6 +14,8 @@
 
     <string name="menu_default_tether">Reset Tether Points</string>
     <string name="menu_browser_tentsile">Tentsile Website</string>
+    <string name="menu_switch_to_imperial">Use feet (ft)</string>
+    <string name="menu_switch_to_meters">Use meters (m)</string>
 
     <string name="default_selection_model">@string/tentsile_tent_stingray</string>
 

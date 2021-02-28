@@ -16,7 +16,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private int mPlatformSelection;
     private ImageButton mPlatformRotation;
-    private Button mUnitToggle;
+    private Menu mToolbarMenu;
     private SeekBar mSeekBar;
 
     private int mCanvasLeft = 0;
@@ -77,13 +76,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-        mUnitToggle = findViewById(R.id.im_units);
-        mUnitToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleUnits();
-            }
-        });
         initializeUnits();
 
         mSeekBar = findViewById(R.id.sk_scale);
@@ -113,8 +105,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        mToolbarMenu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.toolbar, menu);
+        matchUnits();
         return true;
     }
 
@@ -195,6 +189,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             case R.id.action_browser_tentsile:
                 launchTentsile();
                 return true;
+            case R.id.action_enable_imperial:
+                setUnits(true);
+                return true;
+            case R.id.action_enable_meters:
+                setUnits(false);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -211,17 +211,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void initializeUnits() {
-        setUnits(false);
-    }
-
-    private void toggleUnits() {
-        setUnits(!mClearing.getIsImperial());
+        mClearing.setIsImperial(false);
     }
 
     private void setUnits(boolean isImperial) {
         mClearing.setIsImperial(isImperial);
+        matchUnits();
+    }
+
+    private void matchUnits() {
+        boolean isImperial = mClearing.getIsImperial();
         // The unit displayed should be what it will become if pushed, not what it currently is
-        mUnitToggle.setText(mClearing.getIsImperial() ? R.string.unit_meters : R.string.unit_imperial);
+        mToolbarMenu.findItem(R.id.action_enable_imperial).setVisible(!isImperial);
+        mToolbarMenu.findItem(R.id.action_enable_meters).setVisible(isImperial);
     }
 
     private void setEquilateral() {

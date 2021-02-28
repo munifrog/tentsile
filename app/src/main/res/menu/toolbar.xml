@@ -9,4 +9,12 @@
     <item android:id="@+id/action_browser_tentsile"
         android:title="@string/menu_browser_tentsile"
         app:showAsAction="never" />
+
+    <item android:id="@+id/action_enable_imperial"
+        android:title="@string/menu_switch_to_imperial"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_enable_meters"
+        android:title="@string/menu_switch_to_meters"
+        app:showAsAction="never" />
 </menu>
