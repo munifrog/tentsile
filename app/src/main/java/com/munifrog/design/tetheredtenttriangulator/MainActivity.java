@@ -21,8 +21,11 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    private final Clearing mClearing = new Clearing();
+public class MainActivity
+        extends AppCompatActivity
+        implements AdapterView.OnItemSelectedListener, Clearing.ClearingListener
+{
+    private final Clearing mClearing = new Clearing(this);
 
     private static final double MATH_SEEKBAR_MIN = 0.0;
     private static final double MATH_SEEKBAR_MAX = 100.0;
@@ -234,5 +237,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void setIsosceles(double angle) {
         mClearing.setPlatformSymmetricAngle(angle * Math.PI / 180);
         mPlatformRotation.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void computePlatformCenter(PlatformCenterRun run) {
+        runOnUiThread(run);
     }
 }

@@ -13,7 +13,14 @@ import androidx.annotation.NonNull;
 
 import java.util.Calendar;
 
-public class Clearing extends Drawable {
+public class Clearing
+        extends Drawable
+        implements PlatformCenterRun.PlatformCenterListener
+{
+    interface ClearingListener {
+        void computePlatformCenter(PlatformCenterRun run);
+    }
+
     private static final int TETHER_SELECTION_NONE = -1;
     private static final int TETHER_SELECTION_DECIDING = -2;
 
@@ -22,11 +29,9 @@ public class Clearing extends Drawable {
     private static final int DRAW_PLATFORM_TOO_CLOSE = 0;
     private static final int DRAW_PLATFORM_ENABLED = 1;
 
-    private static final double MATH_ANGLE_PRECISION_ALLOWANCE = 0.001;
     private static final double MATH_ANGLE_FULL_CIRCLE = Math.PI * 2;
     private static final double MATH_METERS_TO_FEET_CONVERSION = 3.2808399;
     private static final double MATH_METERS_ACROSS_SMALLEST_DIMEN = 5.0;
-    private static final int MATH_DEGREES_OF_PRECISION = 1;
 
     private final Paint mTetherPaint;
     private final Paint mPerimeterPaint;
@@ -61,7 +66,11 @@ public class Clearing extends Drawable {
     private int mStatePlatform = DRAW_PLATFORM_ENABLED;
     private long mPreviousComputation;
 
-    public Clearing() {
+    private ClearingListener mViewOwner;
+
+    public Clearing(ClearingListener listener) {
+        mViewOwner = listener;
+
         // Set up color and text size
         mTetherPaint = new Paint();
         mTetherPaint.setARGB(255, 127, 127, 127);
@@ -259,69 +268,17 @@ public class Clearing extends Drawable {
 
         if (angle102 < mThreshold1P2 && angle210 < mThreshold2P0 && angle021 < mThreshold0P1) {
             mStatePlatform = DRAW_PLATFORM_ENABLED;
-
-            // Equilateral triangle (simple) case: 2P0, 1P2 and 0P1 are all 120(o) or 2 * PI / 3
-            // Rather than computing the sines of these angles, could compute them ahead of time and load per tent
-
-            double sine2P0 = Math.sin(mThreshold2P0); // rho
-            double sine1P2 = Math.sin(mThreshold1P2); // lambda
-            //double sine0P1 = Math.sin(mThreshold0P1); // psi
-
-            double angleTheta =  MATH_ANGLE_FULL_CIRCLE - mThreshold2P0 - mThreshold1P2 - angle021;
-            double angleP12 = Math.atan(mDist20 * Math.sin(angleTheta) * sine1P2 / (mDist12 * sine2P0 + mDist20 * sine1P2 * Math.cos(angleTheta)));
-            double angleP21 = Math.PI - angleP12 - mThreshold1P2;
-            double angleP20 = angle021 - angleP21;
-
-            //double dist0P = mDist20 * Math.sin(angleP20) / sine2P0;
-            //double dist1P = mDist12 * Math.sin(angleP21) / sine1P2;
-            double dist2P = mDist12 * Math.sin(angleP12) / sine1P2;
-
-            // Determine the location of the platform center (Q is for quadrant or Y=0 line)
-            double angleQ21 = getDirection(mDist12, diff12x, diff12y);
-            double angleQ20 = getDirection(mDist20, -diff20x, -diff20y);
-
-            // If adding lambda1 to angle CA, then subtracting lambda2 from angle CB
-            // If subtracting lambda1 from angle CA, then adding lambda2 to angle CB
-            double angleP20d1 = angleQ20 + angleP20; // compare only with angle12Pd2
-            //double angleP21d2 = angleQ21 - angleP21; // compare only with angleP20d1
-            double angleP20d2 = angleQ20 - angleP20; // compare only with angle12Pd1
-            double angleP21d1 = angleQ21 + angleP21; // compare only with angle02Pd2
-
-            // Find the angle pair that give the same (or close) angle
-            double anglePlatform = areAnglesEquivalent(angleP20d2, angleP21d1) ? angleP21d1 : angleP20d1;
-
-            // After figuring out where the platform center is, calculate the extent of the tent
-            // If dist0P, dist1P, and dist2P are large enough for the tent, show the platform center
-
-            // x = Cx + dist2P * cos(anglePlatform)
-            mPlatformCoordinates[0] = (float) (mTethers[2][0] + dist2P * Math.cos(anglePlatform));
-            // y = Cy + dist2P * sin(anglePlatform)
-            mPlatformCoordinates[1] = (float) (mTethers[2][1] + dist2P * Math.sin(anglePlatform));
+            float[] thresholds = { (float) mThreshold2P0, (float) mThreshold1P2, (float) mThreshold0P1 };
+            mViewOwner.computePlatformCenter(new PlatformCenterRun(this, mTethers, thresholds));
         } else {
             mStatePlatform = DRAW_PLATFORM_TOO_CLOSE;
         }
     }
 
-    // deltaY = (distal Y - proximal Y); if deltaY >= 0, then angle is within Q1 or Q2;
-    // if deltaY < 0, then angle within Q3 or Q4; allowing us to narrow down the quadrant
-    private double getDirection(double hypotenuse, double deltaX, double deltaY) {
-        double angle = Math.asin(deltaY / hypotenuse);
-        if ((angle >= 0) && (deltaX < 0) || ((angle < 0) && (deltaX < 0))) {
-            // symmetric with respect to line (x = 0)
-            angle = Math.PI - angle;
-        }
-        return angle;
-    }
-
-    private boolean areAnglesEquivalent(double angleA, double angleB) {
-        double rawDelta = Math.abs(angleB - angleA);
-        if (rawDelta < MATH_ANGLE_PRECISION_ALLOWANCE) {
-            return true;
-        } else if (Math.signum(angleA) != Math.signum(angleB)) {
-            // In theory we would need to handle N 2*PI, but in practice it suffices to compare +/-
-            return (Math.abs(MATH_ANGLE_FULL_CIRCLE - rawDelta) < MATH_ANGLE_PRECISION_ALLOWANCE);
-        }
-        return false;
+    @Override
+    public void onPlatformComputed(float[] newPlatform) {
+        mPlatformCoordinates = newPlatform;
+        invalidateSelf();
     }
 
     public void configDefault() {
@@ -374,13 +331,8 @@ public class Clearing extends Drawable {
     }
 
     private double scaledDimension(double input) {
-        return forcePrecision(input * mScaleBase * mScaleSlider *
+        return Util.forcePrecision(input * mScaleBase * mScaleSlider *
                 (mIsImperial ? MATH_METERS_TO_FEET_CONVERSION : 1)
         );
-    }
-
-    private double forcePrecision(double input) {
-        double precision = Math.pow(10, MATH_DEGREES_OF_PRECISION);
-        return Math.round(precision * input) / precision;
     }
 }
