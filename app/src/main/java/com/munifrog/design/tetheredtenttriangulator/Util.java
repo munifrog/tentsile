@@ -32,4 +32,23 @@ class Util {
         }
         return false;
     }
+
+    static double[] getPerimeter(float[][] tethers) {
+        double [] returnable = new double[6];
+        double diff01x = tethers[0][0] - tethers[1][0]; // Ax - Bx
+        double diff01y = tethers[0][1] - tethers[1][1]; // Ay - By
+        double diff12x = tethers[1][0] - tethers[2][0]; // Bx - Cx
+        double diff12y = tethers[1][1] - tethers[2][1]; // By - Cy
+        double diff20x = tethers[2][0] - tethers[0][0]; // Cx - Ax
+        double diff20y = tethers[2][1] - tethers[0][1]; // Cy - Ay
+        // Supposed to speed processing; is it faster to multiply again or pass copies?
+        returnable[3] = diff01x * diff01x + diff01y * diff01y; // dist01sq
+        returnable[4] = diff12x * diff12x + diff12y * diff12y; // dist12sq
+        returnable[5] = diff20x * diff20x + diff20y * diff20y; // dist20sq
+        // Users are probably more interested in the actual distances, so return these first
+        returnable[0] = Math.sqrt(returnable[3]); // c; mDist01
+        returnable[1] = Math.sqrt(returnable[4]); // a; mDist12
+        returnable[2] = Math.sqrt(returnable[5]); // b; mDist20
+        return returnable;
+    }
 }

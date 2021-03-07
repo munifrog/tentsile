@@ -136,7 +136,7 @@ public class Clearing
 
     public void releaseTether() {
         mStateTether = TETHER_SELECTION_NONE;
-        invalidateSelf();
+        computePlatformCenter(); // In case the last computation was prevented by timing
     }
 
     public void updateTether(int x, int y) {
@@ -245,34 +245,40 @@ public class Clearing
         if (current > mPreviousComputation + PLATFORM_COMPUTATION_FREQUENCY_MILLIS) {
             mPreviousComputation = current;
             getPlatformCenter();
+        } else {
+            getPerimeter();
+            invalidateSelf();
         }
     }
 
-    private void getPlatformCenter() {
-        double diff01x = mTethers[0][0] - mTethers[1][0]; // Ax - Bx
-        double diff01y = mTethers[0][1] - mTethers[1][1]; // Ay - By
-        double diff12x = mTethers[1][0] - mTethers[2][0]; // Bx - Cx
-        double diff12y = mTethers[1][1] - mTethers[2][1]; // By - Cy
-        double diff20x = mTethers[2][0] - mTethers[0][0]; // Cx - Ax
-        double diff20y = mTethers[2][1] - mTethers[0][1]; // Cy - Ay
-        double dist01sq = diff01x * diff01x + diff01y * diff01y;
-        double dist12sq = diff12x * diff12x + diff12y * diff12y;
-        double dist20sq = diff20x * diff20x + diff20y * diff20y;
-        mDist01 = Math.sqrt(dist01sq); // c
-        mDist12 = Math.sqrt(dist12sq); // a
-        mDist20 = Math.sqrt(dist20sq); // b
+    private void getPerimeter() {
+        double [] perimeter = Util.getPerimeter(mTethers);
+        mDist01 = perimeter[0];
+        mDist12 = perimeter[1];
+        mDist20 = perimeter[2];
+    }
 
-        double angle102 = Math.acos((dist20sq + dist01sq - dist12sq) / 2.0 / mDist20 / mDist01);  // A = 0
-        double angle210  = Math.acos((dist12sq + dist01sq - dist20sq) / 2.0 / mDist12 / mDist01); // B = 1
-        double angle021 = Math.acos((dist12sq + dist20sq - dist01sq) / 2.0 / mDist12 / mDist20);  // C = 2
+    private void getPlatformCenter() {
+        double [] perimeter = Util.getPerimeter(mTethers);
+        mDist01 = perimeter[0];
+        mDist12 = perimeter[1];
+        mDist20 = perimeter[2];
+
+        double angle102 = Math.acos((perimeter[5] + perimeter[3] - perimeter[4]) / 2.0 / mDist20 / mDist01);  // A = 0
+        double angle210  = Math.acos((perimeter[4] + perimeter[3] - perimeter[5]) / 2.0 / mDist12 / mDist01); // B = 1
+        double angle021 = Math.acos((perimeter[4] + perimeter[5] - perimeter[3]) / 2.0 / mDist12 / mDist20);  // C = 2
 
         if (angle102 < mThreshold1P2 && angle210 < mThreshold2P0 && angle021 < mThreshold0P1) {
             mStatePlatform = DRAW_PLATFORM_ENABLED;
-            float[] thresholds = { (float) mThreshold2P0, (float) mThreshold1P2, (float) mThreshold0P1 };
-            mViewOwner.computePlatformCenter(new PlatformCenterRun(this, mTethers, thresholds));
+            computePlatformCenter();
         } else {
             mStatePlatform = DRAW_PLATFORM_TOO_CLOSE;
         }
+    }
+
+    private void computePlatformCenter() {
+        float[] thresholds = { (float) mThreshold2P0, (float) mThreshold1P2, (float) mThreshold0P1 };
+        mViewOwner.computePlatformCenter(new PlatformCenterRun(this, mTethers, thresholds));
     }
 
     @Override
