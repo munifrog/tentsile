@@ -39,6 +39,7 @@ public class Clearing
     private final Paint mLabelPaint;
 
     private boolean mIsImperial;
+    private boolean mSetupFreshConfiguration;
 
     private float mRadiusTetherSize;
     private float mRadiusSelectionSize;
@@ -91,6 +92,7 @@ public class Clearing
         mTreePaint = new Paint();
         mTreePaint.setARGB(255, 193, 154, 107);
 
+        mSetupFreshConfiguration = true;
         mIsImperial = false;
         mScaleSlider = 1.0;
 
@@ -166,7 +168,9 @@ public class Clearing
         mTetherCenter[0] = centerX;
         mTetherCenter[1] = centerY;
 
-        configDefault();
+        if (mSetupFreshConfiguration) {
+            configDefault();
+        }
     }
 
     @Override
@@ -331,6 +335,10 @@ public class Clearing
         invalidateSelf();
     }
 
+    public double getSliderScale() {
+        return mScaleSlider;
+    }
+
     public void setSliderScale(double slider) {
         mScaleSlider = slider;
         invalidateSelf();
@@ -340,5 +348,14 @@ public class Clearing
         return Util.forcePrecision(input * mScaleBase * mScaleSlider *
                 (mIsImperial ? MATH_METERS_TO_FEET_CONVERSION : 1)
         );
+    }
+
+    public float[][] getTetherPoints() {
+        return mTethers.clone();
+    }
+
+    public void setTetherPoints(float[][] newTethers) {
+        mSetupFreshConfiguration = false;
+        mTethers = newTethers.clone();
     }
 }

@@ -6,9 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +27,15 @@ public class MainActivity
         extends AppCompatActivity
         implements AdapterView.OnItemSelectedListener, Clearing.ClearingListener
 {
+    private static final String SAVE_STATE_UNITS = "remembered_units";
+    private static final String SAVE_STATE_SLIDER = "remembered_slider_position";
+    private static final String SAVE_STATE_TETHERS_0X = "remembered_tether_position_0x";
+    private static final String SAVE_STATE_TETHERS_0Y = "remembered_tether_position_0y";
+    private static final String SAVE_STATE_TETHERS_1X = "remembered_tether_position_1x";
+    private static final String SAVE_STATE_TETHERS_1Y = "remembered_tether_position_1y";
+    private static final String SAVE_STATE_TETHERS_2X = "remembered_tether_position_2x";
+    private static final String SAVE_STATE_TETHERS_2Y = "remembered_tether_position_2y";
+
     private final Clearing mClearing = new Clearing(this);
 
     private static final double MATH_SEEKBAR_MIN = 0.0;
@@ -200,6 +211,60 @@ public class MainActivity
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveState();
+    }
+
+    private void saveState() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putBoolean(SAVE_STATE_UNITS, mClearing.getIsImperial());
+        float[][] tethers = mClearing.getTetherPoints();
+        edit.putFloat(SAVE_STATE_TETHERS_0X, tethers[0][0]);
+        edit.putFloat(SAVE_STATE_TETHERS_0Y, tethers[0][1]);
+        edit.putFloat(SAVE_STATE_TETHERS_1X, tethers[1][0]);
+        edit.putFloat(SAVE_STATE_TETHERS_1Y, tethers[1][1]);
+        edit.putFloat(SAVE_STATE_TETHERS_2X, tethers[2][0]);
+        edit.putFloat(SAVE_STATE_TETHERS_2Y, tethers[2][1]);
+        edit.putFloat(SAVE_STATE_SLIDER, (float) mClearing.getSliderScale());
+        edit.putInt(SAVE_STATE_SLIDER, mSeekBar.getProgress());
+        edit.apply();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        restoreState();
+    }
+
+    private void restoreState() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.contains(SAVE_STATE_TETHERS_0X) &&
+                prefs.contains(SAVE_STATE_TETHERS_0X) &&
+                prefs.contains(SAVE_STATE_TETHERS_1X) &&
+                prefs.contains(SAVE_STATE_TETHERS_1Y) &&
+                prefs.contains(SAVE_STATE_TETHERS_2X) &&
+                prefs.contains(SAVE_STATE_TETHERS_2Y)
+        ) {
+            float[][] tethers = new float[3][2];
+            tethers[0][0] = prefs.getFloat(SAVE_STATE_TETHERS_0X, 100);
+            tethers[0][1] = prefs.getFloat(SAVE_STATE_TETHERS_0Y, 100);
+            tethers[1][0] = prefs.getFloat(SAVE_STATE_TETHERS_1X, 100);
+            tethers[1][1] = prefs.getFloat(SAVE_STATE_TETHERS_1Y, 100);
+            tethers[2][0] = prefs.getFloat(SAVE_STATE_TETHERS_2X, 100);
+            tethers[2][1] = prefs.getFloat(SAVE_STATE_TETHERS_2Y, 100);
+            mClearing.setTetherPoints(tethers);
+        }
+        if (prefs.contains(SAVE_STATE_UNITS)) {
+            mClearing.setIsImperial(prefs.getBoolean(SAVE_STATE_UNITS, false));
+        }
+        if (prefs.contains(SAVE_STATE_SLIDER)) {
+            setSeekBarPosition(prefs.getInt(SAVE_STATE_SLIDER, MATH_SEEKBAR_INITIAL));
         }
     }
 
