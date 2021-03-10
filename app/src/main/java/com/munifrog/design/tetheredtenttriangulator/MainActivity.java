@@ -39,12 +39,21 @@ public class MainActivity
 
     private final Clearing mClearing = new Clearing(this);
 
-    private static final double MATH_SEEKBAR_MIN = 0.0;
-    private static final double MATH_SEEKBAR_MAX = 100.0;
-    private static final double MATH_SCALE_MIN = 1.0;
-    private static final double MATH_SCALE_MAX = 30.0;
-    private static final double MATH_SCALE_QUOTIENT =
-            (MATH_SCALE_MAX - MATH_SCALE_MIN) / (MATH_SEEKBAR_MAX - MATH_SEEKBAR_MIN);
+    private static final double MATH_SEEKBAR_POINT_00 = 0.0;
+    private static final double MATH_SEEKBAR_POINT_01 = 50.0;
+    private static final double MATH_SEEKBAR_POINT_02 = 75.0;
+    private static final double MATH_SEEKBAR_POINT_03 = 100.0;
+    private static final double MATH_SCALE_POINT_00 = 1.0;
+    private static final double MATH_SCALE_POINT_01 = 3.0;
+    private static final double MATH_SCALE_POINT_02 = 8.0;
+    private static final double MATH_SCALE_POINT_03 = 10.0;
+    private static final double MATH_SCALE_SLOPE_00_01 = (MATH_SCALE_POINT_01 - MATH_SCALE_POINT_00) /
+            (MATH_SEEKBAR_POINT_01 - MATH_SEEKBAR_POINT_00);
+    private static final double MATH_SCALE_SLOPE_01_02 = (MATH_SCALE_POINT_02 - MATH_SCALE_POINT_01) /
+            (MATH_SEEKBAR_POINT_02 - MATH_SEEKBAR_POINT_01);
+    private static final double MATH_SCALE_SLOPE_02_03 = (MATH_SCALE_POINT_03 - MATH_SCALE_POINT_02) /
+            (MATH_SEEKBAR_POINT_03 - MATH_SEEKBAR_POINT_02);
+
     private static final int MATH_SEEKBAR_INITIAL = 25;
 
     private static final double TENTSILE_BASE_CONNECT = 2.7;
@@ -115,7 +124,7 @@ public class MainActivity
             @Override
             public void onProgressChanged(SeekBar seekBar, int position, boolean b) {
                 // Setting minimum requires API 26, so scale values for ourselves:
-                mClearing.setSliderScale(MATH_SCALE_MIN + MATH_SCALE_QUOTIENT * position);
+                mClearing.setSliderScale(getSeekbarScale(position));
             }
 
             @Override
@@ -285,7 +294,25 @@ public class MainActivity
 
     private void setSeekBarPosition(int position) {
         mSeekBar.setProgress(position);
-        mClearing.setSliderScale(MATH_SCALE_MIN + MATH_SCALE_QUOTIENT * position);
+        mClearing.setSliderScale(getSeekbarScale(position));
+    }
+
+    private double getSeekbarScale(int position) {
+        double diff, offset, slope;
+        if (position < MATH_SEEKBAR_POINT_01) {
+            diff = position - MATH_SEEKBAR_POINT_00;
+            offset = MATH_SCALE_POINT_00;
+            slope = MATH_SCALE_SLOPE_00_01;
+        } else if (position < MATH_SEEKBAR_POINT_02) {
+            diff = position - MATH_SEEKBAR_POINT_01;
+            offset = MATH_SCALE_POINT_01;
+            slope = MATH_SCALE_SLOPE_01_02;
+        } else { // if (position <= MATH_SEEKBAR_POINT_03) {
+            diff = position - MATH_SEEKBAR_POINT_02;
+            offset = MATH_SCALE_POINT_02;
+            slope = MATH_SCALE_SLOPE_02_03;
+        }
+        return offset + slope * diff;
     }
 
     private void launchTentsile() {
