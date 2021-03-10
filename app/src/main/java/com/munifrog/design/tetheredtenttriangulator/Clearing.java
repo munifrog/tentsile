@@ -3,6 +3,7 @@ package com.munifrog.design.tetheredtenttriangulator;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.DashPathEffect;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
@@ -30,11 +31,13 @@ public class Clearing
     private static final int DRAW_PLATFORM_ENABLED = 1;
 
     private static final double MATH_ANGLE_FULL_CIRCLE = Math.PI * 2;
+    private static final double MATH_ANGLE_RADIANS_TO_DEGREES = 180 / Math.PI;
     private static final double MATH_METERS_TO_FEET_CONVERSION = 3.2808399;
     private static final double MATH_METERS_ACROSS_SMALLEST_DIMEN = 5.0;
 
     private final Paint mTetherPaint;
     private final Paint mPerimeterPaint;
+    private final Paint mPlatformPaint;
     private final Paint mTreePaint;
     private final Paint mLabelPaint;
 
@@ -68,6 +71,7 @@ public class Clearing
     private long mPreviousComputation;
 
     private ClearingListener mViewOwner;
+    private Path mPlatformPath = new Path();
 
     public Clearing(ClearingListener listener) {
         mViewOwner = listener;
@@ -88,6 +92,12 @@ public class Clearing
         mPerimeterPaint.setPathEffect(new DashPathEffect(new float[] {15f, 20f}, 0f));
         mPerimeterPaint.setStrokeWidth(5);
         mPerimeterPaint.setStrokeCap(Paint.Cap.ROUND);
+
+        mPlatformPaint = new Paint();
+        mPlatformPaint.setARGB(127, 255, 255, 255);
+        mPlatformPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        mPlatformPaint.setStrokeWidth(0);
+        mPlatformPaint.setStrokeCap(Paint.Cap.ROUND);
 
         mTreePaint = new Paint();
         mTreePaint.setARGB(255, 193, 154, 107);
@@ -177,6 +187,7 @@ public class Clearing
     public void draw(@NonNull Canvas canvas) {
         getPlatformCenterOccasionally();
         drawTethers(canvas);
+        drawPlatform(canvas);
         drawConnections(canvas);
         drawStakes(canvas);
     }
@@ -193,7 +204,7 @@ public class Clearing
         float [] mMid20 = { (mTethers[2][0] + mTethers[0][0]) / 2, (mTethers[2][1] + mTethers[0][1]) / 2 }; // b
         float [] mMid01 = { (mTethers[0][0] + mTethers[1][0]) / 2, (mTethers[0][1] + mTethers[1][1]) / 2 }; // c
 
-        String units = " " + (mIsImperial ? mStringImperial : mStringMeters);
+        String units = (mIsImperial ? mStringImperial : mStringMeters);
         canvas.drawText(String.format(units, scaledDimension(mDist12)), mMid12[0], mMid12[1], mLabelPaint);
         canvas.drawText(String.format(units, scaledDimension(mDist20)), mMid20[0], mMid20[1], mLabelPaint);
         canvas.drawText(String.format(units, scaledDimension(mDist01)), mMid01[0], mMid01[1], mLabelPaint);
@@ -224,6 +235,26 @@ public class Clearing
                     mRadiusTetherSize / 2,
                     mTetherPaint
             );
+        }
+    }
+
+    private void drawPlatform(Canvas canvas) {
+        if (mStatePlatform == DRAW_PLATFORM_ENABLED) {
+            double deltaX = mTethers[0][0] - mPlatformCoordinates[0];
+            double deltaY = mTethers[0][1] - mPlatformCoordinates[1];
+            double hypotenuse = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            double angle0 = Util.getDirection(hypotenuse, deltaX, deltaY);
+
+            Matrix matrix = new Matrix();
+            long scale = metersToPixels(1.0);
+            matrix.setScale((float)scale, (float)scale);
+            matrix.postRotate((float)(angle0 * MATH_ANGLE_RADIANS_TO_DEGREES));
+            matrix.postTranslate(mPlatformCoordinates[0], mPlatformCoordinates[1]);
+
+            Path transformedPath = new Path();
+            mPlatformPath.transform(matrix, transformedPath);
+
+            canvas.drawPath(transformedPath, mPlatformPaint);
         }
     }
 
@@ -321,6 +352,10 @@ public class Clearing
         invalidateSelf();
     }
 
+    public void setPlatformDrawPath(Path platformPath) {
+        mPlatformPath = platformPath;
+    }
+
     public void rotatePlatform() {
         configRotate();
         invalidateSelf();
@@ -344,10 +379,14 @@ public class Clearing
         invalidateSelf();
     }
 
-    private double scaledDimension(double input) {
-        return Util.forcePrecision(input * mScaleBase * mScaleSlider *
+    private double scaledDimension(double pixels) {
+        return Util.forcePrecision(pixels * mScaleBase * mScaleSlider *
                 (mIsImperial ? MATH_METERS_TO_FEET_CONVERSION : 1)
         );
+    }
+
+    private long metersToPixels(double meters) {
+        return Math.round(meters / mScaleBase / mScaleSlider);
     }
 
     public float[][] getTetherPoints() {

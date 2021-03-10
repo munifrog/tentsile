@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Path;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -45,6 +46,22 @@ public class MainActivity
     private static final double MATH_SCALE_QUOTIENT =
             (MATH_SCALE_MAX - MATH_SCALE_MIN) / (MATH_SEEKBAR_MAX - MATH_SEEKBAR_MIN);
     private static final int MATH_SEEKBAR_INITIAL = 25;
+
+    private static final double TENTSILE_BASE_CONNECT = 2.7;
+    private static final double TENTSILE_BASE_FLITE = 2.7;
+    private static final double TENTSILE_BASE_T_MINI = 2.7;
+    private static final double TENTSILE_BASE_TRILOGY = 2.7;
+    private static final double TENTSILE_BASE_UNA = 1.6;
+    private static final double TENTSILE_HYPOTENUSE_CONNECT = 4.0;
+    private static final double TENTSILE_HYPOTENUSE_FLITE = 3.25;
+    private static final double TENTSILE_HYPOTENUSE_STINGRAY = 4.1;
+    private static final double TENTSILE_HYPOTENUSE_T_MINI = 3.25;
+    private static final double TENTSILE_HYPOTENUSE_TRILLIUM = 4.1;
+    private static final double TENTSILE_HYPOTENUSE_TRILLIUM_XL = 6.0;
+    private static final double TENTSILE_HYPOTENUSE_TRILOGY = 4.0;
+    private static final double TENTSILE_HYPOTENUSE_VISTA = 4.1;
+    private static final double TENTSILE_HYPOTENUSE_UNA = 2.9;
+    private static final double TENTSILE_HYPOTENUSE_UNIVERSE = 4.4;
 
     private int mPlatformSelection;
     private ImageButton mPlatformRotation;
@@ -163,29 +180,27 @@ public class MainActivity
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
         String platform = (String) adapterView.getItemAtPosition(position);
         if (platform.equals(getString(R.string.tentsile_tent_stingray))) {
-            setEquilateral();
+            setEquilateral(Util.getTentsileEquilateral(TENTSILE_HYPOTENUSE_STINGRAY));
         } else if (platform.equals(getString(R.string.tenstile_tent_vista))) {
-            setEquilateral();
+            setEquilateral(Util.getTentsileEquilateral(TENTSILE_HYPOTENUSE_VISTA));
         } else if (platform.equals(getString(R.string.tentsile_base_trillium))) {
-            setEquilateral();
+            setEquilateral(Util.getTentsileEquilateral(TENTSILE_HYPOTENUSE_TRILLIUM));
         } else if (platform.equals(getString(R.string.tentsile_test_universe))) {
-            setEquilateral();
+            setEquilateral(Util.getTentsileEquilateral(TENTSILE_HYPOTENUSE_UNIVERSE));
         } else if (platform.equals(getString(R.string.tentsile_tent_trilogy))) {
-            setEquilateral();
+            setEquilateral(Util.getTentsileTrilogy(TENTSILE_HYPOTENUSE_TRILOGY, TENTSILE_BASE_TRILOGY));
         } else if (platform.equals(getString(R.string.tentsile_base_trillium_xl))) {
-            setEquilateral();
+            setEquilateral(Util.getTentsileEquilateral(TENTSILE_HYPOTENUSE_TRILLIUM_XL));
         } else if (platform.equals(getString(R.string.tentsile_tent_una))) {
-            setIsosceles(140);
+            setIsosceles(TENTSILE_HYPOTENUSE_UNA, TENTSILE_BASE_UNA);
         } else if (platform.equals(getString(R.string.tentsile_tent_flite))) {
-            setIsosceles(140);
+            setIsosceles(TENTSILE_HYPOTENUSE_FLITE, TENTSILE_BASE_FLITE);
         } else if (platform.equals(getString(R.string.tentsile_tent_connect))) {
-            setIsosceles(140);
+            setIsosceles(TENTSILE_HYPOTENUSE_CONNECT, TENTSILE_BASE_CONNECT);
         } else if (platform.equals(getString(R.string.tentsile_base_t_mini))) {
-            setIsosceles(140);
-        } else if (platform.equals(getString(R.string.none_custom))) {
-            setIsosceles(140);
+            setIsosceles(TENTSILE_HYPOTENUSE_T_MINI, TENTSILE_BASE_T_MINI);
         } else {
-            setEquilateral();
+            setEquilateral(Util.getTentsileEquilateral(TENTSILE_HYPOTENUSE_TRILLIUM));
         }
     }
 
@@ -294,13 +309,17 @@ public class MainActivity
         mToolbarMenu.findItem(R.id.action_enable_meters).setVisible(isImperial);
     }
 
-    private void setEquilateral() {
+    private void setEquilateral(Path path) {
         mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
         mPlatformRotation.setVisibility(View.GONE);
+        mClearing.setPlatformDrawPath(path);
     }
 
-    private void setIsosceles(double angle) {
-        mClearing.setPlatformSymmetricAngle(angle * Math.PI / 180);
+    private void setIsosceles(double hypotenuse, double base) {
+        double [] measurements = Util.getIsoscelesMeasurements(hypotenuse, base);
+        Path platformPath = Util.getTentsileIsosceles(measurements[0], measurements[1], measurements[2]);
+        mClearing.setPlatformDrawPath(platformPath);
+        mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
         mPlatformRotation.setVisibility(View.VISIBLE);
     }
 

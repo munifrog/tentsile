@@ -11,7 +11,6 @@
         <item>@string/tentsile_tent_una</item>
         <item>@string/tentsile_test_universe</item>
         <item>@string/tenstile_tent_vista</item>
-        <item>@string/none_custom</item>
     </string-array>
 
     <string-array name="equilaterals">
