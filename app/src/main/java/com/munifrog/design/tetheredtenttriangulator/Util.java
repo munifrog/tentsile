@@ -63,140 +63,163 @@ class Util {
         return returnable;
     }
 
-    static Path getTentsileEquilateral(double baseLength) {
-        Path platform = new Path();
-
+    static Platform getTentsileEquilateral(double baseLength) {
         double distal = baseLength * MATH_DIVIDE_BY_SQRT_THREE;
         double proximal = TENTSILE_CENTER_HOLE_HYPOTENUSE * MATH_DIVIDE_BY_SQRT_THREE;
 
-        platform.moveTo(
-                (float)(distal * Math.cos(0)),
-                (float)(distal * Math.sin(0))
+        double [][] extremities = new double[3][2];
+        extremities[0][0] = distal * Math.cos(0);
+        extremities[0][1] = distal * Math.sin(0);
+        extremities[1][0] = distal * Math.cos(MATH_ANGLE_TWO_THIRDS_PI);
+        extremities[1][1] = distal * Math.sin(MATH_ANGLE_TWO_THIRDS_PI);
+        extremities[2][0] = distal * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI);
+        extremities[2][1] = distal * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI);
+
+        Path path = new Path();
+        path.moveTo(
+                (float)extremities[0][0],
+                (float)extremities[0][1]
         );
-        platform.lineTo(
+        path.lineTo(
                 (float)(proximal * Math.cos(0)),
                 (float)(proximal * Math.sin(0))
         );
-        platform.lineTo(
+        path.lineTo(
                 (float)(proximal * Math.cos(MATH_ANGLE_TWO_THIRDS_PI)),
                 (float)(proximal * Math.sin(MATH_ANGLE_TWO_THIRDS_PI))
         );
-        platform.lineTo(
-                (float)(distal * Math.cos(MATH_ANGLE_TWO_THIRDS_PI)),
-                (float)(distal * Math.sin(MATH_ANGLE_TWO_THIRDS_PI))
+        path.lineTo(
+                (float)extremities[1][0],
+                (float)extremities[1][1]
         );
-        platform.close();
+        path.close();
 
-        platform.moveTo(
-                (float)(distal * Math.cos(MATH_ANGLE_TWO_THIRDS_PI)),
-                (float)(distal * Math.sin(MATH_ANGLE_TWO_THIRDS_PI))
+        path.moveTo(
+                (float)extremities[1][0],
+                (float)extremities[1][1]
         );
-        platform.lineTo(
+        path.lineTo(
                 (float)(proximal * Math.cos(MATH_ANGLE_TWO_THIRDS_PI)),
                 (float)(proximal * Math.sin(MATH_ANGLE_TWO_THIRDS_PI))
         );
-        platform.lineTo(
+        path.lineTo(
                 (float)(proximal * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI)),
                 (float)(proximal * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI))
         );
-        platform.lineTo(
-                (float)(distal * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI)),
-                (float)(distal * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI))
+        path.lineTo(
+                (float)extremities[2][0],
+                (float)extremities[2][1]
         );
-        platform.close();
+        path.close();
 
-        platform.moveTo(
-                (float)(distal * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI)),
-                (float)(distal * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI))
+        path.moveTo(
+                (float)extremities[2][0],
+                (float)extremities[2][1]
         );
-        platform.lineTo(
+        path.lineTo(
                 (float)(proximal * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI)),
                 (float)(proximal * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI))
         );
-        platform.lineTo(
+        path.lineTo(
                 (float)(proximal * Math.cos(0)),
                 (float)(proximal * Math.sin(0))
         );
-        platform.lineTo(
-                (float)(distal * Math.cos(0)),
-                (float)(distal * Math.sin(0))
+        path.lineTo(
+                (float)extremities[0][0],
+                (float)extremities[0][1]
         );
-        platform.close();
+        path.close();
 
-        return platform;
+        return new Platform(path, extremities);
     }
 
-    static Path getTentsileIsosceles(double point, double barb, double notch) {
-        Path platform = new Path();
+    static Platform getTentsileIsosceles(double point, double barb, double notch) {
+        double [][] extremities = new double[3][2];
+        extremities[0][0] = point * Math.cos(0);
+        extremities[0][1] = point * Math.sin(0);
+        extremities[1][0] = barb * Math.cos(MATH_ANGLE_TWO_THIRDS_PI);
+        extremities[1][1] = barb * Math.sin(MATH_ANGLE_TWO_THIRDS_PI);
+        extremities[2][0] = barb * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI);
+        extremities[2][1] = barb * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI);
 
-        platform.moveTo(
-                (float)(point * Math.cos(0)),
-                (float)(point * Math.sin(0))
+        Path path = new Path();
+        path.moveTo(
+                (float)extremities[0][0],
+                (float)extremities[0][1]
         );
-        platform.lineTo(
+        path.lineTo(
                 (float)(notch * TENTSILE_NOTCH_SCALE * Math.cos(Math.PI)),
                 (float)(notch * TENTSILE_NOTCH_SCALE * Math.sin(Math.PI))
         );
-        platform.lineTo(
-                (float)(barb * Math.cos(MATH_ANGLE_TWO_THIRDS_PI)),
-                (float)(barb * Math.sin(MATH_ANGLE_TWO_THIRDS_PI))
+        path.lineTo(
+                (float)extremities[1][0],
+                (float)extremities[1][1]
         );
-        platform.close();
-        platform.moveTo(
-                (float)(point * Math.cos(0)),
-                (float)(point * Math.sin(0))
+        path.close();
+        path.moveTo(
+                (float)extremities[0][0],
+                (float)extremities[0][1]
         );
-        platform.lineTo(
+        path.lineTo(
                 (float)(notch * TENTSILE_NOTCH_SCALE * Math.cos(Math.PI)),
                 (float)(notch * TENTSILE_NOTCH_SCALE * Math.sin(Math.PI))
         );
-        platform.lineTo(
-                (float)(barb * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI)),
-                (float)(barb * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI))
+        path.lineTo(
+                (float)extremities[2][0],
+                (float)extremities[2][1]
         );
-        platform.close();
+        path.close();
 
-        return platform;
+        return new Platform(path, extremities);
     }
 
-    static Path getTentsileTrilogy(double hypotenuse, double base) {
+    static Platform getTentsileTrilogy(double hypotenuse, double base) {
         double [] measurements = getIsoscelesMeasurements(hypotenuse, base);
-        Path platform = new Path();
+        Path path = new Path();
+        double [][] extremities = new double[3][2];
 
         Matrix matrix = new Matrix();
         matrix.postRotate(120);
 
+        double distal = measurements[1] + measurements[0];
+        extremities[0][0] = distal * Math.cos(0);
+        extremities[0][1] = distal * Math.sin(0);
+        extremities[1][0] = distal * Math.cos(MATH_ANGLE_TWO_THIRDS_PI);
+        extremities[1][1] = distal * Math.sin(MATH_ANGLE_TWO_THIRDS_PI);
+        extremities[2][0] = distal * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI);
+        extremities[2][1] = distal * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI);
+
         for (int i = 0; i < 3; i++) {
-            platform.transform(matrix);
-            platform.moveTo(
-                    (float)(measurements[1] + measurements[0] * Math.cos(0)),
-                    (float)(measurements[0] * Math.sin(0))
+            path.transform(matrix);
+            path.moveTo(
+                    (float)extremities[0][0],
+                    (float)extremities[0][1]
             );
-            platform.lineTo(
+            path.lineTo(
                     (float)(measurements[1] + measurements[2] * TENTSILE_NOTCH_SCALE * Math.cos(Math.PI)),
                     (float)(measurements[2] * TENTSILE_NOTCH_SCALE * Math.sin(Math.PI))
             );
-            platform.lineTo(
+            path.lineTo(
                     (float)(measurements[1] + measurements[1] * Math.cos(MATH_ANGLE_TWO_THIRDS_PI)),
                     (float)(measurements[1] * Math.sin(MATH_ANGLE_TWO_THIRDS_PI))
             );
-            platform.close();
-            platform.moveTo(
-                    (float)(measurements[1] + measurements[0] * Math.cos(0)),
-                    (float)(measurements[0] * Math.sin(0))
+            path.close();
+            path.moveTo(
+                    (float)extremities[0][0],
+                    (float)extremities[0][1]
             );
-            platform.lineTo(
+            path.lineTo(
                     (float)(measurements[1] + measurements[2] * TENTSILE_NOTCH_SCALE * Math.cos(Math.PI)),
                     (float)(measurements[2] * TENTSILE_NOTCH_SCALE * Math.sin(Math.PI))
             );
-            platform.lineTo(
+            path.lineTo(
                     (float)(measurements[1] + measurements[1] * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI)),
                     (float)(measurements[1] * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI))
             );
-            platform.close();
+            path.close();
         }
 
-        return platform;
+        return new Platform(path, extremities);
     }
 
     static double [] getIsoscelesMeasurements(double hypotenuse, double base) {
@@ -206,5 +229,21 @@ class Util {
         measurements[1] = measurements[2] * 2;
         measurements[0] = Math.sqrt(hypotenuse * hypotenuse - 3 * measurements[2] * measurements[2]) - measurements[2];
         return measurements;
+    }
+
+    static double[][] shiftedCoordinates(double[][] points, double angle, double scale, double[] translation) {
+        // [ x0 y0 ][ cos() -sin() ] = [ x1 y1 ]     x1 =  x0 cos() + y0 sin()
+        //          [ sin()  cos() ]                 y1 = -x0 sin() + y0 cos()
+        double cosine = Math.cos(angle), sine = Math.sin(angle);
+        double [][] newPoints = new double[3][2];
+        newPoints[0][0] = translation[0] + scale * points[0][0] * cosine + scale * points[0][1] * sine;
+        newPoints[0][1] = translation[1] + scale * points[0][1] * cosine - scale * points[0][0] * sine;
+
+        newPoints[1][0] = translation[0] + scale * points[1][0] * cosine + scale * points[1][1] * sine;
+        newPoints[1][1] = translation[1] + scale * points[1][1] * cosine - scale * points[1][0] * sine;
+
+        newPoints[2][0] = translation[0] + scale * points[2][0] * cosine + scale * points[2][1] * sine;
+        newPoints[2][1] = translation[1] + scale * points[2][1] * cosine - scale * points[2][0] * sine;
+        return newPoints;
     }
 }

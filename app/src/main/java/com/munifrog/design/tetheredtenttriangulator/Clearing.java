@@ -57,6 +57,7 @@ public class Clearing
     private float [] mTetherCenter = new float[2];
     private float [] mPlatformCoordinates = new float[2];
     private float [][] mTethers = new float[3][2];
+    private double [][] mPlatformExtremities = new double[3][2];
     private double mDist01; // c
     private double mDist12; // a
     private double mDist20; // b
@@ -186,7 +187,6 @@ public class Clearing
     @Override
     public void draw(@NonNull Canvas canvas) {
         getPlatformCenterOccasionally();
-        drawTethers(canvas);
         drawPlatform(canvas);
         drawConnections(canvas);
         drawStakes(canvas);
@@ -254,7 +254,43 @@ public class Clearing
             Path transformedPath = new Path();
             mPlatformPath.transform(matrix, transformedPath);
 
+            double[] translation = { mPlatformCoordinates[0], mPlatformCoordinates[1] };
+            double [][] extremities = Util.shiftedCoordinates(mPlatformExtremities, -angle0, metersToPixels(1.0), translation);
+            // Draw skeleton of the platform
+            canvas.drawLine((float)extremities[0][0], (float)extremities[0][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
+            canvas.drawLine((float)extremities[1][0], (float)extremities[1][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
+            canvas.drawLine((float)extremities[2][0], (float)extremities[2][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
+            // Connect platform skeleton to the tether points (trees)
+            canvas.drawLine((float)extremities[0][0], (float)extremities[0][1], mTethers[0][0], mTethers[0][1], mTetherPaint);
+            canvas.drawLine((float)extremities[1][0], (float)extremities[1][1], mTethers[1][0], mTethers[1][1], mTetherPaint);
+            canvas.drawLine((float)extremities[2][0], (float)extremities[2][1], mTethers[2][0], mTethers[2][1], mTetherPaint);
+            // Add what will appear as a knot at the tether-center
+            canvas.drawCircle(
+                    mPlatformCoordinates[0],
+                    mPlatformCoordinates[1],
+                    mRadiusTetherSize / 2,
+                    mTetherPaint
+            );
+            // Determine the distance between the platform corner and tether location
+            float diffAx = (float)extremities[0][0] - mTethers[0][0];
+            float diffAy = (float)extremities[0][1] - mTethers[0][1];
+            float diffBx = (float)extremities[1][0] - mTethers[1][0];
+            float diffBy = (float)extremities[1][1] - mTethers[1][1];
+            float diffCx = (float)extremities[2][0] - mTethers[2][0];
+            float diffCy = (float)extremities[2][1] - mTethers[2][1];
+            float distA = (float)Math.sqrt(diffAx * diffAx + diffAy * diffAy);
+            float distB = (float)Math.sqrt(diffBx * diffBx + diffBy * diffBy);
+            float distC = (float)Math.sqrt(diffCx * diffCx + diffCy * diffCy);
+            // Draw the platform and distances if platform not too far past the tether point
             canvas.drawPath(transformedPath, mPlatformPaint);
+            // Label the distances at the platform extremities (corners)
+            float [] labelA = { (float)extremities[0][0], (float)extremities[0][1] };
+            float [] labelB = { (float)extremities[1][0], (float)extremities[1][1] };
+            float [] labelC = { (float)extremities[2][0], (float)extremities[2][1] };
+            String units = (mIsImperial ? mStringImperial : mStringMeters);
+            canvas.drawText(String.format(units, scaledDimension(distA)), labelA[0], labelA[1], mLabelPaint);
+            canvas.drawText(String.format(units, scaledDimension(distB)), labelB[0], labelB[1], mLabelPaint);
+            canvas.drawText(String.format(units, scaledDimension(distC)), labelC[0], labelC[1], mLabelPaint);
         }
     }
 
@@ -352,8 +388,9 @@ public class Clearing
         invalidateSelf();
     }
 
-    public void setPlatformDrawPath(Path platformPath) {
-        mPlatformPath = platformPath;
+    public void setPlatformDrawPath(Platform platform) {
+        mPlatformPath = platform.getPath();
+        mPlatformExtremities = platform.getTetherPoints();
     }
 
     public void rotatePlatform() {

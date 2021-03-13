@@ -7,7 +7,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Path;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -59,18 +58,18 @@ public class MainActivity
     private static final double TENTSILE_BASE_CONNECT = 2.7;
     private static final double TENTSILE_BASE_FLITE = 2.7;
     private static final double TENTSILE_BASE_T_MINI = 2.7;
-    private static final double TENTSILE_BASE_TRILOGY = 2.7;
     private static final double TENTSILE_BASE_UNA = 1.6;
+    private static final double TENTSILE_BASE_TRILOGY = TENTSILE_BASE_CONNECT;
     private static final double TENTSILE_HYPOTENUSE_CONNECT = 4.0;
     private static final double TENTSILE_HYPOTENUSE_FLITE = 3.25;
     private static final double TENTSILE_HYPOTENUSE_STINGRAY = 4.1;
     private static final double TENTSILE_HYPOTENUSE_T_MINI = 3.25;
     private static final double TENTSILE_HYPOTENUSE_TRILLIUM = 4.1;
     private static final double TENTSILE_HYPOTENUSE_TRILLIUM_XL = 6.0;
-    private static final double TENTSILE_HYPOTENUSE_TRILOGY = 4.0;
     private static final double TENTSILE_HYPOTENUSE_VISTA = 4.1;
     private static final double TENTSILE_HYPOTENUSE_UNA = 2.9;
     private static final double TENTSILE_HYPOTENUSE_UNIVERSE = 4.4;
+    private static final double TENTSILE_HYPOTENUSE_TRILOGY = TENTSILE_HYPOTENUSE_CONNECT;
 
     private int mPlatformSelection;
     private ImageButton mPlatformRotation;
@@ -336,16 +335,16 @@ public class MainActivity
         mToolbarMenu.findItem(R.id.action_enable_meters).setVisible(isImperial);
     }
 
-    private void setEquilateral(Path path) {
+    private void setEquilateral(Platform platform) {
         mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
         mPlatformRotation.setVisibility(View.GONE);
-        mClearing.setPlatformDrawPath(path);
+        mClearing.setPlatformDrawPath(platform);
     }
 
     private void setIsosceles(double hypotenuse, double base) {
         double [] measurements = Util.getIsoscelesMeasurements(hypotenuse, base);
-        Path platformPath = Util.getTentsileIsosceles(measurements[0], measurements[1], measurements[2]);
-        mClearing.setPlatformDrawPath(platformPath);
+        Platform platform = Util.getTentsileIsosceles(measurements[0], measurements[1], measurements[2]);
+        mClearing.setPlatformDrawPath(platform);
         mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
         mPlatformRotation.setVisibility(View.VISIBLE);
     }
