@@ -9,9 +9,19 @@ class Util {
     private static final double MATH_ANGLE_PRECISION_ALLOWANCE = 0.001;
     private static final double MATH_ANGLE_TWO_THIRDS_PI = 2 * Math.PI / 3;
     private static final double MATH_DIVIDE_BY_SQRT_THREE = Math.sqrt(3) / 3;
+    private static final double MATH_COS_ZERO = Math.cos(0);
+    private static final double MATH_COS_TWO_THIRDS_PI = Math.cos(MATH_ANGLE_TWO_THIRDS_PI);
+    private static final double MATH_COS_THREE_THIRDS_PI = Math.cos(Math.PI);
+    private static final double MATH_COS_FOUR_THIRDS_PI = Math.cos(MATH_ANGLE_FOUR_THIRDS_PI);
+    private static final double MATH_SIN_ZERO = Math.sin(0);
+    private static final double MATH_SIN_TWO_THIRDS_PI = Math.sin(MATH_ANGLE_TWO_THIRDS_PI);
+    private static final double MATH_SIN_THREE_THIRDS_PI = Math.sin(Math.PI);
+    private static final double MATH_SIN_FOUR_THIRDS_PI = Math.sin(MATH_ANGLE_FOUR_THIRDS_PI);
 
     private static final double TENTSILE_CENTER_HOLE_HYPOTENUSE = 0.6;
     private static final double TENTSILE_NOTCH_SCALE = 0.5;
+    private static final double TENTSILE_NOTCH_SCALED_COS_PI = TENTSILE_NOTCH_SCALE * MATH_COS_THREE_THIRDS_PI;
+    private static final double TENTSILE_NOTCH_SCALED_SIN_PI = TENTSILE_NOTCH_SCALE * MATH_SIN_THREE_THIRDS_PI;
 
     private static final int MATH_DEGREES_OF_PRECISION = 1;
 
@@ -68,12 +78,12 @@ class Util {
         double proximal = TENTSILE_CENTER_HOLE_HYPOTENUSE * MATH_DIVIDE_BY_SQRT_THREE;
 
         double [][] extremities = new double[3][2];
-        extremities[0][0] = distal * Math.cos(0);
-        extremities[0][1] = distal * Math.sin(0);
-        extremities[1][0] = distal * Math.cos(MATH_ANGLE_TWO_THIRDS_PI);
-        extremities[1][1] = distal * Math.sin(MATH_ANGLE_TWO_THIRDS_PI);
-        extremities[2][0] = distal * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI);
-        extremities[2][1] = distal * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI);
+        extremities[0][0] = distal * MATH_COS_ZERO;
+        extremities[0][1] = distal * MATH_SIN_ZERO;
+        extremities[1][0] = distal * MATH_COS_TWO_THIRDS_PI;
+        extremities[1][1] = distal * MATH_SIN_TWO_THIRDS_PI;
+        extremities[2][0] = distal * MATH_COS_FOUR_THIRDS_PI;
+        extremities[2][1] = distal * MATH_SIN_FOUR_THIRDS_PI;
 
         Path path = new Path();
         path.moveTo(
@@ -81,12 +91,12 @@ class Util {
                 (float)extremities[0][1]
         );
         path.lineTo(
-                (float)(proximal * Math.cos(0)),
-                (float)(proximal * Math.sin(0))
+                (float)(proximal * MATH_COS_ZERO),
+                (float)(proximal * MATH_SIN_ZERO)
         );
         path.lineTo(
-                (float)(proximal * Math.cos(MATH_ANGLE_TWO_THIRDS_PI)),
-                (float)(proximal * Math.sin(MATH_ANGLE_TWO_THIRDS_PI))
+                (float)(proximal * MATH_COS_TWO_THIRDS_PI),
+                (float)(proximal * MATH_SIN_TWO_THIRDS_PI)
         );
         path.lineTo(
                 (float)extremities[1][0],
@@ -99,12 +109,12 @@ class Util {
                 (float)extremities[1][1]
         );
         path.lineTo(
-                (float)(proximal * Math.cos(MATH_ANGLE_TWO_THIRDS_PI)),
-                (float)(proximal * Math.sin(MATH_ANGLE_TWO_THIRDS_PI))
+                (float)(proximal * MATH_COS_TWO_THIRDS_PI),
+                (float)(proximal * MATH_SIN_TWO_THIRDS_PI)
         );
         path.lineTo(
-                (float)(proximal * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI)),
-                (float)(proximal * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI))
+                (float)(proximal * MATH_COS_FOUR_THIRDS_PI),
+                (float)(proximal * MATH_SIN_FOUR_THIRDS_PI)
         );
         path.lineTo(
                 (float)extremities[2][0],
@@ -117,12 +127,12 @@ class Util {
                 (float)extremities[2][1]
         );
         path.lineTo(
-                (float)(proximal * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI)),
-                (float)(proximal * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI))
+                (float)(proximal * MATH_COS_FOUR_THIRDS_PI),
+                (float)(proximal * MATH_SIN_FOUR_THIRDS_PI)
         );
         path.lineTo(
-                (float)(proximal * Math.cos(0)),
-                (float)(proximal * Math.sin(0))
+                (float)(proximal * MATH_COS_ZERO),
+                (float)(proximal * MATH_SIN_ZERO)
         );
         path.lineTo(
                 (float)extremities[0][0],
@@ -135,12 +145,12 @@ class Util {
 
     static Platform getTentsileIsosceles(double point, double barb, double notch) {
         double [][] extremities = new double[3][2];
-        extremities[0][0] = point * Math.cos(0);
-        extremities[0][1] = point * Math.sin(0);
-        extremities[1][0] = barb * Math.cos(MATH_ANGLE_TWO_THIRDS_PI);
-        extremities[1][1] = barb * Math.sin(MATH_ANGLE_TWO_THIRDS_PI);
-        extremities[2][0] = barb * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI);
-        extremities[2][1] = barb * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI);
+        extremities[0][0] = point * MATH_COS_ZERO;
+        extremities[0][1] = point * MATH_SIN_ZERO;
+        extremities[1][0] = barb * MATH_COS_TWO_THIRDS_PI;
+        extremities[1][1] = barb * MATH_SIN_TWO_THIRDS_PI;
+        extremities[2][0] = barb * MATH_COS_FOUR_THIRDS_PI;
+        extremities[2][1] = barb * MATH_SIN_FOUR_THIRDS_PI;
 
         Path path = new Path();
         path.moveTo(
@@ -148,8 +158,8 @@ class Util {
                 (float)extremities[0][1]
         );
         path.lineTo(
-                (float)(notch * TENTSILE_NOTCH_SCALE * Math.cos(Math.PI)),
-                (float)(notch * TENTSILE_NOTCH_SCALE * Math.sin(Math.PI))
+                (float)(notch * TENTSILE_NOTCH_SCALED_COS_PI),
+                (float)(notch * TENTSILE_NOTCH_SCALED_SIN_PI)
         );
         path.lineTo(
                 (float)extremities[1][0],
@@ -161,8 +171,8 @@ class Util {
                 (float)extremities[0][1]
         );
         path.lineTo(
-                (float)(notch * TENTSILE_NOTCH_SCALE * Math.cos(Math.PI)),
-                (float)(notch * TENTSILE_NOTCH_SCALE * Math.sin(Math.PI))
+                (float)(notch * TENTSILE_NOTCH_SCALED_COS_PI),
+                (float)(notch * TENTSILE_NOTCH_SCALED_SIN_PI)
         );
         path.lineTo(
                 (float)extremities[2][0],
@@ -182,12 +192,12 @@ class Util {
         matrix.postRotate(120);
 
         double distal = measurements[1] + measurements[0];
-        extremities[0][0] = distal * Math.cos(0);
-        extremities[0][1] = distal * Math.sin(0);
-        extremities[1][0] = distal * Math.cos(MATH_ANGLE_TWO_THIRDS_PI);
-        extremities[1][1] = distal * Math.sin(MATH_ANGLE_TWO_THIRDS_PI);
-        extremities[2][0] = distal * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI);
-        extremities[2][1] = distal * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI);
+        extremities[0][0] = distal * MATH_COS_ZERO;
+        extremities[0][1] = distal * MATH_SIN_ZERO;
+        extremities[1][0] = distal * MATH_COS_TWO_THIRDS_PI;
+        extremities[1][1] = distal * MATH_SIN_TWO_THIRDS_PI;
+        extremities[2][0] = distal * MATH_COS_FOUR_THIRDS_PI;
+        extremities[2][1] = distal * MATH_SIN_FOUR_THIRDS_PI;
 
         for (int i = 0; i < 3; i++) {
             path.transform(matrix);
@@ -196,12 +206,12 @@ class Util {
                     (float)extremities[0][1]
             );
             path.lineTo(
-                    (float)(measurements[1] + measurements[2] * TENTSILE_NOTCH_SCALE * Math.cos(Math.PI)),
-                    (float)(measurements[2] * TENTSILE_NOTCH_SCALE * Math.sin(Math.PI))
+                    (float)(measurements[1] + measurements[2] * TENTSILE_NOTCH_SCALED_COS_PI),
+                    (float)(measurements[2] * TENTSILE_NOTCH_SCALED_SIN_PI)
             );
             path.lineTo(
-                    (float)(measurements[1] + measurements[1] * Math.cos(MATH_ANGLE_TWO_THIRDS_PI)),
-                    (float)(measurements[1] * Math.sin(MATH_ANGLE_TWO_THIRDS_PI))
+                    (float)(measurements[1] + measurements[1] * MATH_COS_TWO_THIRDS_PI),
+                    (float)(measurements[1] * MATH_SIN_TWO_THIRDS_PI)
             );
             path.close();
             path.moveTo(
@@ -209,12 +219,12 @@ class Util {
                     (float)extremities[0][1]
             );
             path.lineTo(
-                    (float)(measurements[1] + measurements[2] * TENTSILE_NOTCH_SCALE * Math.cos(Math.PI)),
-                    (float)(measurements[2] * TENTSILE_NOTCH_SCALE * Math.sin(Math.PI))
+                    (float)(measurements[1] + measurements[2] * TENTSILE_NOTCH_SCALED_COS_PI),
+                    (float)(measurements[2] * TENTSILE_NOTCH_SCALED_SIN_PI)
             );
             path.lineTo(
-                    (float)(measurements[1] + measurements[1] * Math.cos(MATH_ANGLE_FOUR_THIRDS_PI)),
-                    (float)(measurements[1] * Math.sin(MATH_ANGLE_FOUR_THIRDS_PI))
+                    (float)(measurements[1] + measurements[1] * MATH_COS_FOUR_THIRDS_PI),
+                    (float)(measurements[1] * MATH_SIN_FOUR_THIRDS_PI)
             );
             path.close();
         }
