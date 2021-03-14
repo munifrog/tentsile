@@ -104,6 +104,7 @@ public class MainActivity
                 R.layout.text_spinner,
                 array
         );
+        mSpinAdapter.sort(String.CASE_INSENSITIVE_ORDER);
         mSpinAdapter.setDropDownViewResource(R.layout.text_spinner);
         mSpinner.setAdapter(mSpinAdapter);
         mSpinner.setOnItemSelectedListener(this);
