@@ -13,6 +13,12 @@
         <item>@string/tenstile_tent_vista</item>
     </string-array>
 
+    <string-array name="free_models">
+        <item>@string/tentsile_tent_stingray</item>
+        <item>@string/tentsile_base_trillium</item>
+        <item>@string/tenstile_tent_vista</item>
+    </string-array>
+
     <string-array name="equilaterals">
         <item>@string/tentsile_tent_stingray</item>
         <item>@string/tentsile_base_trillium</item>
