@@ -29,6 +29,7 @@ public class MainActivity
 {
     private static final String SAVE_STATE_UNITS = "remembered_units";
     private static final String SAVE_STATE_SLIDER = "remembered_slider_position";
+    private static final String SAVE_STATE_PLATFORM = "remembered_selection_platform";
     private static final String SAVE_STATE_TETHERS_0X = "remembered_tether_position_0x";
     private static final String SAVE_STATE_TETHERS_0Y = "remembered_tether_position_0y";
     private static final String SAVE_STATE_TETHERS_1X = "remembered_tether_position_1x";
@@ -75,6 +76,8 @@ public class MainActivity
     private ImageButton mPlatformRotation;
     private Menu mToolbarMenu;
     private SeekBar mSeekBar;
+    private Spinner mSpinner;
+    private ArrayAdapter<String> mSpinAdapter;
 
     private int mCanvasLeft = 0;
     private int mCanvasTop = 0;
@@ -93,19 +96,19 @@ public class MainActivity
         Toolbar toolbar = findViewById(R.id.tb_main);
         setSupportActionBar(toolbar);
 
-        Spinner models = findViewById(R.id.sp_models);
+        mSpinner = findViewById(R.id.sp_models);
         mPlatformSelection = R.array.tent_models;
         String [] array = getResources().getStringArray(mPlatformSelection);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
+        mSpinAdapter = new ArrayAdapter<>(
                 this,
                 R.layout.text_spinner,
                 array
         );
-        arrayAdapter.setDropDownViewResource(R.layout.text_spinner);
-        models.setAdapter(arrayAdapter);
-        models.setOnItemSelectedListener(this);
-        int platformSelection = arrayAdapter.getPosition(getString(R.string.default_selection_model));
-        models.setSelection(platformSelection);
+        mSpinAdapter.setDropDownViewResource(R.layout.text_spinner);
+        mSpinner.setAdapter(mSpinAdapter);
+        mSpinner.setOnItemSelectedListener(this);
+        int platformSelection = mSpinAdapter.getPosition(getString(R.string.default_selection_model));
+        mSpinner.setSelection(platformSelection);
 
         mPlatformRotation = findViewById(R.id.im_rotate);
         mPlatformRotation.setOnClickListener(new View.OnClickListener() {
@@ -256,6 +259,9 @@ public class MainActivity
         edit.putFloat(SAVE_STATE_TETHERS_2Y, tethers[2][1]);
         edit.putFloat(SAVE_STATE_SLIDER, (float) mClearing.getSliderScale());
         edit.putInt(SAVE_STATE_SLIDER, mSeekBar.getProgress());
+        if (mSpinner.getSelectedItem() != null) {
+            edit.putString(SAVE_STATE_PLATFORM, mSpinner.getSelectedItem().toString());
+        }
         edit.apply();
     }
 
@@ -288,6 +294,17 @@ public class MainActivity
         }
         if (prefs.contains(SAVE_STATE_SLIDER)) {
             setSeekBarPosition(prefs.getInt(SAVE_STATE_SLIDER, MATH_SEEKBAR_INITIAL));
+        }
+        if (prefs.contains(SAVE_STATE_PLATFORM)) {
+            int platformSelection = mSpinAdapter.getPosition(
+                    prefs.getString(
+                            SAVE_STATE_PLATFORM,
+                            getString(R.string.default_selection_model)
+                    )
+            );
+            if (platformSelection > -1) {
+                mSpinner.setSelection(platformSelection);
+            }
         }
     }
 
