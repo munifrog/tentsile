@@ -23,15 +23,6 @@ class Util {
     private static final double TENTSILE_NOTCH_SCALED_COS_PI = TENTSILE_NOTCH_SCALE * MATH_COS_THREE_THIRDS_PI;
     private static final double TENTSILE_NOTCH_SCALED_SIN_PI = TENTSILE_NOTCH_SCALE * MATH_SIN_THREE_THIRDS_PI;
 
-    private static final int MATH_DEGREES_OF_PRECISION = 1;
-
-
-    private static final double mPrecision = Math.pow(10, MATH_DEGREES_OF_PRECISION);
-
-    static double forcePrecision(double input) {
-        return Math.round(mPrecision * input) / mPrecision;
-    }
-
     // deltaY = (distal Y - proximal Y); if deltaY >= 0, then angle is within Q1 or Q2;
     // if deltaY < 0, then angle within Q3 or Q4; allowing us to narrow down the quadrant
     static double getDirection(double hypotenuse, double deltaX, double deltaY) {

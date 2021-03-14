@@ -417,9 +417,7 @@ public class Clearing
     }
 
     private double scaledDimension(double pixels) {
-        return Util.forcePrecision(pixels * mScaleBase * mScaleSlider *
-                (mIsImperial ? MATH_METERS_TO_FEET_CONVERSION : 1)
-        );
+        return pixels * mScaleBase * mScaleSlider * (mIsImperial ? MATH_METERS_TO_FEET_CONVERSION : 1);
     }
 
     private long metersToPixels(double meters) {
