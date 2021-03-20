@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
@@ -30,16 +31,23 @@ public class Clearing
     private static final int DRAW_PLATFORM_TOO_CLOSE = 0;
     private static final int DRAW_PLATFORM_ENABLED = 1;
 
+    private static final int DRAW_TETHERS_TOO_CLOSE = 0;
+    private static final int DRAW_TETHERS_ENABLED = 1;
+
     private static final double MATH_ANGLE_FULL_CIRCLE = Math.PI * 2;
     private static final double MATH_ANGLE_RADIANS_TO_DEGREES = 180 / Math.PI;
     private static final double MATH_METERS_TO_FEET_CONVERSION = 3.2808399;
     private static final double MATH_METERS_ACROSS_SMALLEST_DIMEN = 5.0;
+    private static final double MATH_METERS_TOO_CLOSE = 0.7;
+    private static final double MATH_METERS_TOO_CLOSE_SQUARED =
+            MATH_METERS_TOO_CLOSE * MATH_METERS_TOO_CLOSE;
 
     private final Paint mTetherPaint;
     private final Paint mPerimeterPaint;
     private final Paint mPlatformPaint;
     private final Paint mTreePaint;
-    private final Paint mLabelPaint;
+    private final Paint mLabelConnectionPaint;
+    private final Paint mLabelPlatformPaint;
 
     private boolean mIsImperial;
     private boolean mSetupFreshConfiguration;
@@ -58,6 +66,7 @@ public class Clearing
     private float [] mPlatformCoordinates = new float[2];
     private float [][] mTethers = new float[3][2];
     private double [][] mPlatformExtremities = new double[3][2];
+    private double [][] mTransExtremities = new double[3][2];
     private double mDist01; // c
     private double mDist12; // a
     private double mDist20; // b
@@ -68,11 +77,13 @@ public class Clearing
     private double mThreshold2P0;
 
     private int mStateTether = TETHER_SELECTION_NONE;
-    private int mStatePlatform = DRAW_PLATFORM_ENABLED;
+    private int mDrawTethers = DRAW_TETHERS_ENABLED;
+    private int mDrawPlatform = DRAW_PLATFORM_ENABLED;
     private long mPreviousComputation;
 
     private ClearingListener mViewOwner;
     private Path mPlatformPath = new Path();
+    private Path mTransformedPath = new Path();
 
     public Clearing(ClearingListener listener) {
         mViewOwner = listener;
@@ -82,10 +93,17 @@ public class Clearing
         mTetherPaint.setARGB(255, 127, 127, 127);
         mTetherPaint.setStrokeWidth(10);
 
-        mLabelPaint = new Paint();
-        mLabelPaint.setARGB(255, 0, 0, 0);
-        mLabelPaint.setTextSize(56f);
-        mLabelPaint.setStrokeWidth(4);
+        mLabelConnectionPaint = new Paint();
+        mLabelConnectionPaint.setARGB(180, 0, 0, 0);
+        mLabelConnectionPaint.setTextSize(56f);
+        mLabelConnectionPaint.setStrokeWidth(4);
+        mLabelConnectionPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+
+        mLabelPlatformPaint = new Paint();
+        mLabelPlatformPaint.setARGB(255, 0, 0, 0);
+        mLabelPlatformPaint.setTextSize(56f);
+        mLabelPlatformPaint.setStrokeWidth(4);
+        mLabelPlatformPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
         mPerimeterPaint = new Paint();
         mPerimeterPaint.setARGB(255, 92, 113, 72);
@@ -187,44 +205,73 @@ public class Clearing
     @Override
     public void draw(@NonNull Canvas canvas) {
         getPlatformCenterOccasionally();
+        // Draw order:
+        //  Lines between stakes
+        drawConnectionLines(canvas);
+        //  Tether-center computed
+        computePlatform();
+        //  Platform-tethers (if showing platform)
+        drawPlatformTethers(canvas);
+        //  Platform (if showing platform)
         drawPlatform(canvas);
-        drawConnections(canvas);
+        //  Tethers from platform-corners and stakes (if showing platform)
+        //  Tethers from tether-center and stakes (if not showing platform)
+        //  Stake circles
         drawStakes(canvas);
+        //  Distance between stakes
+        drawConnectionLabels(canvas);
+        //  Distance from platform-corners to stakes
+        drawPlatformLabels(canvas);
     }
 
-    private void drawConnections(Canvas canvas) {
+    private void drawConnectionLines(Canvas canvas) {
         Path path = new Path();
         path.moveTo(mTethers[0][0], mTethers[0][1]);
         path.lineTo(mTethers[1][0], mTethers[1][1]);
         path.lineTo(mTethers[2][0], mTethers[2][1]);
         path.lineTo(mTethers[0][0], mTethers[0][1]);
         canvas.drawPath(path, mPerimeterPaint);
+    }
 
-        float [] mMid12 = { (mTethers[1][0] + mTethers[2][0]) / 2, (mTethers[1][1] + mTethers[2][1]) / 2 }; // a
-        float [] mMid20 = { (mTethers[2][0] + mTethers[0][0]) / 2, (mTethers[2][1] + mTethers[0][1]) / 2 }; // b
-        float [] mMid01 = { (mTethers[0][0] + mTethers[1][0]) / 2, (mTethers[0][1] + mTethers[1][1]) / 2 }; // c
-
+    private void drawConnectionLabels(Canvas canvas) {
         String units = (mIsImperial ? mStringImperial : mStringMeters);
-        canvas.drawText(String.format(units, scaledDimension(mDist12)), mMid12[0], mMid12[1], mLabelPaint);
-        canvas.drawText(String.format(units, scaledDimension(mDist20)), mMid20[0], mMid20[1], mLabelPaint);
-        canvas.drawText(String.format(units, scaledDimension(mDist01)), mMid01[0], mMid01[1], mLabelPaint);
+        canvas.drawText(
+                String.format(units, scaledDimension(mDist01)),
+                (mTethers[0][0] + mTethers[1][0]) / 2,
+                (mTethers[0][1] + mTethers[1][1]) / 2,
+                mLabelConnectionPaint
+        );
+        canvas.drawText(
+                String.format(units, scaledDimension(mDist12)),
+                (mTethers[1][0] + mTethers[2][0]) / 2,
+                (mTethers[1][1] + mTethers[2][1]) / 2,
+                mLabelConnectionPaint
+        );
+        canvas.drawText(
+                String.format(units, scaledDimension(mDist20)),
+                (mTethers[2][0] + mTethers[0][0]) / 2,
+                (mTethers[2][1] + mTethers[0][1]) / 2,
+                mLabelConnectionPaint
+        );
     }
 
     private void drawStakes(Canvas canvas) {
-        float mCurrentRadius;
+        float [] radii = { mRadiusTetherSize, mRadiusTetherSize, mRadiusTetherSize };
+        if (mStateTether >= 0) {
+            radii[mStateTether] = mRadiusSelectionSize;
+        }
         for (int i = 0; i < 3; i++) {
-            mCurrentRadius = (mStateTether == i) ? mRadiusSelectionSize : mRadiusTetherSize;
             canvas.drawCircle(
                     mTethers[i][0],
                     mTethers[i][1],
-                    mCurrentRadius,
+                    radii[i],
                     mTreePaint
             );
         }
     }
 
     private void drawTethers(Canvas canvas) {
-        if (mStatePlatform == DRAW_PLATFORM_ENABLED) {
+        if (mDrawTethers == DRAW_TETHERS_ENABLED) {
             canvas.drawLine(mTethers[0][0], mTethers[0][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
             canvas.drawLine(mTethers[1][0], mTethers[1][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
             canvas.drawLine(mTethers[2][0], mTethers[2][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
@@ -238,8 +285,8 @@ public class Clearing
         }
     }
 
-    private void drawPlatform(Canvas canvas) {
-        if (mStatePlatform == DRAW_PLATFORM_ENABLED) {
+    private void computePlatform() {
+        if (mDrawTethers == DRAW_TETHERS_ENABLED) {
             double deltaX = mTethers[0][0] - mPlatformCoordinates[0];
             double deltaY = mTethers[0][1] - mPlatformCoordinates[1];
             double hypotenuse = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -247,23 +294,46 @@ public class Clearing
 
             Matrix matrix = new Matrix();
             long scale = metersToPixels(1.0);
-            matrix.setScale((float)scale, (float)scale);
-            matrix.postRotate((float)(angle0 * MATH_ANGLE_RADIANS_TO_DEGREES));
+            matrix.setScale((float) scale, (float) scale);
+            matrix.postRotate((float) (angle0 * MATH_ANGLE_RADIANS_TO_DEGREES));
             matrix.postTranslate(mPlatformCoordinates[0], mPlatformCoordinates[1]);
 
-            Path transformedPath = new Path();
-            mPlatformPath.transform(matrix, transformedPath);
+            mPlatformPath.transform(matrix, mTransformedPath);
+            double[] translation = {mPlatformCoordinates[0], mPlatformCoordinates[1]};
+            mTransExtremities = Util.shiftedCoordinates(mPlatformExtremities, -angle0, metersToPixels(1.0), translation);
 
-            double[] translation = { mPlatformCoordinates[0], mPlatformCoordinates[1] };
-            double [][] extremities = Util.shiftedCoordinates(mPlatformExtremities, -angle0, metersToPixels(1.0), translation);
+            float diffAx = (float) scaledDimension(mPlatformCoordinates[0] - mTethers[0][0]);
+            float diffAy = (float) scaledDimension(mPlatformCoordinates[1] - mTethers[0][1]);
+            float diffBx = (float) scaledDimension(mPlatformCoordinates[0] - mTethers[1][0]);
+            float diffBy = (float) scaledDimension(mPlatformCoordinates[1] - mTethers[1][1]);
+            float diffCx = (float) scaledDimension(mPlatformCoordinates[0] - mTethers[2][0]);
+            float diffCy = (float) scaledDimension(mPlatformCoordinates[1] - mTethers[2][1]);
+            float squaredA = (float) (diffAx * diffAx + diffAy * diffAy);
+            float squaredB = (float) (diffBx * diffBx + diffBy * diffBy);
+            float squaredC = (float) (diffCx * diffCx + diffCy * diffCy);
+            mDrawPlatform = (squaredA >= MATH_METERS_TOO_CLOSE_SQUARED) &&
+                    (squaredB >= MATH_METERS_TOO_CLOSE_SQUARED) &&
+                    (squaredC >= MATH_METERS_TOO_CLOSE_SQUARED) ?
+                    DRAW_PLATFORM_ENABLED : DRAW_PLATFORM_TOO_CLOSE;
+        }
+    }
+
+    private void drawPlatformTethers(Canvas canvas) {
+        if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
             // Draw skeleton of the platform
-            canvas.drawLine((float)extremities[0][0], (float)extremities[0][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
-            canvas.drawLine((float)extremities[1][0], (float)extremities[1][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
-            canvas.drawLine((float)extremities[2][0], (float)extremities[2][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
+            canvas.drawLine((float) mTransExtremities[0][0], (float) mTransExtremities[0][1],
+                    mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
+            canvas.drawLine((float) mTransExtremities[1][0], (float) mTransExtremities[1][1],
+                    mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
+            canvas.drawLine((float) mTransExtremities[2][0], (float) mTransExtremities[2][1],
+                    mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
             // Connect platform skeleton to the tether points (trees)
-            canvas.drawLine((float)extremities[0][0], (float)extremities[0][1], mTethers[0][0], mTethers[0][1], mTetherPaint);
-            canvas.drawLine((float)extremities[1][0], (float)extremities[1][1], mTethers[1][0], mTethers[1][1], mTetherPaint);
-            canvas.drawLine((float)extremities[2][0], (float)extremities[2][1], mTethers[2][0], mTethers[2][1], mTetherPaint);
+            canvas.drawLine((float) mTransExtremities[0][0], (float) mTransExtremities[0][1],
+                    mTethers[0][0], mTethers[0][1], mTetherPaint);
+            canvas.drawLine((float) mTransExtremities[1][0], (float) mTransExtremities[1][1],
+                    mTethers[1][0], mTethers[1][1], mTetherPaint);
+            canvas.drawLine((float) mTransExtremities[2][0], (float) mTransExtremities[2][1],
+                    mTethers[2][0], mTethers[2][1], mTetherPaint);
             // Add what will appear as a knot at the tether-center
             canvas.drawCircle(
                     mPlatformCoordinates[0],
@@ -271,26 +341,50 @@ public class Clearing
                     mRadiusTetherSize / 2,
                     mTetherPaint
             );
+        } else {
+            drawTethers(canvas);
+        }
+    }
+
+    private void drawPlatform(Canvas canvas) {
+        if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
+            canvas.drawPath(mTransformedPath, mPlatformPaint);
+        }
+    }
+
+    private void drawPlatformLabels(Canvas canvas) {
+        if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
             // Determine the distance between the platform corner and tether location
-            float diffAx = (float)extremities[0][0] - mTethers[0][0];
-            float diffAy = (float)extremities[0][1] - mTethers[0][1];
-            float diffBx = (float)extremities[1][0] - mTethers[1][0];
-            float diffBy = (float)extremities[1][1] - mTethers[1][1];
-            float diffCx = (float)extremities[2][0] - mTethers[2][0];
-            float diffCy = (float)extremities[2][1] - mTethers[2][1];
-            float distA = (float)Math.sqrt(diffAx * diffAx + diffAy * diffAy);
-            float distB = (float)Math.sqrt(diffBx * diffBx + diffBy * diffBy);
-            float distC = (float)Math.sqrt(diffCx * diffCx + diffCy * diffCy);
+            float diffAx = (float) mTransExtremities[0][0] - mTethers[0][0];
+            float diffAy = (float) mTransExtremities[0][1] - mTethers[0][1];
+            float diffBx = (float) mTransExtremities[1][0] - mTethers[1][0];
+            float diffBy = (float) mTransExtremities[1][1] - mTethers[1][1];
+            float diffCx = (float) mTransExtremities[2][0] - mTethers[2][0];
+            float diffCy = (float) mTransExtremities[2][1] - mTethers[2][1];
+            float distA = (float) Math.sqrt(diffAx * diffAx + diffAy * diffAy);
+            float distB = (float) Math.sqrt(diffBx * diffBx + diffBy * diffBy);
+            float distC = (float) Math.sqrt(diffCx * diffCx + diffCy * diffCy);
             // Draw the platform and distances if platform not too far past the tether point
-            canvas.drawPath(transformedPath, mPlatformPaint);
             // Label the distances at the platform extremities (corners)
-            float [] labelA = { (float)extremities[0][0], (float)extremities[0][1] };
-            float [] labelB = { (float)extremities[1][0], (float)extremities[1][1] };
-            float [] labelC = { (float)extremities[2][0], (float)extremities[2][1] };
             String units = (mIsImperial ? mStringImperial : mStringMeters);
-            canvas.drawText(String.format(units, scaledDimension(distA)), labelA[0], labelA[1], mLabelPaint);
-            canvas.drawText(String.format(units, scaledDimension(distB)), labelB[0], labelB[1], mLabelPaint);
-            canvas.drawText(String.format(units, scaledDimension(distC)), labelC[0], labelC[1], mLabelPaint);
+            canvas.drawText(
+                    String.format(units, scaledDimension(distA)),
+                    (float) mTransExtremities[0][0],
+                    (float) mTransExtremities[0][1],
+                    mLabelPlatformPaint
+            );
+            canvas.drawText(
+                    String.format(units, scaledDimension(distB)),
+                    (float) mTransExtremities[1][0],
+                    (float) mTransExtremities[1][1],
+                    mLabelPlatformPaint
+            );
+            canvas.drawText(
+                    String.format(units, scaledDimension(distC)),
+                    (float) mTransExtremities[2][0],
+                    (float) mTransExtremities[2][1],
+                    mLabelPlatformPaint
+            );
         }
     }
 
@@ -340,10 +434,11 @@ public class Clearing
         double angle021 = Math.acos((perimeter[4] + perimeter[5] - perimeter[3]) / 2.0 / mDist12 / mDist20);  // C = 2
 
         if (angle102 < mThreshold1P2 && angle210 < mThreshold2P0 && angle021 < mThreshold0P1) {
-            mStatePlatform = DRAW_PLATFORM_ENABLED;
+            mDrawTethers = DRAW_TETHERS_ENABLED;
             computePlatformCenter();
         } else {
-            mStatePlatform = DRAW_PLATFORM_TOO_CLOSE;
+            mDrawTethers = DRAW_TETHERS_TOO_CLOSE;
+            mDrawPlatform = DRAW_PLATFORM_TOO_CLOSE;
         }
     }
 
