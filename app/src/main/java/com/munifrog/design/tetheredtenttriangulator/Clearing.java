@@ -75,6 +75,7 @@ public class Clearing
     private double mThreshold0P1;
     private double mThreshold1P2;
     private double mThreshold2P0;
+    private boolean mTetherOrientationFLips = false;
 
     private int mStateTether = TETHER_SELECTION_NONE;
     private int mDrawTethers = DRAW_TETHERS_ENABLED;
@@ -320,19 +321,24 @@ public class Clearing
 
     private void drawPlatformTethers(Canvas canvas) {
         if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
+            int index1 = 1, index2 = 2;
+            if (mTetherOrientationFLips) {
+                index1 = 2;
+                index2 = 1;
+            }
             // Draw skeleton of the platform
             canvas.drawLine((float) mTransExtremities[0][0], (float) mTransExtremities[0][1],
                     mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
-            canvas.drawLine((float) mTransExtremities[1][0], (float) mTransExtremities[1][1],
+            canvas.drawLine((float) mTransExtremities[index1][0], (float) mTransExtremities[index1][1],
                     mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
-            canvas.drawLine((float) mTransExtremities[2][0], (float) mTransExtremities[2][1],
+            canvas.drawLine((float) mTransExtremities[index2][0], (float) mTransExtremities[index2][1],
                     mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
             // Connect platform skeleton to the tether points (trees)
             canvas.drawLine((float) mTransExtremities[0][0], (float) mTransExtremities[0][1],
                     mTethers[0][0], mTethers[0][1], mTetherPaint);
-            canvas.drawLine((float) mTransExtremities[1][0], (float) mTransExtremities[1][1],
+            canvas.drawLine((float) mTransExtremities[index1][0], (float) mTransExtremities[index1][1],
                     mTethers[1][0], mTethers[1][1], mTetherPaint);
-            canvas.drawLine((float) mTransExtremities[2][0], (float) mTransExtremities[2][1],
+            canvas.drawLine((float) mTransExtremities[index2][0], (float) mTransExtremities[index2][1],
                     mTethers[2][0], mTethers[2][1], mTetherPaint);
             // Add what will appear as a knot at the tether-center
             canvas.drawCircle(
@@ -355,12 +361,17 @@ public class Clearing
     private void drawPlatformLabels(Canvas canvas) {
         if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
             // Determine the distance between the platform corner and tether location
+            int index1 = 1, index2 = 2;
+            if (mTetherOrientationFLips) {
+                index1 = 2;
+                index2 = 1;
+            }
             float diffAx = (float) mTransExtremities[0][0] - mTethers[0][0];
             float diffAy = (float) mTransExtremities[0][1] - mTethers[0][1];
-            float diffBx = (float) mTransExtremities[1][0] - mTethers[1][0];
-            float diffBy = (float) mTransExtremities[1][1] - mTethers[1][1];
-            float diffCx = (float) mTransExtremities[2][0] - mTethers[2][0];
-            float diffCy = (float) mTransExtremities[2][1] - mTethers[2][1];
+            float diffBx = (float) mTransExtremities[index1][0] - mTethers[1][0];
+            float diffBy = (float) mTransExtremities[index1][1] - mTethers[1][1];
+            float diffCx = (float) mTransExtremities[index2][0] - mTethers[2][0];
+            float diffCy = (float) mTransExtremities[index2][1] - mTethers[2][1];
             float distA = (float) Math.sqrt(diffAx * diffAx + diffAy * diffAy);
             float distB = (float) Math.sqrt(diffBx * diffBx + diffBy * diffBy);
             float distC = (float) Math.sqrt(diffCx * diffCx + diffCy * diffCy);
@@ -375,14 +386,14 @@ public class Clearing
             );
             canvas.drawText(
                     String.format(units, scaledDimension(distB)),
-                    (float) mTransExtremities[1][0],
-                    (float) mTransExtremities[1][1],
+                    (float) mTransExtremities[index1][0],
+                    (float) mTransExtremities[index1][1],
                     mLabelPlatformPaint
             );
             canvas.drawText(
                     String.format(units, scaledDimension(distC)),
-                    (float) mTransExtremities[2][0],
-                    (float) mTransExtremities[2][1],
+                    (float) mTransExtremities[index2][0],
+                    (float) mTransExtremities[index2][1],
                     mLabelPlatformPaint
             );
         }
@@ -448,8 +459,9 @@ public class Clearing
     }
 
     @Override
-    public void onPlatformComputed(float[] newPlatform) {
+    public void onPlatformComputed(float[] newPlatform, boolean orientation) {
         mPlatformCoordinates = newPlatform;
+        mTetherOrientationFLips = orientation;
         invalidateSelf();
     }
 

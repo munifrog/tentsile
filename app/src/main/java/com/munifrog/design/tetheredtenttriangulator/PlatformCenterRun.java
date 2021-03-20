@@ -1,7 +1,9 @@
 package com.munifrog.design.tetheredtenttriangulator;
 
 class PlatformCenterRun implements Runnable {
-    interface PlatformCenterListener { void onPlatformComputed(float[] newPlatform); }
+    interface PlatformCenterListener {
+        void onPlatformComputed(float[] newPlatform, boolean orientation);
+    }
     private static final double MATH_ANGLE_FULL_CIRCLE = Math.PI * 2;
 
     private final PlatformCenterListener mListener;
@@ -69,7 +71,8 @@ class PlatformCenterRun implements Runnable {
         double angleP21d1 = angleQ21 + angleP21; // compare only with angle02Pd2
 
         // Find the angle pair that give the same (or close) angle
-        double anglePlatform = Util.areAnglesEquivalent(angleP20d2, angleP21d1) ? angleP21d1 : angleP20d1;
+        boolean bOrientationFlipped = Util.areAnglesEquivalent(angleP20d2, angleP21d1);
+        double anglePlatform = bOrientationFlipped ? angleP21d1 : angleP20d1;
 
         float[] newPlatformCenter = {
                 // x = Cx + dist2P * cos(anglePlatform)
@@ -77,6 +80,6 @@ class PlatformCenterRun implements Runnable {
                 // y = Cy + dist2P * sin(anglePlatform)
                 (float)(mTethers[2][1] + dist2P * Math.sin(anglePlatform))
         };
-        mListener.onPlatformComputed(newPlatformCenter);
+        mListener.onPlatformComputed(newPlatformCenter, bOrientationFlipped);
     }
 }
