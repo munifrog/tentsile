@@ -2,6 +2,7 @@
 <resources>
     <string-array name="tent_models">
         <item>@string/tentsile_tent_connect</item>
+        <item>@string/tentsile_base_duo</item>
         <item>@string/tentsile_tent_flite</item>
         <item>@string/tentsile_tent_stingray</item>
         <item>@string/tentsile_base_t_mini</item>

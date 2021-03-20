@@ -57,11 +57,13 @@ public class MainActivity
     private static final int MATH_SEEKBAR_INITIAL = 25;
 
     private static final double TENTSILE_BASE_CONNECT = 2.7;
+    private static final double TENTSILE_BASE_DUO = 2.7;
     private static final double TENTSILE_BASE_FLITE = 2.7;
     private static final double TENTSILE_BASE_T_MINI = 2.7;
     private static final double TENTSILE_BASE_UNA = 1.6;
     private static final double TENTSILE_BASE_TRILOGY = TENTSILE_BASE_CONNECT;
     private static final double TENTSILE_HYPOTENUSE_CONNECT = 4.0;
+    private static final double TENTSILE_HYPOTENUSE_DUO = 4.0;
     private static final double TENTSILE_HYPOTENUSE_FLITE = 3.25;
     private static final double TENTSILE_HYPOTENUSE_STINGRAY = 4.1;
     private static final double TENTSILE_HYPOTENUSE_T_MINI = 3.25;
@@ -209,6 +211,8 @@ public class MainActivity
             setIsosceles(TENTSILE_HYPOTENUSE_FLITE, TENTSILE_BASE_FLITE);
         } else if (platform.equals(getString(R.string.tentsile_tent_connect))) {
             setIsosceles(TENTSILE_HYPOTENUSE_CONNECT, TENTSILE_BASE_CONNECT);
+        } else if (platform.equals(getString(R.string.tentsile_base_duo))) {
+            setIsosceles(TENTSILE_HYPOTENUSE_DUO, TENTSILE_BASE_DUO);
         } else if (platform.equals(getString(R.string.tentsile_base_t_mini))) {
             setIsosceles(TENTSILE_HYPOTENUSE_T_MINI, TENTSILE_BASE_T_MINI);
         } else {
