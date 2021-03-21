@@ -13,8 +13,6 @@ import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
 
-import java.util.Calendar;
-
 public class Clearing
         extends Drawable
         implements PlatformCenterRun.PlatformCenterListener
@@ -25,8 +23,6 @@ public class Clearing
 
     private static final int TETHER_SELECTION_NONE = -1;
     private static final int TETHER_SELECTION_DECIDING = -2;
-
-    private static final long PLATFORM_COMPUTATION_FREQUENCY_MILLIS = 200;
 
     private static final int DRAW_PLATFORM_TOO_CLOSE = 0;
     private static final int DRAW_PLATFORM_ENABLED = 1;
@@ -76,11 +72,12 @@ public class Clearing
     private double mThreshold1P2;
     private double mThreshold2P0;
     private boolean mTetherOrientationFLips = false;
+    private boolean mComputeTetherCenterAgain = false;
+    private boolean mComputingTetherCenter = false;
 
     private int mStateTether = TETHER_SELECTION_NONE;
     private int mDrawTethers = DRAW_TETHERS_ENABLED;
     private int mDrawPlatform = DRAW_PLATFORM_ENABLED;
-    private long mPreviousComputation;
 
     private ClearingListener mViewOwner;
     private Path mPlatformPath = new Path();
@@ -127,7 +124,6 @@ public class Clearing
         mScaleSlider = 1.0;
 
         setPlatformSymmetricAngle(2 * Math.PI / 3);
-        getPlatformCenterOccasionally();
     }
 
     public void setUnitStrings(String meters, String imperial) {
@@ -175,7 +171,7 @@ public class Clearing
         if (mStateTether >= 0) {
             mTethers[mStateTether][0] = x;
             mTethers[mStateTether][1] = y;
-            invalidateSelf();
+            getPlatformCenterOccasionally();
         }
     }
 
@@ -205,7 +201,6 @@ public class Clearing
 
     @Override
     public void draw(@NonNull Canvas canvas) {
-        getPlatformCenterOccasionally();
         // Draw order:
         //  Lines between stakes
         drawConnectionLines(canvas);
@@ -442,15 +437,13 @@ public class Clearing
     }
 
     private void getPlatformCenterOccasionally() {
-        // Computations can be a bit delayed/slow
-        long current = Calendar.getInstance().getTimeInMillis();
-        if (current > mPreviousComputation + PLATFORM_COMPUTATION_FREQUENCY_MILLIS) {
-            mPreviousComputation = current;
+        if (!mComputingTetherCenter) {
             getPlatformCenter();
         } else {
+            mComputeTetherCenterAgain = true;
             getPerimeter();
-            invalidateSelf();
         }
+        invalidateSelf();
     }
 
     private void getPerimeter() {
@@ -461,6 +454,9 @@ public class Clearing
     }
 
     private void getPlatformCenter() {
+        mComputingTetherCenter = true;
+        mComputeTetherCenterAgain = false;
+
         double [] perimeter = Util.getPerimeter(mTethers);
         mDist01 = perimeter[0];
         mDist12 = perimeter[1];
@@ -474,6 +470,7 @@ public class Clearing
             mDrawTethers = DRAW_TETHERS_ENABLED;
             computePlatformCenter();
         } else {
+            mComputingTetherCenter = false;
             mDrawTethers = DRAW_TETHERS_TOO_CLOSE;
             mDrawPlatform = DRAW_PLATFORM_TOO_CLOSE;
         }
@@ -486,8 +483,12 @@ public class Clearing
 
     @Override
     public void onPlatformComputed(float[] newPlatform, boolean orientation) {
+        mComputingTetherCenter = false;
         mPlatformCoordinates = newPlatform;
         mTetherOrientationFLips = orientation;
+        if (mComputeTetherCenterAgain) {
+            getPlatformCenterOccasionally();
+        }
         invalidateSelf();
     }
 
@@ -518,6 +519,7 @@ public class Clearing
         mThreshold0P1 = angle;
         mThreshold1P2 = angle;
         mThreshold2P0 = MATH_ANGLE_FULL_CIRCLE - mThreshold0P1 - mThreshold1P2;
+        getPlatformCenterOccasionally();
         invalidateSelf();
     }
 
