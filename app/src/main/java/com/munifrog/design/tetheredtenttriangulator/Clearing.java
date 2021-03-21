@@ -360,42 +360,68 @@ public class Clearing
 
     private void drawPlatformLabels(Canvas canvas) {
         if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
+            // Draw the platform and distances if platform not too far past the tether point
+            // Label the distances at the platform extremities (corners)
+            String units = (mIsImperial ? mStringImperial : mStringMeters);
             // Determine the distance between the platform corner and tether location
             int index1 = 1, index2 = 2;
             if (mTetherOrientationFLips) {
                 index1 = 2;
                 index2 = 1;
             }
-            float diffAx = (float) mTransExtremities[0][0] - mTethers[0][0];
-            float diffAy = (float) mTransExtremities[0][1] - mTethers[0][1];
-            float diffBx = (float) mTransExtremities[index1][0] - mTethers[1][0];
-            float diffBy = (float) mTransExtremities[index1][1] - mTethers[1][1];
-            float diffCx = (float) mTransExtremities[index2][0] - mTethers[2][0];
-            float diffCy = (float) mTransExtremities[index2][1] - mTethers[2][1];
-            float distA = (float) Math.sqrt(diffAx * diffAx + diffAy * diffAy);
-            float distB = (float) Math.sqrt(diffBx * diffBx + diffBy * diffBy);
-            float distC = (float) Math.sqrt(diffCx * diffCx + diffCy * diffCy);
-            // Draw the platform and distances if platform not too far past the tether point
-            // Label the distances at the platform extremities (corners)
-            String units = (mIsImperial ? mStringImperial : mStringMeters);
-            canvas.drawText(
-                    String.format(units, scaledDimension(distA)),
-                    (float) mTransExtremities[0][0],
-                    (float) mTransExtremities[0][1],
-                    mLabelPlatformPaint
-            );
-            canvas.drawText(
-                    String.format(units, scaledDimension(distB)),
-                    (float) mTransExtremities[index1][0],
-                    (float) mTransExtremities[index1][1],
-                    mLabelPlatformPaint
-            );
-            canvas.drawText(
-                    String.format(units, scaledDimension(distC)),
-                    (float) mTransExtremities[index2][0],
-                    (float) mTransExtremities[index2][1],
-                    mLabelPlatformPaint
-            );
+            float diffExtremityAx = mPlatformCoordinates[0] - (float) mTransExtremities[0][0];
+            float diffExtremityAy = mPlatformCoordinates[1] - (float) mTransExtremities[0][1];
+            float squareExtremityA = diffExtremityAx * diffExtremityAx + diffExtremityAy * diffExtremityAy;
+            float diffFullAx = mPlatformCoordinates[0] - mTethers[0][0];
+            float diffFullAy = mPlatformCoordinates[1] - mTethers[0][1];
+            float squareFullA = diffFullAx * diffFullAx + diffFullAy * diffFullAy;
+            if (squareExtremityA < squareFullA) {
+                float diffRemainAx = (float) mTransExtremities[0][0] - mTethers[0][0];
+                float diffRemainAy = (float) mTransExtremities[0][1] - mTethers[0][1];
+                float distA = (float) Math.sqrt(diffRemainAx * diffRemainAx + diffRemainAy * diffRemainAy);
+                canvas.drawText(
+                        String.format(units, scaledDimension(distA)),
+                        (float) mTransExtremities[0][0],
+                        (float) mTransExtremities[0][1],
+                        mLabelPlatformPaint
+                );
+            }
+
+            float diffExtremityBx = mPlatformCoordinates[0] - (float) mTransExtremities[index1][0];
+            float diffExtremityBy = mPlatformCoordinates[1] - (float) mTransExtremities[index1][1];
+            float squareExtremityB = diffExtremityBx * diffExtremityBx + diffExtremityBy * diffExtremityBy;
+            float diffFullBx = mPlatformCoordinates[0] - mTethers[1][0];
+            float diffFullBy = mPlatformCoordinates[1] - mTethers[1][1];
+            float squareFullB = diffFullBx * diffFullBx + diffFullBy * diffFullBy;
+            if (squareExtremityB < squareFullB) {
+                float diffRemainBx = (float) mTransExtremities[index1][0] - mTethers[1][0];
+                float diffRemainBy = (float) mTransExtremities[index1][1] - mTethers[1][1];
+                float distB = (float) Math.sqrt(diffRemainBx * diffRemainBx + diffRemainBy * diffRemainBy);
+                canvas.drawText(
+                        String.format(units, scaledDimension(distB)),
+                        (float) mTransExtremities[index1][0],
+                        (float) mTransExtremities[index1][1],
+                        mLabelPlatformPaint
+                );
+            }
+
+            float diffExtremityCx = mPlatformCoordinates[0] - (float) mTransExtremities[index2][0];
+            float diffExtremityCy = mPlatformCoordinates[1] - (float) mTransExtremities[index2][1];
+            float squareExtremityC = diffExtremityCx * diffExtremityCx + diffExtremityCy * diffExtremityCy;
+            float diffFullCx = mPlatformCoordinates[0] - mTethers[2][0];
+            float diffFullCy = mPlatformCoordinates[1] - mTethers[2][1];
+            float squareFullC = diffFullCx * diffFullCx + diffFullCy * diffFullCy;
+            if (squareExtremityC < squareFullC) {
+                float diffRemainCx = (float) mTransExtremities[index2][0] - mTethers[2][0];
+                float diffRemainCy = (float) mTransExtremities[index2][1] - mTethers[2][1];
+                float distRemainC = (float) Math.sqrt(diffRemainCx * diffRemainCx + diffRemainCy * diffRemainCy);
+                canvas.drawText(
+                        String.format(units, scaledDimension(distRemainC)),
+                        (float) mTransExtremities[index2][0],
+                        (float) mTransExtremities[index2][1],
+                        mLabelPlatformPaint
+                );
+            }
         }
     }
 
