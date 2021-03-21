@@ -90,6 +90,7 @@ public class Clearing
         mTetherPaint = new Paint();
         mTetherPaint.setARGB(255, 127, 127, 127);
         mTetherPaint.setStrokeWidth(10);
+        mTetherPaint.setStrokeCap(Paint.Cap.ROUND);
 
         mLabelConnectionPaint = new Paint();
         mLabelConnectionPaint.setARGB(180, 0, 0, 0);
@@ -298,12 +299,12 @@ public class Clearing
             double[] translation = {mPlatformCoordinates[0], mPlatformCoordinates[1]};
             mTransExtremities = Util.shiftedCoordinates(mPlatformExtremities, -angle0, metersToPixels(1.0), translation);
 
-            float diffAx = (float) scaledDimension(mPlatformCoordinates[0] - mTethers[0][0]);
-            float diffAy = (float) scaledDimension(mPlatformCoordinates[1] - mTethers[0][1]);
-            float diffBx = (float) scaledDimension(mPlatformCoordinates[0] - mTethers[1][0]);
-            float diffBy = (float) scaledDimension(mPlatformCoordinates[1] - mTethers[1][1]);
-            float diffCx = (float) scaledDimension(mPlatformCoordinates[0] - mTethers[2][0]);
-            float diffCy = (float) scaledDimension(mPlatformCoordinates[1] - mTethers[2][1]);
+            float diffAx = (float) scaledDimensionMeters(mPlatformCoordinates[0] - mTethers[0][0]);
+            float diffAy = (float) scaledDimensionMeters(mPlatformCoordinates[1] - mTethers[0][1]);
+            float diffBx = (float) scaledDimensionMeters(mPlatformCoordinates[0] - mTethers[1][0]);
+            float diffBy = (float) scaledDimensionMeters(mPlatformCoordinates[1] - mTethers[1][1]);
+            float diffCx = (float) scaledDimensionMeters(mPlatformCoordinates[0] - mTethers[2][0]);
+            float diffCy = (float) scaledDimensionMeters(mPlatformCoordinates[1] - mTethers[2][1]);
             float squaredA = (float) (diffAx * diffAx + diffAy * diffAy);
             float squaredB = (float) (diffBx * diffBx + diffBy * diffBy);
             float squaredC = (float) (diffCx * diffCx + diffCy * diffCy);
@@ -552,7 +553,11 @@ public class Clearing
     }
 
     private double scaledDimension(double pixels) {
-        return pixels * mScaleBase * mScaleSlider * (mIsImperial ? MATH_METERS_TO_FEET_CONVERSION : 1);
+        return scaledDimensionMeters(pixels) * (mIsImperial ? MATH_METERS_TO_FEET_CONVERSION : 1);
+    }
+
+    private double scaledDimensionMeters(double pixels) {
+        return pixels * mScaleBase * mScaleSlider;
     }
 
     private long metersToPixels(double meters) {
