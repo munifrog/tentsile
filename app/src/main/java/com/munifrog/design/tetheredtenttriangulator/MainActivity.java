@@ -7,10 +7,12 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -89,6 +91,11 @@ public class MainActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Display window = getWindowManager().getDefaultDisplay();
+        Rect actualSize = new Rect();
+        window.getRectSize(actualSize);
+        mClearing.setFullWindowBounds(actualSize);
 
         mClearing.setUnitStrings(
                 getString(R.string.unit_meters_with_number),

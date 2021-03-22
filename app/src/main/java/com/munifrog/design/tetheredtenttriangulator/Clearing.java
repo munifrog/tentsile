@@ -176,12 +176,9 @@ public class Clearing
         }
     }
 
-    @Override
-    protected void onBoundsChange(Rect bounds) {
-        super.onBoundsChange(bounds);
-
-        int width = getBounds().width();
-        int height = getBounds().height();
+    void setFullWindowBounds(Rect bounds) {
+        int width = bounds.width();
+        int height = bounds.height();
         mSmallestDimen = Math.min(width, height);
 
         int centerX = width/2;
@@ -194,6 +191,11 @@ public class Clearing
 
         mTetherCenter[0] = centerX;
         mTetherCenter[1] = centerY;
+    }
+
+    @Override
+    protected void onBoundsChange(Rect bounds) {
+        super.onBoundsChange(bounds);
 
         if (mSetupFreshConfiguration) {
             configDefault();
