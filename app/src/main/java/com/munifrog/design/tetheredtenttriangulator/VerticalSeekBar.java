@@ -47,14 +47,37 @@ public class VerticalSeekBar extends AppCompatSeekBar {
             return false;
         }
 
-        int max;
+        final int y;
+        final int height;
+        final int width;
+        final int paddingLeft;
+        final int paddingRight;
+        final float scale;
+
+        float progress;
+
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
             case MotionEvent.ACTION_UP:
-                max = getMax();
-                setProgress(max - (int)(max * event.getY() / getHeight()));
-                onSizeChanged(getWidth(), getHeight(), 0, 0);
+                // For now keep in mind that the indicated padding is actually for a different side:
+                // left->bottom, bottom->right, right->top, top->left
+                height = getHeight();
+                width = getWidth();
+                paddingLeft = getPaddingLeft();
+                paddingRight = getPaddingRight();
+                y = Math.round(event.getY());
+                if (y < paddingRight) {
+                    scale = 0.0f;
+                } else if (y > height - paddingLeft) {
+                    scale = 1.0f;
+                } else {
+                    scale = (y - paddingRight) / (float) (height - paddingLeft - paddingRight);
+                }
+                final int range = getMax();
+                progress = (1 - scale) * range;
+                setProgress(Math.round(progress));
+                onSizeChanged(width, height, 0, 0);
                 break;
             case MotionEvent.ACTION_CANCEL:
                 break;

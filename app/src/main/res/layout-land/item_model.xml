@@ -5,17 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--Note that, for now, the indicated padding is for a different side:
+        left->bottom, bottom->right, right->top, top->left -->
     <com.munifrog.design.tetheredtenttriangulator.VerticalSeekBar
         android:id="@+id/sk_scale"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:padding="12dp"
         android:layout_marginTop="36dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="24dp"
+        android:paddingTop="32dp"
+        android:paddingLeft="24dp"
+        android:paddingStart="24dp"
+        android:paddingRight="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="32dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
