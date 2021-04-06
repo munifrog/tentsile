@@ -237,6 +237,7 @@ public class MainActivity
         switch(item.getItemId()) {
             case R.id.action_default_tether_points:
                 mClearing.configDefault();
+                mClearing.releaseTether();
                 return true;
             case R.id.action_browser_tentsile:
                 launchTentsile();
@@ -300,6 +301,7 @@ public class MainActivity
             tethers[2][0] = prefs.getFloat(SAVE_STATE_TETHERS_2X, 100);
             tethers[2][1] = prefs.getFloat(SAVE_STATE_TETHERS_2Y, 100);
             mClearing.setTetherPoints(tethers);
+            mClearing.releaseTether();
         }
         if (prefs.contains(SAVE_STATE_UNITS)) {
             mClearing.setIsImperial(prefs.getBoolean(SAVE_STATE_UNITS, false));

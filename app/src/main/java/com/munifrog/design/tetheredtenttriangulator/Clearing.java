@@ -58,7 +58,6 @@ public class Clearing
     private String mStringMeters;
     private String mStringImperial;
 
-    private float [] mTetherCenter = new float[2];
     private float [] mPlatformCoordinates = new float[2];
     private float [][] mTethers = new float[3][2];
     private double [][] mPlatformExtremities = new double[3][2];
@@ -78,6 +77,8 @@ public class Clearing
     private int mStateTether = TETHER_SELECTION_NONE;
     private int mDrawTethers = DRAW_TETHERS_ENABLED;
     private int mDrawPlatform = DRAW_PLATFORM_ENABLED;
+
+    private int [] mCenter = new int[2];
 
     private ClearingListener mViewOwner;
     private Path mPlatformPath = new Path();
@@ -189,13 +190,28 @@ public class Clearing
 
         mScaleBase = MATH_METERS_ACROSS_SMALLEST_DIMEN / mSmallestDimen;
 
-        mTetherCenter[0] = centerX;
-        mTetherCenter[1] = centerY;
+        mCenter[0] = centerX;
+        mCenter[1] = centerY;
     }
 
     @Override
     protected void onBoundsChange(Rect bounds) {
         super.onBoundsChange(bounds);
+
+        int[] previousCenter = mCenter.clone();
+        mCenter[0] = bounds.width() / 2;
+        mCenter[1] = bounds.height() / 2;
+        int[] shiftToNewCenter = {
+                mCenter[0] - previousCenter[0],
+                mCenter[1] - previousCenter[1]
+        };
+
+        mTethers[0][0] += shiftToNewCenter[0];
+        mTethers[0][1] += shiftToNewCenter[1];
+        mTethers[1][0] += shiftToNewCenter[0];
+        mTethers[1][1] += shiftToNewCenter[1];
+        mTethers[2][0] += shiftToNewCenter[0];
+        mTethers[2][1] += shiftToNewCenter[1];
 
         if (mSetupFreshConfiguration) {
             configDefault();
@@ -501,8 +517,8 @@ public class Clearing
         double currentAngle;
         for (int i = 0; i < 3; i++) {
             currentAngle = offset + MATH_ANGLE_FULL_CIRCLE / 3 * i;
-            mTethers[i][0] = (float)(mTetherCenter[0] + lengthReference * Math.cos(currentAngle));
-            mTethers[i][1] = (float)(mTetherCenter[1] + lengthReference * Math.sin(currentAngle));
+            mTethers[i][0] = (float)(mCenter[0] + lengthReference * Math.cos(currentAngle));
+            mTethers[i][1] = (float)(mCenter[1] + lengthReference * Math.sin(currentAngle));
         }
         invalidateSelf();
     }
@@ -567,11 +583,24 @@ public class Clearing
     }
 
     public float[][] getTetherPoints() {
-        return mTethers.clone();
+        float[][] offsetTethers = new float[3][2];
+        offsetTethers[0][0] = mTethers[0][0] - mPlatformCoordinates[0];
+        offsetTethers[0][1] = mTethers[0][1] - mPlatformCoordinates[1];
+        offsetTethers[1][0] = mTethers[1][0] - mPlatformCoordinates[0];
+        offsetTethers[1][1] = mTethers[1][1] - mPlatformCoordinates[1];
+        offsetTethers[2][0] = mTethers[2][0] - mPlatformCoordinates[0];
+        offsetTethers[2][1] = mTethers[2][1] - mPlatformCoordinates[1];
+        return offsetTethers;
     }
 
     public void setTetherPoints(float[][] newTethers) {
         mSetupFreshConfiguration = false;
-        mTethers = newTethers.clone();
+
+        mTethers[0][0] = mCenter[0] + newTethers[0][0];
+        mTethers[0][1] = mCenter[1] + newTethers[0][1];
+        mTethers[1][0] = mCenter[0] + newTethers[1][0];
+        mTethers[1][1] = mCenter[1] + newTethers[1][1];
+        mTethers[2][0] = mCenter[0] + newTethers[2][0];
+        mTethers[2][1] = mCenter[1] + newTethers[2][1];
     }
 }
