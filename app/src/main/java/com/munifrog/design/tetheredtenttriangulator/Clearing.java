@@ -23,6 +23,7 @@ public class Clearing
 
     private static final int TETHER_SELECTION_NONE = -1;
     private static final int TETHER_SELECTION_DECIDING = -2;
+    private static final int TETHER_SELECTION_ENTIRE = 3; // Indices 0, 1, and 2 are for anchors
 
     private static final int DRAW_PLATFORM_TOO_CLOSE = 0;
     private static final int DRAW_PLATFORM_ENABLED = 1;
@@ -59,6 +60,8 @@ public class Clearing
     private String mStringImperial;
 
     private float [] mPlatformCoordinates = new float[2];
+    private float [] mSnapshotPlatform = new float[2];
+    private float [][] mSnapshotTethers = new float[3][2];
     private float [][] mTethers = new float[3][2];
     private double [][] mPlatformExtremities = new double[3][2];
     private double [][] mTransExtremities = new double[3][2];
@@ -155,7 +158,24 @@ public class Clearing
                     smallestDeltaSquared = deltaSquared;
                 }
             }
-
+            // ... also allowing the tether-center to be selected
+            if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
+                deltaX = x - mPlatformCoordinates[0];
+                deltaY = y - mPlatformCoordinates[1];
+                deltaSquared = deltaX * deltaX + deltaY * deltaY;
+                if (deltaSquared < smallestDeltaSquared) {
+                    closestIndex = TETHER_SELECTION_ENTIRE;
+                    // Take a "snapshot" of the current configuration
+                    mSnapshotPlatform[0] = mPlatformCoordinates[0];
+                    mSnapshotPlatform[1] = mPlatformCoordinates[1];
+                    mSnapshotTethers[0][0] = mTethers[0][0];
+                    mSnapshotTethers[0][1] = mTethers[0][1];
+                    mSnapshotTethers[1][0] = mTethers[1][0];
+                    mSnapshotTethers[1][1] = mTethers[1][1];
+                    mSnapshotTethers[2][0] = mTethers[2][0];
+                    mSnapshotTethers[2][1] = mTethers[2][1];
+                }
+            }
             // Officially select the closest tree, now that it is known
             if (closestIndex != TETHER_SELECTION_NONE) {
                 mStateTether = closestIndex;
@@ -170,7 +190,19 @@ public class Clearing
     }
 
     public void updateTether(int x, int y) {
-        if (mStateTether >= 0) {
+        if (mStateTether == TETHER_SELECTION_ENTIRE) {
+            float shiftX = x - mSnapshotPlatform[0];
+            float shiftY = y - mSnapshotPlatform[1];
+            mTethers[0][0] = mSnapshotTethers[0][0] + shiftX;
+            mTethers[0][1] = mSnapshotTethers[0][1] + shiftY;
+            mTethers[1][0] = mSnapshotTethers[1][0] + shiftX;
+            mTethers[1][1] = mSnapshotTethers[1][1] + shiftY;
+            mTethers[2][0] = mSnapshotTethers[2][0] + shiftX;
+            mTethers[2][1] = mSnapshotTethers[2][1] + shiftY;
+            mPlatformCoordinates[0] = x; // mSnapshotPlatform[0] + shiftX
+            mPlatformCoordinates[1] = y; // mSnapshotPlatform[1] + shiftY
+            invalidateSelf();
+        } else if (mStateTether >= 0) {
             mTethers[mStateTether][0] = x;
             mTethers[mStateTether][1] = y;
             getPlatformCenterOccasionally();
@@ -231,8 +263,8 @@ public class Clearing
         drawPlatform(canvas);
         //  Tethers from platform-corners and stakes (if showing platform)
         //  Tethers from tether-center and stakes (if not showing platform)
-        //  Stake circles
-        drawStakes(canvas);
+        //  Selection points (anchors and tether-center)
+        drawSelectionPoints(canvas);
         //  Distance between stakes
         drawConnectionLabels(canvas);
         //  Distance from platform-corners to stakes
@@ -270,12 +302,18 @@ public class Clearing
         );
     }
 
-    private void drawStakes(Canvas canvas) {
-        float [] radii = { mRadiusTetherSize, mRadiusTetherSize, mRadiusTetherSize };
+    private void drawSelectionPoints(Canvas canvas) {
+        float [] radii = {
+                mRadiusTetherSize,
+                mRadiusTetherSize,
+                mRadiusTetherSize,
+                3 * mRadiusTetherSize / 4
+        };
         if (mStateTether >= 0) {
             radii[mStateTether] = mRadiusSelectionSize;
         }
         for (int i = 0; i < 3; i++) {
+            // Draw anchor/tether points
             canvas.drawCircle(
                     mTethers[i][0],
                     mTethers[i][1],
@@ -283,6 +321,13 @@ public class Clearing
                     mTreePaint
             );
         }
+        // Add what will appear as a knot at the tether-center
+        canvas.drawCircle(
+                mPlatformCoordinates[0],
+                mPlatformCoordinates[1],
+                radii[TETHER_SELECTION_ENTIRE],
+                mTetherPaint
+        );
     }
 
     private void drawTethers(Canvas canvas) {
@@ -354,13 +399,6 @@ public class Clearing
                     mTethers[1][0], mTethers[1][1], mTetherPaint);
             canvas.drawLine((float) mTransExtremities[index2][0], (float) mTransExtremities[index2][1],
                     mTethers[2][0], mTethers[2][1], mTetherPaint);
-            // Add what will appear as a knot at the tether-center
-            canvas.drawCircle(
-                    mPlatformCoordinates[0],
-                    mPlatformCoordinates[1],
-                    mRadiusTetherSize / 2,
-                    mTetherPaint
-            );
         } else {
             drawTethers(canvas);
         }
