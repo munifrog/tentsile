@@ -245,6 +245,9 @@ public class Clearing
         mTethers[2][0] += shiftToNewCenter[0];
         mTethers[2][1] += shiftToNewCenter[1];
 
+        mPlatformCoordinates[0] += shiftToNewCenter[0];
+        mPlatformCoordinates[1] += shiftToNewCenter[1];
+
         if (mSetupFreshConfiguration) {
             configDefault();
         }
