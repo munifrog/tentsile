@@ -60,9 +60,9 @@ public class Clearing
     private String mStringImperial;
 
     private float [] mPlatformCoordinates = new float[2];
-    private float [] mSnapshotPlatform = new float[2];
-    private float [][] mSnapshotTethers = new float[3][2];
-    private float [][] mTethers = new float[3][2];
+    private final float [] mSnapshotPlatform = new float[2];
+    private final float [][] mSnapshotTethers = new float[3][2];
+    private final float [][] mTethers = new float[3][2];
     private double [][] mPlatformExtremities = new double[3][2];
     private double [][] mTransExtremities = new double[3][2];
     private double mDist01; // c
@@ -81,11 +81,11 @@ public class Clearing
     private int mDrawTethers = DRAW_TETHERS_ENABLED;
     private int mDrawPlatform = DRAW_PLATFORM_ENABLED;
 
-    private int [] mCenter = new int[2];
+    private final int [] mCenter = new int[2];
 
-    private ClearingListener mViewOwner;
+    private final ClearingListener mViewOwner;
     private Path mPlatformPath = new Path();
-    private Path mTransformedPath = new Path();
+    private final Path mTransformedPath = new Path();
 
     public Clearing(ClearingListener listener) {
         mViewOwner = listener;
@@ -356,14 +356,14 @@ public class Clearing
             double angle0 = Util.getDirection(hypotenuse, deltaX, deltaY);
 
             Matrix matrix = new Matrix();
-            long scale = metersToPixels(1.0);
+            long scale = metersToPixels();
             matrix.setScale((float) scale, (float) scale);
             matrix.postRotate((float) (angle0 * MATH_ANGLE_RADIANS_TO_DEGREES));
             matrix.postTranslate(mPlatformCoordinates[0], mPlatformCoordinates[1]);
 
             mPlatformPath.transform(matrix, mTransformedPath);
             double[] translation = {mPlatformCoordinates[0], mPlatformCoordinates[1]};
-            mTransExtremities = Util.shiftedCoordinates(mPlatformExtremities, -angle0, metersToPixels(1.0), translation);
+            mTransExtremities = Util.shiftedCoordinates(mPlatformExtremities, -angle0, metersToPixels(), translation);
 
             float diffAx = (float) scaledDimensionMeters(mPlatformCoordinates[0] - mTethers[0][0]);
             float diffAy = (float) scaledDimensionMeters(mPlatformCoordinates[1] - mTethers[0][1]);
@@ -371,9 +371,9 @@ public class Clearing
             float diffBy = (float) scaledDimensionMeters(mPlatformCoordinates[1] - mTethers[1][1]);
             float diffCx = (float) scaledDimensionMeters(mPlatformCoordinates[0] - mTethers[2][0]);
             float diffCy = (float) scaledDimensionMeters(mPlatformCoordinates[1] - mTethers[2][1]);
-            float squaredA = (float) (diffAx * diffAx + diffAy * diffAy);
-            float squaredB = (float) (diffBx * diffBx + diffBy * diffBy);
-            float squaredC = (float) (diffCx * diffCx + diffCy * diffCy);
+            float squaredA = (diffAx * diffAx + diffAy * diffAy);
+            float squaredB = (diffBx * diffBx + diffBy * diffBy);
+            float squaredC = (diffCx * diffCx + diffCy * diffCy);
             mDrawPlatform = (squaredA >= MATH_METERS_TOO_CLOSE_SQUARED) &&
                     (squaredB >= MATH_METERS_TOO_CLOSE_SQUARED) &&
                     (squaredC >= MATH_METERS_TOO_CLOSE_SQUARED) ?
@@ -619,8 +619,8 @@ public class Clearing
         return pixels * mScaleBase * mScaleSlider;
     }
 
-    private long metersToPixels(double meters) {
-        return Math.round(meters / mScaleBase / mScaleSlider);
+    private long metersToPixels() {
+        return Math.round(1.0 / mScaleBase / mScaleSlider);
     }
 
     public float[][] getTetherPoints() {

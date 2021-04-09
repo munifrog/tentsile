@@ -76,7 +76,6 @@ public class MainActivity
     private static final double TENTSILE_HYPOTENUSE_UNIVERSE = 4.4;
     private static final double TENTSILE_HYPOTENUSE_TRILOGY = TENTSILE_HYPOTENUSE_CONNECT;
 
-    private int mPlatformSelection;
     private ImageButton mPlatformRotation;
     private Menu mToolbarMenu;
     private SeekBar mSeekBar;
@@ -106,7 +105,7 @@ public class MainActivity
         setSupportActionBar(toolbar);
 
         mSpinner = findViewById(R.id.sp_models);
-        mPlatformSelection = R.array.free_models;
+        int mPlatformSelection = R.array.free_models;
         String [] array = getResources().getStringArray(mPlatformSelection);
         mSpinAdapter = new ArrayAdapter<>(
                 this,
@@ -184,8 +183,6 @@ public class MainActivity
                 mClearing.selectTether(x - mCanvasLeft,y - mCanvasTop);
                 break;
             case MotionEvent.ACTION_UP:
-                x = (int) event.getX();
-                y = (int) event.getY();
                 mClearing.releaseTether();
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -234,22 +231,22 @@ public class MainActivity
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.action_default_tether_points:
-                mClearing.configDefault();
-                mClearing.releaseTether();
-                return true;
-            case R.id.action_browser_tentsile:
-                launchTentsile();
-                return true;
-            case R.id.action_enable_imperial:
-                setUnits(true);
-                return true;
-            case R.id.action_enable_meters:
-                setUnits(false);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+        if (id == R.id.action_default_tether_points) {
+            mClearing.configDefault();
+            mClearing.releaseTether();
+            return true;
+        } else if (id == R.id.action_browser_tentsile) {
+            launchTentsile();
+            return true;
+        } else if (id == R.id.action_enable_imperial) {
+            setUnits(true);
+            return true;
+        } else if (id == R.id.action_enable_meters) {
+            setUnits(false);
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
