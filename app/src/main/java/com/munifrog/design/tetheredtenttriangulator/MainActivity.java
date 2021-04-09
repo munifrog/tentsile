@@ -102,6 +102,7 @@ public class MainActivity
         );
 
         Toolbar toolbar = findViewById(R.id.tb_main);
+        toolbar.setTitle(R.string.app_name_long);
         setSupportActionBar(toolbar);
 
         mSpinner = findViewById(R.id.sp_models);
