@@ -106,7 +106,7 @@ public class MainActivity
         setSupportActionBar(toolbar);
 
         mSpinner = findViewById(R.id.sp_models);
-        mPlatformSelection = R.array.tent_models;
+        mPlatformSelection = R.array.free_models;
         String [] array = getResources().getStringArray(mPlatformSelection);
         mSpinAdapter = new ArrayAdapter<>(
                 this,
