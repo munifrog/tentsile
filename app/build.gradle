@@ -1,7 +1,21 @@
 apply plugin: 'com.android.application'
 
+// https://stackoverflow.com/q/35722904
+def keysFile = rootProject.file("my.keys")
+def keysProperties = new Properties()
+keysProperties.load(new FileInputStream(keysFile))
+
 android {
     compileSdkVersion 29
+
+    signingConfigs {
+        release {
+            storeFile file(keysProperties['release_store_file'])
+            storePassword keysProperties['release_store_secret']
+            keyPassword keysProperties['release_key_secret']
+            keyAlias keysProperties['release_key_alias']
+        }
+    }
 
     defaultConfig {
         applicationId "com.munifrog.design.tetheredtenttriangulator"
@@ -15,7 +29,11 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            signingConfig signingConfigs.release
+            shrinkResources true
+            minifyEnabled true
+            debuggable false
+            jniDebuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
