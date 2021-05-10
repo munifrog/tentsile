@@ -35,4 +35,21 @@ public class UtilUnitTests {
             assertEquals(angle, derivedAngle, allowance);
         }
     }
+
+    @Test
+    public void areAnglesEquivalent_isWorking() {
+        int iterations = 360;
+        double angleDiff = 2 * Math.PI / iterations;
+        double angle, negAngle;
+        for (int i = 0; i < iterations; i++) {
+            // In theory we could handle any two angles, but since the greatest an angle could be in
+            // a triangle is 1/2 a circle, it should suffice to test from -pi to +pi.
+            // Positive circle (0 to 2pi)
+            angle = i * angleDiff;
+            assertTrue(Util.areAnglesEquivalent(angle, angle));
+            // Negative circle (-2pi to 0)
+            negAngle = angle - 2 * Math.PI;
+            assertTrue(Util.areAnglesEquivalent(angle, negAngle));
+        }
+    }
 }
