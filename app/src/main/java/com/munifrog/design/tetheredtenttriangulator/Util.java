@@ -233,18 +233,19 @@ class Util {
     }
 
     static double[][] shiftedCoordinates(double[][] points, double angle, double scale, double[] translation) {
-        // [ x0 y0 ][ cos() -sin() ] = [ x1 y1 ]     x1 =  x0 cos() + y0 sin()
-        //          [ sin()  cos() ]                 y1 = -x0 sin() + y0 cos()
+        // [ x0 y0 ][  cos()  sin() ] = [ x1 y1 ]     x1 =  x0 cos() - y0 sin()
+        //          [ -sin()  cos() ]                 y1 =  x0 sin() + y0 cos()
         double cosine = Math.cos(angle), sine = Math.sin(angle);
         double [][] newPoints = new double[3][2];
-        newPoints[0][0] = translation[0] + scale * points[0][0] * cosine + scale * points[0][1] * sine;
-        newPoints[0][1] = translation[1] + scale * points[0][1] * cosine - scale * points[0][0] * sine;
+        newPoints[0][0] = translation[0] + scale * points[0][0] * cosine - scale * points[0][1] * sine;
+        newPoints[0][1] = translation[1] + scale * points[0][1] * cosine + scale * points[0][0] * sine;
 
-        newPoints[1][0] = translation[0] + scale * points[1][0] * cosine + scale * points[1][1] * sine;
-        newPoints[1][1] = translation[1] + scale * points[1][1] * cosine - scale * points[1][0] * sine;
+        newPoints[1][0] = translation[0] + scale * points[1][0] * cosine - scale * points[1][1] * sine;
+        newPoints[1][1] = translation[1] + scale * points[1][1] * cosine + scale * points[1][0] * sine;
 
-        newPoints[2][0] = translation[0] + scale * points[2][0] * cosine + scale * points[2][1] * sine;
-        newPoints[2][1] = translation[1] + scale * points[2][1] * cosine - scale * points[2][0] * sine;
+        newPoints[2][0] = translation[0] + scale * points[2][0] * cosine - scale * points[2][1] * sine;
+        newPoints[2][1] = translation[1] + scale * points[2][1] * cosine + scale * points[2][0] * sine;
+
         return newPoints;
     }
 }

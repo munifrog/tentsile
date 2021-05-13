@@ -89,7 +89,7 @@ public class UtilUnitTests {
                 { 0.5, -MATH_SQUARE_ROOT_OF_THREE / 2 }
         };
         double[] translation = { 0, 0 };
-        double[][] actual = Util.shiftedCoordinates(startingPoints, -angle, 1.0, translation);
+        double[][] actual = Util.shiftedCoordinates(startingPoints, angle, 1.0, translation);
         assertArrayEquals(expected[0], actual[0], ALLOWANCE_DELTA_TWO);
         assertArrayEquals(expected[1], actual[1], ALLOWANCE_DELTA_TWO);
         assertArrayEquals(expected[2], actual[2], ALLOWANCE_DELTA_TWO);

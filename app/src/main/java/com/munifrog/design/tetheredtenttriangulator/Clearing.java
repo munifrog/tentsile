@@ -363,7 +363,7 @@ public class Clearing
 
             mPlatformPath.transform(matrix, mTransformedPath);
             double[] translation = {mPlatformCoordinates[0], mPlatformCoordinates[1]};
-            mTransExtremities = Util.shiftedCoordinates(mPlatformExtremities, -angle0, metersToPixels(), translation);
+            mTransExtremities = Util.shiftedCoordinates(mPlatformExtremities, angle0, metersToPixels(), translation);
 
             float diffAx = (float) scaledDimensionMeters(mPlatformCoordinates[0] - mTethers[0][0]);
             float diffAy = (float) scaledDimensionMeters(mPlatformCoordinates[1] - mTethers[0][1]);
