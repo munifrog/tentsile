@@ -78,6 +78,23 @@ public class UtilUnitTests {
         assertArrayEquals(expected, actual, ALLOWANCE_DELTA_TWO);
     }
 
+    @Test
+    public void shiftedCoordinates_isWorking() {
+        double[][] startingPoints = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
+        double angle = Math.PI / 6;
+        double[][] expected = {
+                { MATH_SQUARE_ROOT_OF_THREE / 2, 0.5 },
+                { -0.5, MATH_SQUARE_ROOT_OF_THREE / 2 },
+                { -MATH_SQUARE_ROOT_OF_THREE / 2, -0.5 },
+                { 0.5, -MATH_SQUARE_ROOT_OF_THREE / 2 }
+        };
+        double[] translation = { 0, 0 };
+        double[][] actual = Util.shiftedCoordinates(startingPoints, -angle, 1.0, translation);
+        assertArrayEquals(expected[0], actual[0], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[1], actual[1], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[2], actual[2], ALLOWANCE_DELTA_TWO);
+    }
+
     private static float[][] getScalene() {
         float[][] tethers = new float[3][2];
         float[] center = { (float) MATH_CENTER_X, (float) MATH_CENTER_Y };
