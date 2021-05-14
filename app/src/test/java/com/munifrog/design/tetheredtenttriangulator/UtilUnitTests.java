@@ -93,6 +93,11 @@ public class UtilUnitTests {
         assertArrayEquals(expected[0], actual[0], ALLOWANCE_DELTA_TWO);
         assertArrayEquals(expected[1], actual[1], ALLOWANCE_DELTA_TWO);
         assertArrayEquals(expected[2], actual[2], ALLOWANCE_DELTA_TWO);
+
+        actual = Util.shiftedCoordinates(actual, -angle, 1.0, translation);
+        assertArrayEquals(startingPoints[0], actual[0], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(startingPoints[1], actual[1], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(startingPoints[2], actual[2], ALLOWANCE_DELTA_TWO);
     }
 
     private static float[][] getScalene() {
