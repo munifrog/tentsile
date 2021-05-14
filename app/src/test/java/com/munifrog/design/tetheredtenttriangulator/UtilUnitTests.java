@@ -17,7 +17,10 @@ public class UtilUnitTests {
     private static final double MATH_CENTER_Y = 300;
     private static final double ALLOWANCE_DELTA_ONE = 0.1;
     private static final double ALLOWANCE_DELTA_TWO = 0.01;
+    private static final double ALLOWANCE_DELTA_TWO_FIVE = 0.015;
     private static final double ALLOWANCE_DELTA_THREE = 0.001;
+    private static final float[][] equilateral_tethers = getEquilateral();
+    private static final float[][] isosceles_tethers = getIsosceles();
     private static final float[][] scalene_tethers = getScalene();
 
     @Test
@@ -76,6 +79,24 @@ public class UtilUnitTests {
         expected[4] = MATH_BASE_LENGTH_N * MATH_BASE_LENGTH_N * 19;
         expected[5] = MATH_BASE_LENGTH_N * MATH_BASE_LENGTH_N * 13;
         assertArrayEquals(expected, actual, ALLOWANCE_DELTA_TWO);
+
+        actual = Util.getPerimeter(equilateral_tethers);
+        expected[0] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_THREE;
+        expected[1] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_THREE;
+        expected[2] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_THREE;
+        expected[3] = MATH_BASE_LENGTH_N * MATH_BASE_LENGTH_N * 3;
+        expected[4] = MATH_BASE_LENGTH_N * MATH_BASE_LENGTH_N * 3;
+        expected[5] = MATH_BASE_LENGTH_N * MATH_BASE_LENGTH_N * 3;
+        assertArrayEquals(expected, actual, ALLOWANCE_DELTA_TWO);
+
+        actual = Util.getPerimeter(isosceles_tethers);
+        expected[0] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_THREE * 2;
+        expected[1] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_NINETEEN;
+        expected[2] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_NINETEEN;
+        expected[3] = MATH_BASE_LENGTH_N * MATH_BASE_LENGTH_N * 12;
+        expected[4] = MATH_BASE_LENGTH_N * MATH_BASE_LENGTH_N * 19;
+        expected[5] = MATH_BASE_LENGTH_N * MATH_BASE_LENGTH_N * 19;
+        assertArrayEquals(expected, actual, ALLOWANCE_DELTA_TWO_FIVE);
     }
 
     @Test
@@ -98,6 +119,32 @@ public class UtilUnitTests {
         assertArrayEquals(startingPoints[0], actual[0], ALLOWANCE_DELTA_TWO);
         assertArrayEquals(startingPoints[1], actual[1], ALLOWANCE_DELTA_TWO);
         assertArrayEquals(startingPoints[2], actual[2], ALLOWANCE_DELTA_TWO);
+    }
+
+    private static float[][] getEquilateral() {
+        float[][] tethers = new float[3][2];
+        float[] center = { (float) MATH_CENTER_X, (float) MATH_CENTER_Y };
+
+        tethers[0][0] =        (center[0]);
+        tethers[0][1] = (float)(center[1] + MATH_BASE_LENGTH_N);
+        tethers[1][0] = (float)(center[0] - MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N / 2);
+        tethers[1][1] = (float)(center[1] - MATH_BASE_LENGTH_N / 2);
+        tethers[2][0] = (float)(center[0] + MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N / 2);
+        tethers[2][1] = (float)(center[1] - MATH_BASE_LENGTH_N / 2);
+        return tethers;
+    }
+
+    private static float[][] getIsosceles() {
+        float[][] tethers = new float[3][2];
+        float[] center = { (float) MATH_CENTER_X, (float) MATH_CENTER_Y };
+
+        tethers[0][0] = (float)(center[0] - MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_THREE);
+        tethers[0][1] = (float)(center[1] + MATH_BASE_LENGTH_N);
+        tethers[1][0] = (float)(center[0] + MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_THREE);
+        tethers[1][1] = (float)(center[1] + MATH_BASE_LENGTH_N);
+        tethers[2][0] =        (center[0]);
+        tethers[2][1] = (float)(center[1] - MATH_BASE_LENGTH_N * 3);
+        return tethers;
     }
 
     private static float[][] getScalene() {
