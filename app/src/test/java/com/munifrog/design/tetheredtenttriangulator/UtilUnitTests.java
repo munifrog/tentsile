@@ -2,33 +2,27 @@ package com.munifrog.design.tetheredtenttriangulator;
 
 import org.junit.Test;
 
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.ALLOWANCE_DELTA_TWO;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.ALLOWANCE_DELTA_TWO_FIVE;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.ALLOWANCE_DELTA_THREE;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.MATH_BASE_LENGTH_N;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.MATH_SQUARE_ROOT_OF_THREE;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.MATH_SQUARE_ROOT_OF_SEVEN;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.MATH_SQUARE_ROOT_OF_THIRTEEN;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.MATH_SQUARE_ROOT_OF_NINETEEN;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TETHERS_EQUILATERAL;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TETHERS_ISOSCELES;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TETHERS_SCALENE;
+
 import static org.junit.Assert.*;
 
 // Note: cosine and sine are computed in radians, not degrees
 public class UtilUnitTests {
-    private final String TAG = getClass().getSimpleName();
-
-    private static final double MATH_SQUARE_ROOT_OF_THREE = Math.sqrt(3);
-    private static final double MATH_SQUARE_ROOT_OF_SEVEN = Math.sqrt(7);
-    private static final double MATH_SQUARE_ROOT_OF_THIRTEEN = Math.sqrt(13);
-    private static final double MATH_SQUARE_ROOT_OF_NINETEEN = Math.sqrt(19);
-    private static final double MATH_BASE_LENGTH_N = 200;
-    private static final double MATH_CENTER_X = 300;
-    private static final double MATH_CENTER_Y = 300;
-    private static final double ALLOWANCE_DELTA_ONE = 0.1;
-    private static final double ALLOWANCE_DELTA_TWO = 0.01;
-    private static final double ALLOWANCE_DELTA_TWO_FIVE = 0.015;
-    private static final double ALLOWANCE_DELTA_THREE = 0.001;
-    private static final float[][] equilateral_tethers = getEquilateral();
-    private static final float[][] isosceles_tethers = getIsosceles();
-    private static final float[][] scalene_tethers = getScalene();
-
     @Test
     public void getDirection_isWorking() {
         int iterations = 360;
         double angleDiff = 2 * Math.PI / iterations;
         double hypotenuse = 1.0;
-        System.out.println(TAG + "angleDiff: \"" + angleDiff + "\"");
 
         double angle, negAngle, deltaX, deltaY, derivedAngle;
         for (int i = 0; i < iterations; i++) {
@@ -70,7 +64,7 @@ public class UtilUnitTests {
     @Test
     public void getPerimeter_isWorking() {
         // Set up equilateral triangle and test perimeter and angles
-        double[] actual = Util.getPerimeter(scalene_tethers);
+        double[] actual = Util.getPerimeter(TETHERS_SCALENE);
         double[] expected = new double[6];
         expected[0] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_SEVEN;
         expected[1] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_NINETEEN;
@@ -80,7 +74,7 @@ public class UtilUnitTests {
         expected[5] = MATH_BASE_LENGTH_N * MATH_BASE_LENGTH_N * 13;
         assertArrayEquals(expected, actual, ALLOWANCE_DELTA_TWO);
 
-        actual = Util.getPerimeter(equilateral_tethers);
+        actual = Util.getPerimeter(TETHERS_EQUILATERAL);
         expected[0] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_THREE;
         expected[1] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_THREE;
         expected[2] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_THREE;
@@ -89,7 +83,7 @@ public class UtilUnitTests {
         expected[5] = MATH_BASE_LENGTH_N * MATH_BASE_LENGTH_N * 3;
         assertArrayEquals(expected, actual, ALLOWANCE_DELTA_TWO);
 
-        actual = Util.getPerimeter(isosceles_tethers);
+        actual = Util.getPerimeter(TETHERS_ISOSCELES);
         expected[0] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_THREE * 2;
         expected[1] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_NINETEEN;
         expected[2] = MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_NINETEEN;
@@ -230,44 +224,5 @@ public class UtilUnitTests {
         assertArrayEquals(expected[1], actual[1], ALLOWANCE_DELTA_TWO);
         assertArrayEquals(expected[2], actual[2], ALLOWANCE_DELTA_TWO);
         assertArrayEquals(expected[3], actual[3], ALLOWANCE_DELTA_TWO);
-    }
-
-    private static float[][] getEquilateral() {
-        float[][] tethers = new float[3][2];
-        float[] center = { (float) MATH_CENTER_X, (float) MATH_CENTER_Y };
-
-        tethers[0][0] =        (center[0]);
-        tethers[0][1] = (float)(center[1] + MATH_BASE_LENGTH_N);
-        tethers[1][0] = (float)(center[0] - MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N / 2);
-        tethers[1][1] = (float)(center[1] - MATH_BASE_LENGTH_N / 2);
-        tethers[2][0] = (float)(center[0] + MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N / 2);
-        tethers[2][1] = (float)(center[1] - MATH_BASE_LENGTH_N / 2);
-        return tethers;
-    }
-
-    private static float[][] getIsosceles() {
-        float[][] tethers = new float[3][2];
-        float[] center = { (float) MATH_CENTER_X, (float) MATH_CENTER_Y };
-
-        tethers[0][0] = (float)(center[0] - MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_THREE);
-        tethers[0][1] = (float)(center[1] + MATH_BASE_LENGTH_N);
-        tethers[1][0] = (float)(center[0] + MATH_BASE_LENGTH_N * MATH_SQUARE_ROOT_OF_THREE);
-        tethers[1][1] = (float)(center[1] + MATH_BASE_LENGTH_N);
-        tethers[2][0] =        (center[0]);
-        tethers[2][1] = (float)(center[1] - MATH_BASE_LENGTH_N * 3);
-        return tethers;
-    }
-
-    private static float[][] getScalene() {
-        float[][] tethers = new float[3][2];
-        float[] center = { (float) MATH_CENTER_X, (float) MATH_CENTER_Y };
-
-        tethers[0][0] = (float)(center[0] - MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N / 2);
-        tethers[0][1] = (float)(center[1] + MATH_BASE_LENGTH_N + MATH_BASE_LENGTH_N / 2);
-        tethers[1][0] = (float)(center[0] + MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N);
-        tethers[1][1] = (float)(center[1] + MATH_BASE_LENGTH_N + MATH_BASE_LENGTH_N);
-        tethers[2][0] =        (center[0]);
-        tethers[2][1] = (float)(center[1] + MATH_BASE_LENGTH_N - 3 * MATH_BASE_LENGTH_N);
-        return tethers;
     }
 }
