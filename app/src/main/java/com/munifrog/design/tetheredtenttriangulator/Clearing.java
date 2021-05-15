@@ -325,12 +325,14 @@ public class Clearing
             );
         }
         // Add what will appear as a knot at the tether-center
-        canvas.drawCircle(
-                mPlatformCoordinates[0],
-                mPlatformCoordinates[1],
-                radii[TETHER_SELECTION_ENTIRE],
-                mTetherPaint
-        );
+        if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
+            canvas.drawCircle(
+                    mPlatformCoordinates[0],
+                    mPlatformCoordinates[1],
+                    radii[TETHER_SELECTION_ENTIRE],
+                    mTetherPaint
+            );
+        }
     }
 
     private void drawTethers(Canvas canvas) {
