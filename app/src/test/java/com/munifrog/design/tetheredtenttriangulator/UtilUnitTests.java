@@ -100,25 +100,136 @@ public class UtilUnitTests {
     }
 
     @Test
-    public void shiftedCoordinates_isWorking() {
-        double[][] startingPoints = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
+    public void shiftedCoordinates_angles_isWorking() {
+        double[][] starting = new double[4][2];
+        double[][] expected = new double[4][2];
+        double[] translation = {0, 0};
         double angle = Math.PI / 6;
-        double[][] expected = {
-                { MATH_SQUARE_ROOT_OF_THREE / 2, 0.5 },
-                { -0.5, MATH_SQUARE_ROOT_OF_THREE / 2 },
-                { -MATH_SQUARE_ROOT_OF_THREE / 2, -0.5 },
-                { 0.5, -MATH_SQUARE_ROOT_OF_THREE / 2 }
-        };
-        double[] translation = { 0, 0 };
-        double[][] actual = Util.shiftedCoordinates(startingPoints, angle, 1.0, translation);
+
+        starting[0][0] =  1;
+        starting[0][1] =  0;
+        starting[1][0] =  0;
+        starting[1][1] =  1;
+        starting[2][0] = -1;
+        starting[2][1] =  0;
+        starting[3][0] =  0;
+        starting[3][1] = -1;
+
+        expected[0][0] = MATH_SQUARE_ROOT_OF_THREE / 2;
+        expected[0][1] = 0.5;
+        expected[1][0] = -0.5;
+        expected[1][1] = MATH_SQUARE_ROOT_OF_THREE / 2;
+        expected[2][0] = -MATH_SQUARE_ROOT_OF_THREE / 2;
+        expected[2][1] = -0.5;
+        expected[3][0] = 0.5;
+        expected[3][1] = -MATH_SQUARE_ROOT_OF_THREE / 2;
+
+        double[][] actual = Util.shiftedCoordinates(starting, angle, 1.0, translation);
         assertArrayEquals(expected[0], actual[0], ALLOWANCE_DELTA_TWO);
         assertArrayEquals(expected[1], actual[1], ALLOWANCE_DELTA_TWO);
         assertArrayEquals(expected[2], actual[2], ALLOWANCE_DELTA_TWO);
-
+        assertArrayEquals(expected[3], actual[3], ALLOWANCE_DELTA_TWO);
         actual = Util.shiftedCoordinates(actual, -angle, 1.0, translation);
-        assertArrayEquals(startingPoints[0], actual[0], ALLOWANCE_DELTA_TWO);
-        assertArrayEquals(startingPoints[1], actual[1], ALLOWANCE_DELTA_TWO);
-        assertArrayEquals(startingPoints[2], actual[2], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(starting[0], actual[0], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(starting[1], actual[1], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(starting[2], actual[2], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(starting[3], actual[3], ALLOWANCE_DELTA_TWO);
+    }
+
+    @Test
+    public void shiftedCoordinates_translation_isWorking() {
+        double[][] starting = new double[4][2];
+        double[][] expected = new double[4][2];
+        double[] translation = new double[2];
+        double angle = 0;
+
+        translation[0] = -3;
+        translation[1] = 4;
+
+        starting[0][0] =  1;
+        starting[0][1] =  0;
+        starting[1][0] =  0;
+        starting[1][1] =  1;
+        starting[2][0] = -1;
+        starting[2][1] =  0;
+        starting[3][0] =  0;
+        starting[3][1] = -1;
+
+        expected[0][0] = -2;
+        expected[0][1] =  4;
+        expected[1][0] = -3;
+        expected[1][1] =  5;
+        expected[2][0] = -4;
+        expected[2][1] =  4;
+        expected[3][0] = -3;
+        expected[3][1] =  3;
+
+        double[][] actual = Util.shiftedCoordinates(starting, angle, 1.0, translation);
+        assertArrayEquals(expected[0], actual[0], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[1], actual[1], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[2], actual[2], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[3], actual[3], ALLOWANCE_DELTA_TWO);
+        translation[0] =  3;
+        translation[1] = -4;
+        actual = Util.shiftedCoordinates(actual, -angle, 1.0, translation);
+        assertArrayEquals(starting[0], actual[0], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(starting[1], actual[1], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(starting[2], actual[2], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(starting[3], actual[3], ALLOWANCE_DELTA_TWO);
+    }
+
+    @Test
+    public void shiftedCoordinates_rotate_and_translate_isWorking() {
+        double[][] starting = new double[4][2];
+        double[][] expected = new double[4][2];
+        double[] translation = new double[2];
+        double angle = Math.PI / 3;
+
+        translation[0] =  35;
+        translation[1] = -24;
+
+        starting[0][0] =  2;
+        starting[0][1] =  0;
+        starting[1][0] =  0;
+        starting[1][1] =  2;
+        starting[2][0] = -2;
+        starting[2][1] =  0;
+        starting[3][0] =  0;
+        starting[3][1] = -2;
+
+        expected[0][0] =  36;
+        expected[0][1] = -24 + MATH_SQUARE_ROOT_OF_THREE;
+        expected[1][0] =  35 - MATH_SQUARE_ROOT_OF_THREE;
+        expected[1][1] = -23;
+        expected[2][0] =  34;
+        expected[2][1] = -24 - MATH_SQUARE_ROOT_OF_THREE;
+        expected[3][0] =  35 + MATH_SQUARE_ROOT_OF_THREE;
+        expected[3][1] = -25;
+
+        double[][] actual = Util.shiftedCoordinates(starting, angle, 1.0, translation);
+        assertArrayEquals(expected[0], actual[0], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[1], actual[1], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[2], actual[2], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[3], actual[3], ALLOWANCE_DELTA_TWO);
+
+        translation[0] = -35;
+        translation[1] =  24;
+        angle = -Math.PI / 3;
+
+        expected[0][0] = -35 +  1;
+        expected[0][1] =  24 + -MATH_SQUARE_ROOT_OF_THREE;
+        expected[1][0] = -35 +  MATH_SQUARE_ROOT_OF_THREE;
+        expected[1][1] =  24 +  1;
+        expected[2][0] = -35 + -1;
+        expected[2][1] =  24 +  MATH_SQUARE_ROOT_OF_THREE;
+        expected[3][0] = -35 + -MATH_SQUARE_ROOT_OF_THREE;
+        expected[3][1] =  24 + -1;
+
+        actual = Util.shiftedCoordinates(starting, angle, 1.0, translation);
+        assertArrayEquals(expected[0], actual[0], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[1], actual[1], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[2], actual[2], ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[3], actual[3], ALLOWANCE_DELTA_TWO);
     }
 
     private static float[][] getEquilateral() {
