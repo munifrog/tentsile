@@ -365,7 +365,7 @@ public class MainActivity
     }
 
     private void setEquilateral(Platform platform) {
-        mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
+        mClearing.setPlatformSymmetricAngle();
         mPlatformRotation.setVisibility(View.GONE);
         mClearing.setPlatformDrawPath(platform);
     }
@@ -374,7 +374,7 @@ public class MainActivity
         double [] measurements = Util.getIsoscelesMeasurements(hypotenuse, base);
         Platform platform = Util.getTentsileIsosceles(measurements[0], measurements[1], measurements[2]);
         mClearing.setPlatformDrawPath(platform);
-        mClearing.setPlatformSymmetricAngle(2 * Math.PI / 3);
+        mClearing.setPlatformSymmetricAngle();
         mPlatformRotation.setVisibility(View.VISIBLE);
     }
 

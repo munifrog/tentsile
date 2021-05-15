@@ -12,15 +12,9 @@ class UnitTestUtil {
     static final double MATH_SQUARE_ROOT_OF_SEVEN = Math.sqrt(7);
     static final double MATH_SQUARE_ROOT_OF_THIRTEEN = Math.sqrt(13);
     static final double MATH_SQUARE_ROOT_OF_NINETEEN = Math.sqrt(19);
-    static final double MATH_ONE_THIRD_CIRCLE = 2 * Math.PI / 3;
     static final float[][] TETHERS_EQUILATERAL = UnitTestUtil.getEquilateral();
     static final float[][] TETHERS_ISOSCELES = UnitTestUtil.getIsosceles();
     static final float[][] TETHERS_SCALENE = UnitTestUtil.getScalene();
-    static final float[] THRESHOLD_PLATFORM = {
-            (float) MATH_ONE_THIRD_CIRCLE,
-            (float) MATH_ONE_THIRD_CIRCLE,
-            (float) MATH_ONE_THIRD_CIRCLE
-    };
 
     private static float[][] getEquilateral() {
         float[][] tethers = new float[3][2];

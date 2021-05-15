@@ -10,13 +10,11 @@ class PlatformCenterRun implements Runnable {
 
     PlatformCenterRun(
             PlatformCenterListener listener,
-            final float[][] tetherPoints,
-            final float[] thresholds
+            final float[][] tetherPoints
     ) {
         mListener = listener;
         mTetherCenter = new TetherCenter(
-                tetherPoints,
-                thresholds
+                tetherPoints
         );
     }
 

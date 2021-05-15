@@ -32,6 +32,7 @@ public class Clearing
     private static final int DRAW_TETHERS_ENABLED = 1;
 
     private static final double MATH_ANGLE_FULL_CIRCLE = Math.PI * 2;
+    private static final double MATH_ANGLE_ONE_THIRD_CIRCLE = 2 * Math.PI / 3;
     private static final double MATH_ANGLE_RADIANS_TO_DEGREES = 180 / Math.PI;
     private static final double MATH_METERS_TO_FEET_CONVERSION = 3.2808399;
     private static final double MATH_METERS_ACROSS_SMALLEST_DIMEN = 5.0;
@@ -70,9 +71,6 @@ public class Clearing
     private double mDist20; // b
     private double mScaleBase; // Units per pixel
     private double mScaleSlider; // Scaled multiplier
-    private double mThreshold0P1;
-    private double mThreshold1P2;
-    private double mThreshold2P0;
     private boolean mTetherOrientationFLips = false;
     private boolean mComputeTetherCenterAgain = false;
     private boolean mComputingTetherCenter = false;
@@ -128,7 +126,7 @@ public class Clearing
         mIsImperial = false;
         mScaleSlider = 1.0;
 
-        setPlatformSymmetricAngle(2 * Math.PI / 3);
+        setPlatformSymmetricAngle();
     }
 
     public void setUnitStrings(String meters, String imperial) {
@@ -528,7 +526,11 @@ public class Clearing
         double angle210  = Math.acos((perimeter[4] + perimeter[3] - perimeter[5]) / 2.0 / mDist12 / mDist01); // B = 1
         double angle021 = Math.acos((perimeter[4] + perimeter[5] - perimeter[3]) / 2.0 / mDist12 / mDist20);  // C = 2
 
-        if (angle102 < mThreshold1P2 && angle210 < mThreshold2P0 && angle021 < mThreshold0P1) {
+        if (
+                angle102 < MATH_ANGLE_ONE_THIRD_CIRCLE &&
+                angle210 < MATH_ANGLE_ONE_THIRD_CIRCLE &&
+                angle021 < MATH_ANGLE_ONE_THIRD_CIRCLE
+        ) {
             mDrawTethers = DRAW_TETHERS_ENABLED;
             computePlatformCenter();
         } else {
@@ -539,8 +541,7 @@ public class Clearing
     }
 
     private void computePlatformCenter() {
-        float[] thresholds = { (float) mThreshold2P0, (float) mThreshold1P2, (float) mThreshold0P1 };
-        mViewOwner.computePlatformCenter(new PlatformCenterRun(this, mTethers, thresholds));
+        mViewOwner.computePlatformCenter(new PlatformCenterRun(this, mTethers));
     }
 
     @Override
@@ -577,10 +578,7 @@ public class Clearing
         mTethers[2][1] = tempY;
     }
 
-    public void setPlatformSymmetricAngle(double angle) {
-        mThreshold0P1 = angle;
-        mThreshold1P2 = angle;
-        mThreshold2P0 = MATH_ANGLE_FULL_CIRCLE - mThreshold0P1 - mThreshold1P2;
+    public void setPlatformSymmetricAngle() {
         getPlatformCenterOccasionally();
         invalidateSelf();
     }
