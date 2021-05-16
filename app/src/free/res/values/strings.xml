@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_selection_model">@string/tentsile_tent_stingray</string>
+
+    <string name="tentsile_tent_stingray">Stingray Tent</string>
+    <string name="tentsile_base_trillium">Trillium Hammock</string>
+    <string name="tenstile_tent_vista">Vista Tent</string>
+</resources>

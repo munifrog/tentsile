@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_selection_model">@string/tentsile_tent_stingray</string>
+
+    <string name="tentsile_tent_connect">Connect (2) Tent</string>
+    <string name="tentsile_base_duo">Duo (2) Hammock</string>
+    <string name="tentsile_tent_flite">Flite (2) Tent</string>
+    <string name="tentsile_tent_stingray">Stingray (3) Tent</string>
+    <string name="tentsile_base_t_mini">T-Mini (2) Hammock</string>
+    <string name="tentsile_base_trillium">Trillium (3) Hammock</string>
+    <string name="tentsile_base_trillium_xl">Trillium XL (6) Hammock</string>
+    <string name="tentsile_tent_trilogy">Trilogy (6) Tent</string>
+    <string name="tentsile_tent_una">Una (1) Tent</string>
+    <string name="tentsile_test_universe">Universe (5) Tent</string>
+    <string name="tenstile_tent_vista">Vista (3) Tent</string>
+</resources>
