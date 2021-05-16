@@ -1,31 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="tent_models">
-        <item>@string/tentsile_tent_connect</item>
-        <item>@string/tentsile_base_duo</item>
-        <item>@string/tentsile_tent_flite</item>
-        <item>@string/tentsile_tent_stingray</item>
-        <item>@string/tentsile_base_t_mini</item>
-        <item>@string/tentsile_base_trillium</item>
-        <item>@string/tentsile_base_trillium_xl</item>
-        <item>@string/tentsile_tent_trilogy</item>
-        <item>@string/tentsile_tent_una</item>
-        <item>@string/tentsile_test_universe</item>
-        <item>@string/tenstile_tent_vista</item>
-    </string-array>
-
-    <string-array name="free_models">
-        <item>@string/tentsile_tent_stingray</item>
-        <item>@string/tentsile_base_trillium</item>
-        <item>@string/tenstile_tent_vista</item>
-    </string-array>
-
-    <string-array name="equilaterals">
-        <item>@string/tentsile_tent_stingray</item>
-        <item>@string/tentsile_base_trillium</item>
-        <item>@string/tentsile_base_trillium_xl</item>
-        <item>@string/tentsile_tent_trilogy</item>
-        <item>@string/tentsile_test_universe</item>
-        <item>@string/tenstile_tent_vista</item>
-    </string-array>
+    <string-array name="tent_models"/>
 </resources>

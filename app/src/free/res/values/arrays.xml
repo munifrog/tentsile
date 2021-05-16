@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tent_models">
+        <item>@string/tentsile_tent_stingray</item>
+        <item>@string/tentsile_base_trillium</item>
+        <item>@string/tenstile_tent_vista</item>
+    </string-array>
+</resources>
