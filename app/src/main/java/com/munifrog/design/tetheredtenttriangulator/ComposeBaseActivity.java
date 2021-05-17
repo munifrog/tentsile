@@ -86,6 +86,7 @@ public class ComposeBaseActivity
         Toolbar toolbar = findViewById(R.id.tb_main);
         toolbar.setTitle(R.string.app_name_long);
         setSupportActionBar(toolbar);
+        hideVirtualButtons();
 
         mSpinner = findViewById(R.id.sp_models);
         int mPlatformSelection = R.array.tent_models;
@@ -154,6 +155,9 @@ public class ComposeBaseActivity
         iv_clearing.getLocationOnScreen(viewLoc);
         mCanvasLeft = viewLoc[0];
         mCanvasTop = viewLoc[1];
+        if (hasFocus) {
+            hideVirtualButtons();
+        }
     }
 
     @Override
@@ -161,6 +165,7 @@ public class ComposeBaseActivity
         int x, y;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                hideVirtualButtons();
                 x = (int) event.getX();
                 y = (int) event.getY();
                 mClearing.selectTether(x - mCanvasLeft,y - mCanvasTop);
@@ -319,6 +324,24 @@ public class ComposeBaseActivity
         // The unit displayed should be what it will become if pushed, not what it currently is
         mToolbarMenu.findItem(R.id.action_enable_imperial).setVisible(!isImperial);
         mToolbarMenu.findItem(R.id.action_enable_meters).setVisible(isImperial);
+    }
+
+    // http://www.pixnbgames.com/blog/libgdx/how-to-hide-virtual-buttons-in-android-libgdx/
+    // https://developer.android.com/training/system-ui/immersive
+    private void hideVirtualButtons() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_IMMERSIVE
+                    // Set the content to appear under the system bars so that the
+                    // content doesn't resize when the system bars hide and show.
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    // Hide the nav bar and status bar
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+            );
+        }
     }
 
     @Override
