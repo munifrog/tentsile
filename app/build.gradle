@@ -42,11 +42,11 @@ android {
     productFlavors {
         free {
             dimension "tier"
-            applicationId 'com.munifrog.design.tetheredtenttriangulator'
+            applicationId 'com.munifrog.design.tetheredtenttriangulator.free'
         }
         paid {
             dimension "tier"
-            applicationId 'com.munifrog.design.tetheredtenttriangulator'
+            applicationId 'com.munifrog.design.tetheredtenttriangulator.paid'
         }
     }
 }
