@@ -40,7 +40,10 @@ public class Clearing
     private static final double MATH_METERS_TOO_CLOSE_SQUARED =
             MATH_METERS_TOO_CLOSE * MATH_METERS_TOO_CLOSE;
 
-    private final Paint mTetherPaint;
+    private final Paint mTetherPaintPlatform;
+    private final Paint mTetherPaintStraps;
+    private final Paint mTetherPaintExtensions;
+    private final Paint mTetherPaintTooClose;
     private final Paint mPerimeterPaint;
     private final Paint mPlatformPaint;
     private final Paint mTreePaint;
@@ -74,6 +77,8 @@ public class Clearing
     private boolean mTetherOrientationFLips = false;
     private boolean mComputeTetherCenterAgain = false;
     private boolean mComputingTetherCenter = false;
+    private boolean[] mAnchorTooClose = { false, false, false };
+    private double mStrapLength;
 
     private int mStateTether = TETHER_SELECTION_NONE;
     private int mDrawTethers = DRAW_TETHERS_ENABLED;
@@ -89,10 +94,25 @@ public class Clearing
         mViewOwner = listener;
 
         // Set up color and text size
-        mTetherPaint = new Paint();
-        mTetherPaint.setARGB(255, 127, 127, 127);
-        mTetherPaint.setStrokeWidth(10);
-        mTetherPaint.setStrokeCap(Paint.Cap.ROUND);
+        mTetherPaintPlatform = new Paint();
+        mTetherPaintPlatform.setARGB(255, 127, 127, 127); // grey
+        mTetherPaintPlatform.setStrokeWidth(10);
+        mTetherPaintPlatform.setStrokeCap(Paint.Cap.ROUND);
+
+        mTetherPaintStraps = new Paint();
+        mTetherPaintStraps.setARGB(255, 33, 150, 243); // blue
+        mTetherPaintStraps.setStrokeWidth(10);
+        mTetherPaintStraps.setStrokeCap(Paint.Cap.ROUND);
+
+        mTetherPaintExtensions = new Paint();
+        mTetherPaintExtensions.setARGB(255, 255, 235, 59); // yellow
+        mTetherPaintExtensions.setStrokeWidth(10);
+        mTetherPaintExtensions.setStrokeCap(Paint.Cap.ROUND);
+
+        mTetherPaintTooClose = new Paint();
+        mTetherPaintTooClose.setARGB(255, 244, 67, 54); // red
+        mTetherPaintTooClose.setStrokeWidth(10);
+        mTetherPaintTooClose.setStrokeCap(Paint.Cap.ROUND);
 
         mLabelConnectionPaint = new Paint();
         mLabelConnectionPaint.setARGB(180, 0, 0, 0);
@@ -270,6 +290,8 @@ public class Clearing
         drawConnectionLabels(canvas);
         //  Distance from platform-corners to stakes
         drawPlatformLabels(canvas);
+        //  Anchor points that are too close
+        drawTooClose(canvas);
     }
 
     private void drawConnectionLines(Canvas canvas) {
@@ -328,22 +350,22 @@ public class Clearing
                     mPlatformCoordinates[0],
                     mPlatformCoordinates[1],
                     radii[TETHER_SELECTION_ENTIRE],
-                    mTetherPaint
+                    mTetherPaintStraps
             );
         }
     }
 
     private void drawTethers(Canvas canvas) {
         if (mDrawTethers == DRAW_TETHERS_ENABLED) {
-            canvas.drawLine(mTethers[0][0], mTethers[0][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
-            canvas.drawLine(mTethers[1][0], mTethers[1][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
-            canvas.drawLine(mTethers[2][0], mTethers[2][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
+            canvas.drawLine(mTethers[0][0], mTethers[0][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaintPlatform);
+            canvas.drawLine(mTethers[1][0], mTethers[1][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaintPlatform);
+            canvas.drawLine(mTethers[2][0], mTethers[2][1], mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaintPlatform);
 
             canvas.drawCircle(
                     mPlatformCoordinates[0],
                     mPlatformCoordinates[1],
                     mRadiusTetherSize / 2,
-                    mTetherPaint
+                    mTetherPaintStraps
             );
         }
     }
@@ -383,25 +405,59 @@ public class Clearing
 
     private void drawPlatformTethers(Canvas canvas) {
         if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
-            int index1 = 1, index2 = 2;
+            int[] indices = { 0, 1, 2 };
             if (mTetherOrientationFLips) {
-                index1 = 2;
-                index2 = 1;
+                indices[1] = 2;
+                indices[2] = 1;
             }
-            // Draw skeleton of the platform
-            canvas.drawLine((float) mTransExtremities[0][0], (float) mTransExtremities[0][1],
-                    mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
-            canvas.drawLine((float) mTransExtremities[index1][0], (float) mTransExtremities[index1][1],
-                    mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
-            canvas.drawLine((float) mTransExtremities[index2][0], (float) mTransExtremities[index2][1],
-                    mPlatformCoordinates[0], mPlatformCoordinates[1], mTetherPaint);
-            // Connect platform skeleton to the tether points (trees)
-            canvas.drawLine((float) mTransExtremities[0][0], (float) mTransExtremities[0][1],
-                    mTethers[0][0], mTethers[0][1], mTetherPaint);
-            canvas.drawLine((float) mTransExtremities[index1][0], (float) mTransExtremities[index1][1],
-                    mTethers[1][0], mTethers[1][1], mTetherPaint);
-            canvas.drawLine((float) mTransExtremities[index2][0], (float) mTransExtremities[index2][1],
-                    mTethers[2][0], mTethers[2][1], mTetherPaint);
+            for (int i = 0; i < 3; i++) {
+                // Draw skeleton of the platform
+                canvas.drawLine(
+                        (float) mTransExtremities[indices[i]][0],
+                        (float) mTransExtremities[indices[i]][1],
+                        mPlatformCoordinates[0],
+                        mPlatformCoordinates[1],
+                        mTetherPaintPlatform
+                );
+
+                // For each strap, draw between the extremity and tree according to extensions
+                // Use strap color for first 1ft (placing knot) then next 6m (or 4m), then extension
+                // color, with knots every 6m
+                float[][] strapKnots = Util.getTetherKnots(
+                        scaledDimensionMeters(1.0),
+                        mTransExtremities[indices[i]][0],
+                        mTransExtremities[indices[i]][1],
+                        mTethers[i][0],
+                        mTethers[i][1],
+                        mStrapLength,
+                        6 // strap extension default
+                );
+
+                if (strapKnots.length > 1) {
+                    mAnchorTooClose[i] = false;
+                    Paint color;
+                    int startIdx;
+                    for (int j = strapKnots.length - 1; j > 0; j--) {
+                        startIdx = j - 1;
+                        color = (j < 3) ? mTetherPaintStraps : mTetherPaintExtensions;
+                        canvas.drawLine(
+                                strapKnots[startIdx][0],
+                                strapKnots[startIdx][1],
+                                strapKnots[j][0],
+                                strapKnots[j][1],
+                                color
+                        );
+                        canvas.drawCircle(
+                                strapKnots[j][0],
+                                strapKnots[j][1],
+                                mRadiusTetherSize / 2,
+                                color
+                        );
+                    }
+                } else {
+                    mAnchorTooClose[i] = true;
+                }
+            }
         } else {
             drawTethers(canvas);
         }
@@ -440,6 +496,8 @@ public class Clearing
                         (float) mTransExtremities[0][1],
                         mLabelPlatformPaint
                 );
+            } else {
+                mAnchorTooClose[0] = true;
             }
 
             float diffExtremityBx = mPlatformCoordinates[0] - (float) mTransExtremities[index1][0];
@@ -458,6 +516,8 @@ public class Clearing
                         (float) mTransExtremities[index1][1],
                         mLabelPlatformPaint
                 );
+            } else {
+                mAnchorTooClose[1] = true;
             }
 
             float diffExtremityCx = mPlatformCoordinates[0] - (float) mTransExtremities[index2][0];
@@ -475,6 +535,30 @@ public class Clearing
                         (float) mTransExtremities[index2][0],
                         (float) mTransExtremities[index2][1],
                         mLabelPlatformPaint
+                );
+            } else {
+                mAnchorTooClose[2] = true;
+            }
+        }
+    }
+
+    private void drawTooClose(Canvas canvas) {
+        for (int i = 0; i < 3; i++) {
+            if (mAnchorTooClose[i]) {
+                float offset = metersToPixels() / 3.0f;
+                canvas.drawLine(
+                        (float) (mTethers[i][0] - offset),
+                        (float) (mTethers[i][1] + offset),
+                        (float) (mTethers[i][0] + offset),
+                        (float) (mTethers[i][1] - offset),
+                        mTetherPaintTooClose
+                );
+                canvas.drawLine(
+                        (float) (mTethers[i][0] - offset),
+                        (float) (mTethers[i][1] - offset),
+                        (float) (mTethers[i][0] + offset),
+                        (float) (mTethers[i][1] + offset),
+                        mTetherPaintTooClose
                 );
             }
         }
@@ -586,6 +670,7 @@ public class Clearing
     public void setPlatformDrawPath(Platform platform) {
         mPlatformPath = platform.getPath();
         mPlatformExtremities = platform.getTetherPoints();
+        mStrapLength = platform.getStrapLength();
     }
 
     public void rotatePlatform() {

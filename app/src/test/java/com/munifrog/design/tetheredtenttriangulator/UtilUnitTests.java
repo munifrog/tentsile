@@ -10,6 +10,8 @@ import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.MATH_SQU
 import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.MATH_SQUARE_ROOT_OF_SEVEN;
 import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.MATH_SQUARE_ROOT_OF_THIRTEEN;
 import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.MATH_SQUARE_ROOT_OF_NINETEEN;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.STRAP_DEFAULT;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.STRAP_EXTENSION;
 import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TETHERS_EQUILATERAL;
 import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TETHERS_ISOSCELES;
 import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TETHERS_SCALENE;
@@ -224,5 +226,148 @@ public class UtilUnitTests {
         assertArrayEquals(expected[1], actual[1], ALLOWANCE_DELTA_TWO);
         assertArrayEquals(expected[2], actual[2], ALLOWANCE_DELTA_TWO);
         assertArrayEquals(expected[3], actual[3], ALLOWANCE_DELTA_TWO);
+    }
+
+    @Test
+    public void getTetherKnots_x_isWorking() {
+        double pixelsToMetersConversion = 0.01;
+
+        // X-Axis
+        double startX = 50;
+        double startY = 50;
+        double finishX = 1310; // expecting 50 + 30 + 600 + 600 + 30
+        double finishY = 50;
+
+        float[][] results = Util.getTetherKnots(
+                pixelsToMetersConversion,
+                startX, startY,
+                finishX, finishY,
+                STRAP_DEFAULT, STRAP_EXTENSION
+        );
+
+        assertEquals(5, results.length);
+        float[][] expected = { { 50, 50 }, { 80.48f, 50 }, { 680.48f, 50 }, { 1280.48f, 50 }, { 1310, 50} };
+        assertArrayEquals(expected[0], results[0], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[1], results[1], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[2], results[2], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[3], results[3], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[4], results[4], (float) ALLOWANCE_DELTA_TWO);
+    }
+
+    @Test
+    public void getTetherKnots_y_isWorking() {
+        double pixelsToMetersConversion = 0.01;
+
+        // Y-Axis
+        double startX = 50;
+        double startY = 50;
+        double finishX = 50;
+        double finishY = 710; // expecting 50 + 30 + 600 + 30
+
+        float[][] results = Util.getTetherKnots(
+                pixelsToMetersConversion,
+                startX, startY,
+                finishX, finishY,
+                STRAP_DEFAULT, STRAP_EXTENSION
+        );
+
+        assertEquals(4, results.length);
+        float[][] expected = { { 50, 50 }, { 50, 80.48f }, { 50, 680.48f }, { 50, 710 } };
+        assertArrayEquals(expected[0], results[0], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[1], results[1], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[2], results[2], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[3], results[3], (float) ALLOWANCE_DELTA_TWO);
+    }
+
+    @Test
+    public void getTetherKnots_45_isWorking() {
+        double pixelsToMetersConversion = 0.01;
+
+        double startX = 50;
+        double startY = 50;
+        double finishX = 516; // 50 + 21.1 + 424.3 + 21.2
+        double finishY = 516;
+
+        float[][] results = Util.getTetherKnots(
+                pixelsToMetersConversion,
+                startX, startY,
+                finishX, finishY,
+                STRAP_DEFAULT, STRAP_EXTENSION
+        );
+
+        assertEquals(4, results.length);
+        float[][] expected = { { 50, 50 }, { 71.55f, 71.55f }, { 495.81f, 495.81f }, { 516, 516 } };
+        assertArrayEquals(expected[0], results[0], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[1], results[1], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[2], results[2], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[3], results[3], (float) ALLOWANCE_DELTA_TWO);
+    }
+
+    @Test
+    public void getTetherKnots_135_isWorking() {
+        double pixelsToMetersConversion = 0.01;
+
+        double startX = 50;
+        double startY = 516;
+        double finishX = 516; // 50 + 21.2 + 424.3 + 21.2
+        double finishY = 50;
+
+        float[][] results = Util.getTetherKnots(
+                pixelsToMetersConversion,
+                startX, startY,
+                finishX, finishY,
+                STRAP_DEFAULT, STRAP_EXTENSION
+        );
+
+        assertEquals(4, results.length);
+        float[][] expected = { { 50, 516 }, { 71.55f, 494.45f }, { 495.81f, 70.18f }, { 516, 50 } };
+        assertArrayEquals(expected[0], results[0], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[1], results[1], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[2], results[2], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[3], results[3], (float) ALLOWANCE_DELTA_TWO);
+    }
+
+    @Test
+    public void getTetherKnots_135_in_range_isWorking() {
+        double pixelsToMetersConversion = 0.01;
+
+        double startX = 50;
+        double startY = 490;
+        double finishX = 490; // 50 + 21.2 + 418.8
+        double finishY = 50;
+
+        float[][] results = Util.getTetherKnots(
+                pixelsToMetersConversion,
+                startX, startY,
+                finishX, finishY,
+                STRAP_DEFAULT, STRAP_EXTENSION
+        );
+
+        assertEquals(3, results.length);
+        float[][] expected = { { 50, 490 }, { 71.55f, 468.45f }, { 490, 50 } };
+        assertArrayEquals(expected[0], results[0], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[1], results[1], (float) ALLOWANCE_DELTA_TWO);
+        assertArrayEquals(expected[2], results[2], (float) ALLOWANCE_DELTA_TWO);
+    }
+
+    @Test
+    public void getTetherKnots_45_too_close_isWorking() {
+        double pixelsToMetersConversion = 0.01;
+
+        double startX = 50;
+        double startY = 50;
+        double finishX = 70; // 50 + 20
+        double finishY = 70;
+
+        float[][] results = Util.getTetherKnots(
+                pixelsToMetersConversion,
+                startX, startY,
+                finishX, finishY,
+                STRAP_DEFAULT, STRAP_EXTENSION
+        );
+
+        assertEquals(1, results.length);
+        float[][] expected = { { 50, 50 } };
+        assertArrayEquals(expected[0], results[0], (float) ALLOWANCE_DELTA_TWO);
     }
 }

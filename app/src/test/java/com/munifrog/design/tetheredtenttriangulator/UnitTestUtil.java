@@ -16,6 +16,10 @@ class UnitTestUtil {
     static final float[][] TETHERS_ISOSCELES = UnitTestUtil.getIsosceles();
     static final float[][] TETHERS_SCALENE = UnitTestUtil.getScalene();
 
+    static final double STRAP_EXTENSION = 6;
+    static final double STRAP_DEFAULT = 6;
+    static final double STRAP_UNA = 4;
+
     private static float[][] getEquilateral() {
         float[][] tethers = new float[3][2];
         float[] center = { (float) MATH_CENTER_X, (float) MATH_CENTER_Y };
