@@ -12,6 +12,8 @@ struct ContentView: View {
         VStack {
             PlatformPicker(platform: .stingray)
             HSlider()
+            Spacer()
+            Clearing()
         }
     }
 }

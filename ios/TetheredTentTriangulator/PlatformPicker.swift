@@ -29,12 +29,11 @@ struct PlatformPicker: View {
     var body: some View {
         HStack {
             Picker("\(platform.rawValue)", selection: $platform) {
-                ForEach(Platform.allCases.reversed()) { p in
+                ForEach(Platform.allCases) { p in
                     Text(p.rawValue).tag(p)
                 }
             }
         }
-        .padding()
         .pickerStyle(MenuPickerStyle())
     }
 }
