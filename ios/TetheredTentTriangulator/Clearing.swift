@@ -9,6 +9,7 @@ import SwiftUI
 
 struct Clearing: View {
     @State var touchPoint = CGPoint(x:0, y:0)
+    @State var configuration = Configuration()
 
     var body: some View {
         Rectangle()
@@ -35,6 +36,9 @@ struct Clearing: View {
                     .frame(width: 15, height: 15, alignment: .center)
                     .position(touchPoint)
                 )
+            .overlay(
+                AnchorView(anchors: configuration.anchors)
+            )
     }
 }
 

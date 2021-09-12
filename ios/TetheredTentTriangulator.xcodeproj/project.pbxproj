@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8E0C686C26EDAB41003EE614 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C686B26EDAB41003EE614 /* Configuration.swift */; };
+		8E0C686E26EDAB68003EE614 /* Anchors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C686D26EDAB68003EE614 /* Anchors.swift */; };
+		8E0C687026EDABB6003EE614 /* Coordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C686F26EDABB6003EE614 /* Coordinate.swift */; };
+		8E0C687226EE9010003EE614 /* AnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C687126EE9010003EE614 /* AnchorView.swift */; };
 		8E8C065B26E5797400F47062 /* TetheredTentTriangulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C065A26E5797400F47062 /* TetheredTentTriangulatorApp.swift */; };
 		8E8C065D26E5797400F47062 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C065C26E5797400F47062 /* ContentView.swift */; };
 		8E8C065F26E5797600F47062 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E8C065E26E5797600F47062 /* Assets.xcassets */; };
@@ -36,6 +40,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8E0C686B26EDAB41003EE614 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
+		8E0C686D26EDAB68003EE614 /* Anchors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Anchors.swift; sourceTree = "<group>"; };
+		8E0C686F26EDABB6003EE614 /* Coordinate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinate.swift; sourceTree = "<group>"; };
+		8E0C687126EE9010003EE614 /* AnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorView.swift; sourceTree = "<group>"; };
 		8E8C065726E5797400F47062 /* TetheredTentTriangulator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TetheredTentTriangulator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E8C065A26E5797400F47062 /* TetheredTentTriangulatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TetheredTentTriangulatorApp.swift; sourceTree = "<group>"; };
 		8E8C065C26E5797400F47062 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -104,6 +112,10 @@
 				8E8C065A26E5797400F47062 /* TetheredTentTriangulatorApp.swift */,
 				8E8C065C26E5797400F47062 /* ContentView.swift */,
 				8E8C068926E65EC200F47062 /* Clearing.swift */,
+				8E0C687126EE9010003EE614 /* AnchorView.swift */,
+				8E0C686D26EDAB68003EE614 /* Anchors.swift */,
+				8E0C686F26EDABB6003EE614 /* Coordinate.swift */,
+				8E0C686B26EDAB41003EE614 /* Configuration.swift */,
 				8E8C068526E57EF100F47062 /* HSlider.swift */,
 				8E8C068726E5814A00F47062 /* PlatformPicker.swift */,
 				8E8C065E26E5797600F47062 /* Assets.xcassets */,
@@ -268,11 +280,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E0C686C26EDAB41003EE614 /* Configuration.swift in Sources */,
+				8E0C686E26EDAB68003EE614 /* Anchors.swift in Sources */,
 				8E8C065D26E5797400F47062 /* ContentView.swift in Sources */,
+				8E0C687026EDABB6003EE614 /* Coordinate.swift in Sources */,
 				8E8C068626E57EF100F47062 /* HSlider.swift in Sources */,
 				8E8C068826E5814A00F47062 /* PlatformPicker.swift in Sources */,
 				8E8C065B26E5797400F47062 /* TetheredTentTriangulatorApp.swift in Sources */,
 				8E8C068A26E65EC200F47062 /* Clearing.swift in Sources */,
+				8E0C687226EE9010003EE614 /* AnchorView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
