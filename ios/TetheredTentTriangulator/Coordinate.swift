@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Coordinate {
     var x: Float
@@ -16,8 +17,23 @@ struct Coordinate {
         self.y = y
     }
 
+    init(x: CGFloat, y: CGFloat) {
+        self.x = Float(x)
+        self.y = Float(y)
+    }
+
     init(x: Double, y: Double) {
         self.x = Float(x)
         self.y = Float(y)
+    }
+
+    init(coordinate: Coordinate) {
+        self.x = coordinate.x
+        self.y = coordinate.y
+    }
+
+    init(coordinate: CGPoint) {
+        self.x = Float(coordinate.x)
+        self.y = Float(coordinate.y)
     }
 }
