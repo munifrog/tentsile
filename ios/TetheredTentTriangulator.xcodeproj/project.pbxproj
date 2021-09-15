@@ -11,6 +11,7 @@
 		8E0C686E26EDAB68003EE614 /* Anchors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C686D26EDAB68003EE614 /* Anchors.swift */; };
 		8E0C687026EDABB6003EE614 /* Coordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C686F26EDABB6003EE614 /* Coordinate.swift */; };
 		8E0C687226EE9010003EE614 /* AnchorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C687126EE9010003EE614 /* AnchorView.swift */; };
+		8E0C687426F19AAF003EE614 /* Perimeter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C687326F19AAF003EE614 /* Perimeter.swift */; };
 		8E8C065B26E5797400F47062 /* TetheredTentTriangulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C065A26E5797400F47062 /* TetheredTentTriangulatorApp.swift */; };
 		8E8C065D26E5797400F47062 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C065C26E5797400F47062 /* ContentView.swift */; };
 		8E8C065F26E5797600F47062 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E8C065E26E5797600F47062 /* Assets.xcassets */; };
@@ -44,6 +45,7 @@
 		8E0C686D26EDAB68003EE614 /* Anchors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Anchors.swift; sourceTree = "<group>"; };
 		8E0C686F26EDABB6003EE614 /* Coordinate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinate.swift; sourceTree = "<group>"; };
 		8E0C687126EE9010003EE614 /* AnchorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorView.swift; sourceTree = "<group>"; };
+		8E0C687326F19AAF003EE614 /* Perimeter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Perimeter.swift; sourceTree = "<group>"; };
 		8E8C065726E5797400F47062 /* TetheredTentTriangulator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TetheredTentTriangulator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E8C065A26E5797400F47062 /* TetheredTentTriangulatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TetheredTentTriangulatorApp.swift; sourceTree = "<group>"; };
 		8E8C065C26E5797400F47062 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 				8E8C065A26E5797400F47062 /* TetheredTentTriangulatorApp.swift */,
 				8E8C065C26E5797400F47062 /* ContentView.swift */,
 				8E8C068926E65EC200F47062 /* Clearing.swift */,
+				8E0C687326F19AAF003EE614 /* Perimeter.swift */,
 				8E0C687126EE9010003EE614 /* AnchorView.swift */,
 				8E0C686D26EDAB68003EE614 /* Anchors.swift */,
 				8E0C686F26EDABB6003EE614 /* Coordinate.swift */,
@@ -281,6 +284,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E0C686C26EDAB41003EE614 /* Configuration.swift in Sources */,
+				8E0C687426F19AAF003EE614 /* Perimeter.swift in Sources */,
 				8E0C686E26EDAB68003EE614 /* Anchors.swift in Sources */,
 				8E8C065D26E5797400F47062 /* ContentView.swift in Sources */,
 				8E0C687026EDABB6003EE614 /* Coordinate.swift in Sources */,

@@ -49,6 +49,7 @@ struct Clearing: View {
                     .frame(width: 15, height: 15, alignment: .center)
                     .position(touchPoint)
                 )
+            .overlay(Perimeter(anchors: configuration.anchors))
             .overlay(AnchorView(anchors: configuration.anchors))
     }
 }
