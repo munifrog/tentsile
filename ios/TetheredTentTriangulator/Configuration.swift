@@ -18,15 +18,22 @@ enum Select {
 
 struct Configuration {
     var anchors: Anchors
+    var util: Util
+    var center: TetherCenter?
+
     private var selection: Select = .none
     private var radiusSquared: Float = 225
 
     init() {
         self.anchors = Anchors()
+        self.util = Util()
+        self.center = util.getTetherCenter(self.anchors)
     }
 
     init(anchors: Anchors) {
         self.anchors = anchors
+        self.util = Util()
+        self.center = util.getTetherCenter(self.anchors)
     }
 
     mutating func endSelection() {
@@ -39,12 +46,15 @@ struct Configuration {
         case .anchor_a:
             self.anchors.a.x = coordinate.x
             self.anchors.a.y = coordinate.y
+            self.center = util.getTetherCenter(self.anchors)
         case .anchor_b:
             self.anchors.b.x = coordinate.x
             self.anchors.b.y = coordinate.y
+            self.center = util.getTetherCenter(self.anchors)
         case .anchor_c:
             self.anchors.c.x = coordinate.x
             self.anchors.c.y = coordinate.y
+            self.center = util.getTetherCenter(self.anchors)
         case .missed:
             // Do nothing
             break

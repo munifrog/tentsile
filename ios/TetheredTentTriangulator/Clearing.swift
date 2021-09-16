@@ -50,6 +50,7 @@ struct Clearing: View {
                     .position(touchPoint)
                 )
             .overlay(Perimeter(anchors: configuration.anchors))
+            .overlay(TetherView(config: configuration))
             .overlay(PerimeterLabels(anchors: configuration.anchors))
             .overlay(AnchorView(anchors: configuration.anchors))
     }
