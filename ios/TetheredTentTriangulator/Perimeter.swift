@@ -8,31 +8,29 @@
 import SwiftUI
 
 struct Perimeter: View {
-    var anchors: Anchors
+    var config: Configuration
 
     var body: some View {
-        let screenSize = UIScreen.main.bounds
-        let halfWidth: Float = Float(screenSize.width) / 2.0
-        let halfHeight: Float = Float(screenSize.height) / 2.0
+        let limits = config.getLimits()
         Rectangle()
             .foregroundColor(.clear)
             .aspectRatio(0.66667, contentMode: .fit)
             .overlay(Path() { path in
                 path.move(to: CGPoint(
-                    x: CGFloat(halfWidth + anchors.a.x),
-                    y: CGFloat(halfHeight + anchors.a.y)
+                    x: CGFloat(limits.x + config.anchors.a.x),
+                    y: CGFloat(limits.y + config.anchors.a.y)
                 ))
                 path.addLine(to: CGPoint(
-                    x: CGFloat(halfWidth + anchors.b.x),
-                    y: CGFloat(halfHeight + anchors.b.y)
+                    x: CGFloat(limits.x + config.anchors.b.x),
+                    y: CGFloat(limits.y + config.anchors.b.y)
                 ))
                 path.addLine(to: CGPoint(
-                    x: CGFloat(halfWidth + anchors.c.x),
-                    y: CGFloat(halfHeight + anchors.c.y)
+                    x: CGFloat(limits.x + config.anchors.c.x),
+                    y: CGFloat(limits.y + config.anchors.c.y)
                 ))
                 path.addLine(to: CGPoint(
-                    x: CGFloat(halfWidth + anchors.a.x),
-                    y: CGFloat(halfHeight + anchors.a.y)
+                    x: CGFloat(limits.x + config.anchors.a.x),
+                    y: CGFloat(limits.y + config.anchors.a.y)
                 ))
             }.stroke(style: StrokeStyle(lineWidth: 3, dash: [18,6,3,6]))
             .foregroundColor(Color("Perimeter"))
@@ -42,6 +40,6 @@ struct Perimeter: View {
 
 struct Perimeter_Previews: PreviewProvider {
     static var previews: some View {
-        Perimeter(anchors: Anchors())
+        Perimeter(config: Configuration(anchors: Anchors()))
     }
 }

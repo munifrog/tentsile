@@ -12,36 +12,34 @@ struct TetherView: View {
 
     var body: some View {
         if let center = config.center {
-            let screenSize = UIScreen.main.bounds
-            let halfWidth: Float = Float(screenSize.width) / 2.0
-            let halfHeight: Float = Float(screenSize.height) / 2.0
+            let limits = config.getLimits()
             Rectangle()
                 .foregroundColor(.clear)
                 .aspectRatio(0.66667, contentMode: .fit)
                 .overlay(Path() { path in
                     path.move(to: CGPoint(
-                        x: CGFloat(halfWidth + center.p.x),
-                        y: CGFloat(halfHeight + center.p.y)
+                        x: CGFloat(limits.x + center.p.x),
+                        y: CGFloat(limits.y + center.p.y)
                     ))
                     path.addLine(to: CGPoint(
-                        x: CGFloat(halfWidth + config.anchors.a.x),
-                        y: CGFloat(halfHeight + config.anchors.a.y)
+                        x: CGFloat(limits.x + config.anchors.a.x),
+                        y: CGFloat(limits.y + config.anchors.a.y)
                     ))
                     path.move(to: CGPoint(
-                        x: CGFloat(halfWidth + center.p.x),
-                        y: CGFloat(halfHeight + center.p.y)
+                        x: CGFloat(limits.x + center.p.x),
+                        y: CGFloat(limits.y + center.p.y)
                     ))
                     path.addLine(to: CGPoint(
-                        x: CGFloat(halfWidth + config.anchors.b.x),
-                        y: CGFloat(halfHeight + config.anchors.b.y)
+                        x: CGFloat(limits.x + config.anchors.b.x),
+                        y: CGFloat(limits.y + config.anchors.b.y)
                     ))
                     path.move(to: CGPoint(
-                        x: CGFloat(halfWidth + center.p.x),
-                        y: CGFloat(halfHeight + center.p.y)
+                        x: CGFloat(limits.x + center.p.x),
+                        y: CGFloat(limits.y + center.p.y)
                     ))
                     path.addLine(to: CGPoint(
-                        x: CGFloat(halfWidth + config.anchors.c.x),
-                        y: CGFloat(halfHeight + config.anchors.c.y)
+                        x: CGFloat(limits.x + config.anchors.c.x),
+                        y: CGFloat(limits.y + config.anchors.c.y)
                     ))
                 }.stroke(style: StrokeStyle(lineWidth: 3))
                 .foregroundColor(Color("TetherProvided"))

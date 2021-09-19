@@ -23,17 +23,28 @@ struct Configuration {
 
     private var selection: Select = .none
     private var radiusSquared: Float = 225
+    private var limits: Coordinate
 
     init() {
         self.anchors = Anchors()
         self.util = Util()
         self.center = util.getTetherCenter(self.anchors)
+        self.limits = Coordinate(x: 0.0, y: 0.0)
     }
 
     init(anchors: Anchors) {
         self.anchors = anchors
         self.util = Util()
         self.center = util.getTetherCenter(self.anchors)
+        self.limits = Coordinate(x: 0.0, y: 0.0)
+    }
+
+    mutating func setLimits(screen: Coordinate) {
+        self.limits = screen
+    }
+
+    func getLimits() -> Coordinate {
+        return self.limits
     }
 
     mutating func endSelection() {

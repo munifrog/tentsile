@@ -36,4 +36,22 @@ struct Coordinate {
         self.x = Float(coordinate.x)
         self.y = Float(coordinate.y)
     }
+
+    // Unary operator: -coord
+    static prefix func - (coord: Coordinate) -> Coordinate {
+        return Coordinate(x: -coord.x, y: -coord.y)
+    }
+
+    static func - (left: Coordinate, right: Coordinate) -> Coordinate {
+        return Coordinate(x: left.x - right.x, y: left.y - right.y)
+    }
+
+    static func + (left: Coordinate, right: Coordinate) -> Coordinate {
+        return Coordinate(x: left.x + right.x, y: left.y + right.y)
+    }
+
+    static func += (left: inout Coordinate, right: Coordinate) {
+        left.x = left.x + right.x
+        left.y = left.y + right.y
+    }
 }

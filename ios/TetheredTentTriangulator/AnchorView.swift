@@ -8,15 +8,13 @@
 import SwiftUI
 
 struct AnchorView: View {
-    var anchors: Anchors
+    var config: Configuration
 
     private let diamFree: CGFloat = 15
     private let diamSelected: CGFloat = 30
 
     var body: some View {
-        let screenSize = UIScreen.main.bounds
-        let halfWidth: Float = Float(screenSize.width) / 2.0
-        let halfHeight: Float = Float(screenSize.height) / 2.0
+        let limits = config.getLimits()
 
         Rectangle()
             .foregroundColor(.clear)
@@ -26,8 +24,8 @@ struct AnchorView: View {
                     .fill(Color.green)
                     .frame(width: diamFree, height: diamFree, alignment: .center)
                     .position(
-                        x: CGFloat(halfWidth + anchors.a.x),
-                        y: CGFloat(halfHeight + anchors.a.y)
+                        x: CGFloat(limits.x + config.anchors.a.x),
+                        y: CGFloat(limits.y + config.anchors.a.y)
                     )
                 )
             .overlay(
@@ -35,8 +33,8 @@ struct AnchorView: View {
                     .fill(Color.green)
                     .frame(width: diamFree, height: diamFree, alignment: .center)
                     .position(
-                        x: CGFloat(halfWidth + anchors.b.x),
-                        y: CGFloat(halfHeight + anchors.b.y)
+                        x: CGFloat(limits.x + config.anchors.b.x),
+                        y: CGFloat(limits.y + config.anchors.b.y)
                     )
                 )
             .overlay(
@@ -44,8 +42,8 @@ struct AnchorView: View {
                     .fill(Color.green)
                     .frame(width: diamFree, height: diamFree, alignment: .center)
                     .position(
-                        x: CGFloat(halfWidth + anchors.c.x),
-                        y: CGFloat(halfHeight + anchors.c.y)
+                        x: CGFloat(limits.x + config.anchors.c.x),
+                        y: CGFloat(limits.y + config.anchors.c.y)
                     )
                 )
     }
@@ -53,6 +51,6 @@ struct AnchorView: View {
 
 struct AnchorView_Previews: PreviewProvider {
     static var previews: some View {
-        AnchorView(anchors: Anchors())
+        AnchorView(config: Configuration(anchors: Anchors()))
     }
 }

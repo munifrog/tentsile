@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct Clearing: View {
+    @State var dimensions = CGPoint(x:0, y:0)
     @State var touchPoint = CGPoint(x:0, y:0)
     @State var configuration = Configuration()
 
@@ -15,16 +16,9 @@ struct Clearing: View {
         // https://stackoverflow.com/a/60219793
         DragGesture(minimumDistance: 0)
             .onChanged({ touch in
-                let screenSize = UIScreen.main.bounds
-                let halfWidth: CGFloat = screenSize.width / 2.0
-                let halfHeight: CGFloat = screenSize.height / 2.0
-
                 self.touchPoint = touch.location
                 self.configuration.updateSelection(
-                    coordinate: Coordinate(
-                        x: touch.location.x - halfWidth,
-                        y: touch.location.y - halfHeight
-                    )
+                    touch: touchPoint - dimensions
                 )
             })
             .onEnded({ touch in
@@ -37,6 +31,12 @@ struct Clearing: View {
         Rectangle()
             .aspectRatio(0.66667, contentMode: .fit)
             .foregroundColor(Color("Clearing"))
+            .measureSize(perform: {
+                self.dimensions = $0 / 2
+                configuration.setLimits(
+                    screen: Coordinate(coordinate: dimensions)
+                )
+            })
             .gesture(touches)
             .overlay(
                 Text("(\(Int(touchPoint.x)), \(Int(touchPoint.y)))")
@@ -49,10 +49,10 @@ struct Clearing: View {
                     .frame(width: 15, height: 15, alignment: .center)
                     .position(touchPoint)
                 )
-            .overlay(Perimeter(anchors: configuration.anchors))
+            .overlay(Perimeter(config: configuration))
             .overlay(TetherView(config: configuration))
-            .overlay(PerimeterLabels(anchors: configuration.anchors))
-            .overlay(AnchorView(anchors: configuration.anchors))
+            .overlay(PerimeterLabels(config: configuration))
+            .overlay(AnchorView(config: configuration))
     }
 }
 

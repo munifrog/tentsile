@@ -8,40 +8,38 @@
 import SwiftUI
 
 struct PerimeterLabels: View {
-    var anchors: Anchors
+    var config: Configuration
 
     var body: some View {
-        let screenSize = UIScreen.main.bounds
-        let halfWidth: Float = Float(screenSize.width) / 2.0
-        let halfHeight: Float = Float(screenSize.height) / 2.0
+        let limits = config.getLimits()
         Rectangle()
             .foregroundColor(.clear)
             .aspectRatio(0.66667, contentMode: .fit)
             .overlay(
-                Text(String(format: "%3.1f", self.anchors.ab))
+                Text(String(format: "%3.1f", config.anchors.ab))
                     .font(.title)
                     .colorInvert()
                     .position(
-                        x: CGFloat(halfWidth + (self.anchors.a.x + self.anchors.b.x) / 2),
-                        y: CGFloat(halfHeight + (self.anchors.a.y + self.anchors.b.y) / 2)
+                        x: CGFloat(limits.x + (config.anchors.a.x + config.anchors.b.x) / 2),
+                        y: CGFloat(limits.y + (config.anchors.a.y + config.anchors.b.y) / 2)
                     )
             )
             .overlay(
-                Text(String(format: "%3.1f", self.anchors.bc))
+                Text(String(format: "%3.1f", config.anchors.bc))
                     .font(.title)
                     .colorInvert()
                     .position(
-                        x: CGFloat(halfWidth + (self.anchors.b.x + self.anchors.c.x) / 2),
-                        y: CGFloat(halfHeight + (self.anchors.b.y + self.anchors.c.y) / 2)
+                        x: CGFloat(limits.x + (config.anchors.b.x + config.anchors.c.x) / 2),
+                        y: CGFloat(limits.y + (config.anchors.b.y + config.anchors.c.y) / 2)
                     )
             )
             .overlay(
-                Text(String(format: "%3.1f", self.anchors.ca))
+                Text(String(format: "%3.1f", config.anchors.ca))
                     .font(.title)
                     .colorInvert()
                     .position(
-                        x: CGFloat(halfWidth + (self.anchors.c.x + self.anchors.a.x) / 2),
-                        y: CGFloat(halfHeight + (self.anchors.c.y + self.anchors.a.y) / 2)
+                        x: CGFloat(limits.x + (config.anchors.c.x + config.anchors.a.x) / 2),
+                        y: CGFloat(limits.y + (config.anchors.c.y + config.anchors.a.y) / 2)
                     )
             )
     }
@@ -49,6 +47,6 @@ struct PerimeterLabels: View {
 
 struct PerimeterLabels_Previews: PreviewProvider {
     static var previews: some View {
-        PerimeterLabels(anchors: Anchors())
+        PerimeterLabels(config: Configuration(anchors: Anchors()))
     }
 }
