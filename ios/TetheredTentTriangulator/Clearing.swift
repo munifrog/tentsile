@@ -37,7 +37,6 @@ struct Clearing: View {
                     screen: Coordinate(coordinate: dimensions)
                 )
             })
-            .gesture(touches)
             .overlay(
                 Text("(\(Int(touchPoint.x)), \(Int(touchPoint.y)))")
                     .font(.title)
@@ -53,6 +52,7 @@ struct Clearing: View {
             .overlay(TetherView(config: configuration))
             .overlay(PerimeterLabels(config: configuration))
             .overlay(AnchorView(config: configuration))
+            .gesture(touches)
     }
 }
 
