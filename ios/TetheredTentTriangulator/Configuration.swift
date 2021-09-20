@@ -72,6 +72,10 @@ struct Configuration {
         self.resetInitialPositions()
     }
 
+    func getSelection() -> Select {
+        return self.selection
+    }
+
     mutating func updateSelection(touch: Coordinate) {
         // When already selected, allow the selected point to be updated with the new location
         switch selection {
