@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct Clearing: View {
-    @State var dimensions = CGPoint(x:0, y:0)
-    @State var touchPoint = CGPoint(x:0, y:0)
-    @State var configuration = Configuration()
+    @Binding var configuration: Configuration
+
+    @State private var dimensions = CGPoint(x:0, y:0)
+    @State private var touchPoint = CGPoint(x:0, y:0)
 
     var touches: some Gesture {
         // https://stackoverflow.com/a/60219793
@@ -29,7 +30,7 @@ struct Clearing: View {
 
     var body: some View {
         Rectangle()
-            .aspectRatio(0.66667, contentMode: .fit)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             .foregroundColor(Color("Clearing"))
             .measureSize(perform: {
                 self.dimensions = $0 / 2
@@ -58,6 +59,6 @@ struct Clearing: View {
 
 struct Clearing_Previews: PreviewProvider {
     static var previews: some View {
-        Clearing()
+        Clearing(configuration: .constant(Configuration(anchors: Anchors())))
     }
 }

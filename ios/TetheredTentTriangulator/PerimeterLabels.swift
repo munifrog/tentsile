@@ -14,7 +14,6 @@ struct PerimeterLabels: View {
         let limits = config.getLimits()
         Rectangle()
             .foregroundColor(.clear)
-            .aspectRatio(0.66667, contentMode: .fit)
             .overlay(
                 Text(String(format: "%3.1f", config.anchors.ab))
                     .font(.title)

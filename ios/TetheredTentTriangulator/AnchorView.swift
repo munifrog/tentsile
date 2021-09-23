@@ -23,7 +23,6 @@ struct AnchorView: View {
 
         Rectangle()
             .foregroundColor(.clear)
-            .aspectRatio(0.66667, contentMode: .fit)
             .overlay(
                 Circle()
                     .fill(Color.green)

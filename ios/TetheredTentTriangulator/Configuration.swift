@@ -16,10 +16,16 @@ enum Select {
     case point
 }
 
+enum Units {
+    case imperial
+    case metric
+}
+
 struct Configuration {
     var anchors: Anchors
-    var util: Util
     var center: TetherCenter?
+    var units: Units
+    var util: Util
 
     private var selection: Select = .none
     private var radiusSquared: Float = 225
@@ -31,6 +37,7 @@ struct Configuration {
 
     init() {
         self.anchors = Anchors()
+        self.units = .metric
         self.util = Util()
         self.center = util.getTetherCenter(self.anchors)
         self.limits = Coordinate(x: 0.0, y: 0.0)
@@ -39,6 +46,7 @@ struct Configuration {
 
     init(anchors: Anchors) {
         self.anchors = anchors
+        self.units = .metric
         self.util = Util()
         self.center = util.getTetherCenter(self.anchors)
         self.limits = Coordinate(x: 0.0, y: 0.0)
@@ -51,6 +59,11 @@ struct Configuration {
 
     func getLimits() -> Coordinate {
         return self.limits
+    }
+
+    mutating func resetAnchors() {
+        self.anchors = Anchors()
+        self.center = util.getTetherCenter(self.anchors)
     }
 
     mutating private func resetInitialPositions() {

@@ -14,7 +14,6 @@ struct Perimeter: View {
         let limits = config.getLimits()
         Rectangle()
             .foregroundColor(.clear)
-            .aspectRatio(0.66667, contentMode: .fit)
             .overlay(Path() { path in
                 path.move(to: CGPoint(
                     x: CGFloat(limits.x + config.anchors.a.x),
