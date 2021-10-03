@@ -15,31 +15,37 @@ struct PerimeterLabels: View {
         Rectangle()
             .foregroundColor(.clear)
             .overlay(
-                Text(String(format: "%3.1f", config.anchors.ab))
-                    .font(.title)
-                    .colorInvert()
-                    .position(
-                        x: CGFloat(limits.x + (config.anchors.a.x + config.anchors.b.x) / 2),
-                        y: CGFloat(limits.y + (config.anchors.a.y + config.anchors.b.y) / 2)
-                    )
+                LabelView(
+                    value: config.anchors.ab,
+                    offset_x: limits.x,
+                    offset_y: limits.y,
+                    a_x: config.anchors.a.x,
+                    a_y: config.anchors.a.y,
+                    b_x: config.anchors.b.x,
+                    b_y: config.anchors.b.y
+                )
             )
             .overlay(
-                Text(String(format: "%3.1f", config.anchors.bc))
-                    .font(.title)
-                    .colorInvert()
-                    .position(
-                        x: CGFloat(limits.x + (config.anchors.b.x + config.anchors.c.x) / 2),
-                        y: CGFloat(limits.y + (config.anchors.b.y + config.anchors.c.y) / 2)
-                    )
+                LabelView(
+                    value: config.anchors.bc,
+                    offset_x: limits.x,
+                    offset_y: limits.y,
+                    a_x: config.anchors.b.x,
+                    a_y: config.anchors.b.y,
+                    b_x: config.anchors.c.x,
+                    b_y: config.anchors.c.y
+                )
             )
             .overlay(
-                Text(String(format: "%3.1f", config.anchors.ca))
-                    .font(.title)
-                    .colorInvert()
-                    .position(
-                        x: CGFloat(limits.x + (config.anchors.c.x + config.anchors.a.x) / 2),
-                        y: CGFloat(limits.y + (config.anchors.c.y + config.anchors.a.y) / 2)
-                    )
+                LabelView(
+                    value: config.anchors.ca,
+                    offset_x: limits.x,
+                    offset_y: limits.y,
+                    a_x: config.anchors.c.x,
+                    a_y: config.anchors.c.y,
+                    b_x: config.anchors.a.x,
+                    b_y: config.anchors.a.y
+                )
             )
     }
 }
