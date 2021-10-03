@@ -24,32 +24,28 @@ enum Units {
 struct Configuration {
     var anchors: Anchors
     var center: TetherCenter?
-    var units: Units
-    var util: Util
+    var units: Units = .metric
+    var util: Util = Util()
+    var selection: Select = .none
+    var platform: Platform = .stingray
+    var path: PlatformPath = PlatformPath()
 
-    private var selection: Select = .none
     private var radiusSquared: Float = 225
     private var initial_p: Coordinate?
     private var initial_a: Coordinate?
     private var initial_b: Coordinate?
     private var initial_c: Coordinate?
-    private var limits: Coordinate
+    private var limits: Coordinate = Coordinate()
 
     init() {
         self.anchors = Anchors()
-        self.units = .metric
-        self.util = Util()
         self.center = util.getTetherCenter(self.anchors)
-        self.limits = Coordinate(x: 0.0, y: 0.0)
         self.resetInitialPositions()
     }
 
     init(anchors: Anchors) {
         self.anchors = anchors
-        self.units = .metric
-        self.util = Util()
         self.center = util.getTetherCenter(self.anchors)
-        self.limits = Coordinate(x: 0.0, y: 0.0)
         self.resetInitialPositions()
     }
 
@@ -83,10 +79,6 @@ struct Configuration {
     mutating func endSelection() {
         self.selection = .none
         self.resetInitialPositions()
-    }
-
-    func getSelection() -> Select {
-        return self.selection
     }
 
     mutating func updateSelection(touch: Coordinate) {

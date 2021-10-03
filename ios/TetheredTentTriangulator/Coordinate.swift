@@ -5,12 +5,16 @@
 //  Created by Karl Arthur on 9/11/21.
 //
 
-import Foundation
 import SwiftUI
 
 struct Coordinate {
     var x: Float
     var y: Float
+
+    init() {
+        self.x = 0
+        self.y = 0
+    }
 
     init(x: Float, y: Float) {
         self.x = x

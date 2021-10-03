@@ -15,7 +15,7 @@ struct AnchorView: View {
 
     var body: some View {
         let limits = config.getLimits()
-        let selection: Select = config.getSelection()
+        let selection: Select = config.selection
         let diamA = selection == .anchor_a ? diamSelected : diamFree
         let diamB = selection == .anchor_b ? diamSelected : diamFree
         let diamC = selection == .anchor_c ? diamSelected : diamFree
