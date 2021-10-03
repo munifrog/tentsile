@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TetherView: View {
-    let config: Configuration
+    @Binding var config: Configuration
 
     var body: some View {
         if let center = config.center {
@@ -49,6 +49,6 @@ struct TetherView: View {
 
 struct TetherView_Previews: PreviewProvider {
     static var previews: some View {
-        TetherView(config: Configuration(anchors: Anchors()))
+        TetherView(config: .constant(Configuration(anchors: Anchors())))
     }
 }

@@ -40,7 +40,7 @@ struct ContentView: View {
             PlatformPicker(platform: .stingray)
             HSlider()
             Spacer()
-            Clearing(configuration: $config)
+            Clearing(config: $config)
         }
         .background(Color("ThemeLight"))
     }

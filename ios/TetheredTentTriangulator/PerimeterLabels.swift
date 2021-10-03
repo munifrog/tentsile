@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PerimeterLabels: View {
-    var config: Configuration
+    @Binding var config: Configuration
 
     var body: some View {
         let limits = config.getLimits()
@@ -46,6 +46,6 @@ struct PerimeterLabels: View {
 
 struct PerimeterLabels_Previews: PreviewProvider {
     static var previews: some View {
-        PerimeterLabels(config: Configuration(anchors: Anchors()))
+        PerimeterLabels(config: .constant(Configuration(anchors: Anchors())))
     }
 }

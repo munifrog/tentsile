@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Clearing: View {
-    @Binding var configuration: Configuration
+    @Binding var config: Configuration
 
     @State private var dimensions = CGPoint(x:0, y:0)
     @State private var touchPoint = CGPoint(x:0, y:0)
@@ -18,13 +18,13 @@ struct Clearing: View {
         DragGesture(minimumDistance: 0)
             .onChanged({ touch in
                 self.touchPoint = touch.location
-                self.configuration.updateSelection(
+                self.config.updateSelection(
                     touch: touchPoint - dimensions
                 )
             })
             .onEnded({ touch in
                 self.touchPoint = touch.location
-                self.configuration.endSelection()
+                self.config.endSelection()
             })
     }
 
@@ -34,7 +34,7 @@ struct Clearing: View {
             .foregroundColor(Color("Clearing"))
             .measureSize(perform: {
                 self.dimensions = $0 / 2
-                configuration.setLimits(
+                config.setLimits(
                     screen: Coordinate(coordinate: dimensions)
                 )
             })
@@ -49,16 +49,17 @@ struct Clearing: View {
                     .frame(width: 15, height: 15, alignment: .center)
                     .position(touchPoint)
                 )
-            .overlay(Perimeter(config: configuration))
-            .overlay(TetherView(config: configuration))
-            .overlay(PerimeterLabels(config: configuration))
-            .overlay(AnchorView(config: configuration))
+            .overlay(Perimeter(config: $config))
+            .overlay(TetherView(config: $config))
+            .overlay(PlatformView(config: $config))
+            .overlay(PerimeterLabels(config: $config))
+            .overlay(AnchorView(config: $config))
             .gesture(touches)
     }
 }
 
 struct Clearing_Previews: PreviewProvider {
     static var previews: some View {
-        Clearing(configuration: .constant(Configuration(anchors: Anchors())))
+        Clearing(config: .constant(Configuration(anchors: Anchors())))
     }
 }

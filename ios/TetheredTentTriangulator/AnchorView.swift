@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AnchorView: View {
-    var config: Configuration
+    @Binding var config: Configuration
 
     private let diamFree: CGFloat = 15
     private let diamSelected: CGFloat = 30
@@ -70,6 +70,6 @@ struct AnchorView: View {
 
 struct AnchorView_Previews: PreviewProvider {
     static var previews: some View {
-        AnchorView(config: Configuration(anchors: Anchors()))
+        AnchorView(config: .constant(Configuration(anchors: Anchors())))
     }
 }
