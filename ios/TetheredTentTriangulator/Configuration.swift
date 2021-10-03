@@ -230,4 +230,62 @@ struct Configuration {
         self.anchors.b = initB + v + limitedV
         self.anchors.c = initC + v + limitedV
     }
+
+    mutating func getPath() -> [[Coordinate]] {
+        var groupings: [[Coordinate]]
+        switch platform {
+        case .connect:
+            groupings = path.connect
+        case .duo:
+            groupings = path.duo
+        case .flite:
+            groupings = path.flite
+        case .stingray:
+            groupings = path.stingray
+        case .t_mini:
+            groupings = path.t_mini
+        case .trillium:
+            groupings = path.trillium
+        case .trillium_xl:
+            groupings = path.trillium_xl
+        case .trilogy:
+            groupings = path.trilogy
+        case .una:
+            groupings = path.una
+        case .universe:
+            groupings = path.universe
+        case .vista:
+            groupings = path.vista
+        }
+        return groupings
+            .rotated(by: getRotation())
+            .scaled(by: getScale())
+            .translated(by: getTranslation())
+    }
+
+    mutating func getRotation() -> Float {
+        if let focus = center {
+            let delta = anchors.a - focus.p
+            let hypotenuse = sqrt(delta.x * delta.x + delta.y * delta.y)
+            return util.getDirection(h: hypotenuse, delta_x: delta.x, delta_y: delta.y)
+        } else {
+            return 0
+        }
+    }
+
+    mutating func getTranslation() -> Coordinate {
+        if let focus = center {
+            return getLimits() + focus.p
+        } else {
+            return Coordinate()
+        }
+    }
+
+    mutating func getScale() -> Float {
+        if let _ = center {
+            return 25
+        } else {
+            return 0
+        }
+    }
 }

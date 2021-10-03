@@ -94,7 +94,7 @@ class Util {
         }
     }
 
-    private func getDirection(h: Float, delta_x: Float, delta_y: Float) -> Float {
+    func getDirection(h: Float, delta_x: Float, delta_y: Float) -> Float {
         var angle = asin(delta_y / h)
         if (angle >= 0 && delta_x < 0) || (angle < 0 && delta_x < 0) {
             angle = .pi - angle
