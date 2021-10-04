@@ -37,7 +37,7 @@ struct ContentView: View {
             }
             .padding(.horizontal)
             .background(Color("ThemePrimary"))
-            PlatformPicker(platform: .stingray)
+            PlatformPicker(platform: $config.platform)
             HSlider()
             Spacer()
             Clearing(config: $config)

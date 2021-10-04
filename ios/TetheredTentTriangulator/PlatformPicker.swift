@@ -24,7 +24,7 @@ enum Platform: String, CaseIterable, Identifiable {
 }
 
 struct PlatformPicker: View {
-    @State var platform: Platform
+    @Binding var platform: Platform
 
     var body: some View {
         HStack {
@@ -40,6 +40,7 @@ struct PlatformPicker: View {
 
 struct PlatformPicker_Previews: PreviewProvider {
     static var previews: some View {
-        PlatformPicker(platform: .stingray)
+        let config = Configuration(anchors: Anchors())
+        PlatformPicker(platform: .constant(config.platform))
     }
 }
