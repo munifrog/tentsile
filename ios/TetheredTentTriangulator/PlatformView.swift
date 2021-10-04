@@ -14,6 +14,7 @@ struct PlatformView: View {
         HStack {
             if let _ = config.center {
                 config.getPath().asPathView()
+                    .foregroundColor(Color("Platform"))
             } else {
                 EmptyView()
             }
