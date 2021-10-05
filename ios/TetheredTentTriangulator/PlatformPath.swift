@@ -92,17 +92,12 @@ private func getTenstsileIsosceles(hypotenuse: Float, base: Float) -> [[Coordina
     let notch_x: Float = -TENTSILE_NOTCH_SCALE * measurements[2]
     let notch_y: Float = 0
 
-    var rightArray = [Coordinate]()
-    rightArray.append(Coordinate(x: point_x, y: point_y))
-    rightArray.append(Coordinate(x: notch_x, y: notch_y))
-    rightArray.append(Coordinate(x: barb_x, y: barb_y))
-    shapes.append(rightArray)
-
-    var leftArray = [Coordinate]()
-    leftArray.append(Coordinate(x: point_x, y: point_y))
-    leftArray.append(Coordinate(x: notch_x, y: notch_y))
-    leftArray.append(Coordinate(x: barb_x, y: -barb_y))
-    shapes.append(leftArray)
+    var path = [Coordinate]()
+    path.append(Coordinate(x: point_x, y: point_y))
+    path.append(Coordinate(x: barb_x, y: barb_y))
+    path.append(Coordinate(x: notch_x, y: notch_y))
+    path.append(Coordinate(x: barb_x, y: -barb_y))
+    shapes.append(path)
 
     return shapes
 }
