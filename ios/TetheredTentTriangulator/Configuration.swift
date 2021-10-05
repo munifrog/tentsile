@@ -24,11 +24,12 @@ enum Units {
 struct Configuration {
     var anchors: Anchors
     var center: TetherCenter?
+    var path: PlatformPath = PlatformPath()
+    var platform: Platform = .stingray
+    var scale: Float = 25.0
+    var selection: Select = .none
     var units: Units = .metric
     var util: Util = Util()
-    var selection: Select = .none
-    var platform: Platform = .stingray
-    var path: PlatformPath = PlatformPath()
 
     private var radiusSquared: Float = 225
     private var initial_p: Coordinate?
@@ -283,7 +284,7 @@ struct Configuration {
 
     mutating func getScale() -> Float {
         if let _ = center {
-            return 25
+            return scale
         } else {
             return 0
         }

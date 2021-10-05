@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HSlider: View {
-    @State private var position = 25.0
+    @Binding var position: Float
     @State private var isEditing = false
 
     var body: some View {
@@ -29,6 +29,6 @@ struct HSlider: View {
 
 struct HSlider_Previews: PreviewProvider {
     static var previews: some View {
-        HSlider()
+        HSlider(position: .constant(25.0))
     }
 }
