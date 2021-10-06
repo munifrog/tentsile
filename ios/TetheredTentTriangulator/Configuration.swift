@@ -21,17 +21,43 @@ enum Units {
     case metric
 }
 
+private let MATH_BASE_PIXELS_PER_METER: Float = 75;
+private let MATH_METERS_TO_FEET_CONVERSION: Float = 3.2808399;
+private let MATH_SLIDER_POINT_00: Float = 0.0;
+private let MATH_SLIDER_POINT_01: Float = 50.0;
+private let MATH_SLIDER_POINT_02: Float = 75.0;
+private let MATH_SLIDER_POINT_03: Float = 100.0;
+private let MATH_SCALE_POINT_00: Float = 1.0;
+private let MATH_SCALE_POINT_01: Float = 3.0;
+private let MATH_SCALE_POINT_02: Float = 8.0;
+private let MATH_SCALE_POINT_03: Float = 10.0;
+private let MATH_SCALE_SLOPE_00_01: Float =
+    (MATH_SCALE_POINT_01 - MATH_SCALE_POINT_00) /
+    (MATH_SLIDER_POINT_01 - MATH_SLIDER_POINT_00);
+private let MATH_SCALE_SLOPE_01_02: Float =
+    (MATH_SCALE_POINT_02 - MATH_SCALE_POINT_01) /
+    (MATH_SLIDER_POINT_02 - MATH_SLIDER_POINT_01);
+private let MATH_SCALE_SLOPE_02_03: Float =
+    (MATH_SCALE_POINT_03 - MATH_SCALE_POINT_02) /
+    (MATH_SLIDER_POINT_03 - MATH_SLIDER_POINT_02);
+
 struct Configuration {
     var anchors: Anchors
     var center: TetherCenter?
     var path: PlatformPath = PlatformPath()
     var platform: Platform = .stingray
-    var scale: Float = 25.0
+    var scale: Float = 25.0 {
+        didSet {
+            updateConvertedScale()
+        }
+    }
     var selection: Select = .none
     var units: Units = .metric
     var util: Util = Util()
 
     private var radiusSquared: Float = 225
+    private var distanceScale: Float = 25.0
+    private var imageScale: Float = 0.04
     private var initial_p: Coordinate?
     private var initial_a: Coordinate?
     private var initial_b: Coordinate?
@@ -42,12 +68,14 @@ struct Configuration {
         self.anchors = Anchors()
         self.center = util.getTetherCenter(self.anchors)
         self.resetInitialPositions()
+        self.updateConvertedScale()
     }
 
     init(anchors: Anchors) {
         self.anchors = anchors
         self.center = util.getTetherCenter(self.anchors)
         self.resetInitialPositions()
+        self.updateConvertedScale()
     }
 
     mutating func setLimits(screen: Coordinate) {
@@ -260,7 +288,7 @@ struct Configuration {
         }
         return groupings
             .rotated(by: getRotation())
-            .scaled(by: getScale())
+            .scaled(by: getImageScale())
             .translated(by: getTranslation())
     }
 
@@ -282,11 +310,37 @@ struct Configuration {
         }
     }
 
-    mutating func getScale() -> Float {
+    mutating func getImageScale() -> Float {
         if let _ = center {
-            return scale
+            return imageScale
         } else {
             return 0
         }
+    }
+
+    mutating func updateConvertedScale() {
+        var diff: Float
+        var offset: Float
+        var slope: Float
+        if (scale < MATH_SLIDER_POINT_01) {
+            diff = scale - MATH_SLIDER_POINT_00;
+            offset = MATH_SCALE_POINT_00;
+            slope = MATH_SCALE_SLOPE_00_01;
+        } else if (scale < MATH_SLIDER_POINT_02) {
+            diff = scale - MATH_SLIDER_POINT_01;
+            offset = MATH_SCALE_POINT_01;
+            slope = MATH_SCALE_SLOPE_01_02;
+        } else { // if (position <= MATH_SLIDER_POINT_03) {
+            diff = scale - MATH_SLIDER_POINT_02;
+            offset = MATH_SCALE_POINT_02;
+            slope = MATH_SCALE_SLOPE_02_03;
+        }
+        let scale = offset + slope * diff
+        distanceScale = scale / MATH_BASE_PIXELS_PER_METER
+        imageScale = MATH_BASE_PIXELS_PER_METER / scale
+    }
+
+    func getDistance(_ points: Float) -> Float {
+        return points * distanceScale * (units == .metric ? 1.0 : MATH_METERS_TO_FEET_CONVERSION)
     }
 }
