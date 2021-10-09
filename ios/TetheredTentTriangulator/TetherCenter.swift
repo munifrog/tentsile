@@ -12,11 +12,13 @@ struct TetherCenter {
     var pa: Float
     var pb: Float
     var pc: Float
+    var flips: Bool
 
-    init(p: Coordinate, pa: Float, pb: Float, pc: Float) {
+    init(p: Coordinate, pa: Float, pb: Float, pc: Float, flips: Bool) {
         self.p = p
         self.pa = pa
         self.pb = pb
         self.pc = pc
+        self.flips = flips
     }
 }

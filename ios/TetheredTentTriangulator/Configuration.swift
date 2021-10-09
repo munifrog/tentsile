@@ -44,7 +44,6 @@ private let MATH_SCALE_SLOPE_02_03: Float =
 struct Configuration {
     var anchors: Anchors
     var center: TetherCenter?
-    var path: PlatformPath = PlatformPath()
     var platform: Platform = .stingray
     var scale: Float = 25.0 {
         didSet {
@@ -63,6 +62,7 @@ struct Configuration {
     private var initial_b: Coordinate?
     private var initial_c: Coordinate?
     private var limits: Coordinate = Coordinate()
+    private var path: PlatformPath = PlatformPath()
 
     init() {
         self.anchors = Anchors()
@@ -84,6 +84,10 @@ struct Configuration {
 
     func getLimits() -> Coordinate {
         return self.limits
+    }
+
+    mutating func getPlatform() -> PlatformDetails {
+        return path.getDetails(platform)
     }
 
     mutating func resetAnchors() {
@@ -261,32 +265,14 @@ struct Configuration {
     }
 
     mutating func getPath() -> [[Coordinate]] {
-        var groupings: [[Coordinate]]
-        switch platform {
-        case .connect:
-            groupings = path.connect
-        case .duo:
-            groupings = path.duo
-        case .flite:
-            groupings = path.flite
-        case .stingray:
-            groupings = path.stingray
-        case .t_mini:
-            groupings = path.t_mini
-        case .trillium:
-            groupings = path.trillium
-        case .trillium_xl:
-            groupings = path.trillium_xl
-        case .trilogy:
-            groupings = path.trilogy
-        case .una:
-            groupings = path.una
-        case .universe:
-            groupings = path.universe
-        case .vista:
-            groupings = path.vista
-        }
-        return groupings
+        return path.getDetails(platform).path
+            .rotated(by: getRotation())
+            .scaled(by: getImageScale())
+            .translated(by: getTranslation())
+    }
+
+    mutating func getExtremities() -> [Coordinate] {
+        return path.getDetails(platform).extremites
             .rotated(by: getRotation())
             .scaled(by: getImageScale())
             .translated(by: getTranslation())

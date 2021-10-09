@@ -86,7 +86,8 @@ class Util {
                 p: Coordinate(x: p_x, y: p_y),
                 pa: lengthPA,
                 pb: lengthPB,
-                pc: lengthPC
+                pc: lengthPC,
+                flips: flipped
             )
         } else {
             // If angles are too great, then the center cannot exist
