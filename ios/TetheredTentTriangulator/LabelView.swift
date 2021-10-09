@@ -15,8 +15,9 @@ struct LabelView: View {
     var a_y: Float
     var b_x: Float
     var b_y: Float
+    var units: Units
     var body: some View {
-        Text(String(format: "%3.1f", value))
+        Text(String(format: (units == .imperial ? "%3.0f ft" : "%3.1f m"), value))
             .font(.title)
             .colorInvert()
             .position(
@@ -35,7 +36,8 @@ struct LabelView_Previews: PreviewProvider {
             a_x: 100,
             a_y: 200,
             b_x: 200,
-            b_y: 300
+            b_y: 300,
+            units: .metric
         )
         .colorInvert()
     }

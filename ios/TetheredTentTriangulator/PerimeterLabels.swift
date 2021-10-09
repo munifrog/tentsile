@@ -16,35 +16,38 @@ struct PerimeterLabels: View {
             .foregroundColor(.clear)
             .overlay(
                 LabelView(
-                    value: config.anchors.ab,
+                    value: config.getDistance(config.anchors.ab),
                     offset_x: limits.x,
                     offset_y: limits.y,
                     a_x: config.anchors.a.x,
                     a_y: config.anchors.a.y,
                     b_x: config.anchors.b.x,
-                    b_y: config.anchors.b.y
+                    b_y: config.anchors.b.y,
+                    units: config.units
                 )
             )
             .overlay(
                 LabelView(
-                    value: config.anchors.bc,
+                    value: config.getDistance(config.anchors.bc),
                     offset_x: limits.x,
                     offset_y: limits.y,
                     a_x: config.anchors.b.x,
                     a_y: config.anchors.b.y,
                     b_x: config.anchors.c.x,
-                    b_y: config.anchors.c.y
+                    b_y: config.anchors.c.y,
+                    units: config.units
                 )
             )
             .overlay(
                 LabelView(
-                    value: config.anchors.ca,
+                    value: config.getDistance(config.anchors.ca),
                     offset_x: limits.x,
                     offset_y: limits.y,
                     a_x: config.anchors.c.x,
                     a_y: config.anchors.c.y,
                     b_x: config.anchors.a.x,
-                    b_y: config.anchors.a.y
+                    b_y: config.anchors.a.y,
+                    units: config.units
                 )
             )
     }
