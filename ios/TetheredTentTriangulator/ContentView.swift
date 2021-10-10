@@ -37,7 +37,10 @@ struct ContentView: View {
             }
             .padding(.horizontal)
             .background(Color("ThemePrimary"))
-            PlatformPicker(platform: $config.platform)
+            HStack {
+                PlatformPicker(platform: $config.platform)
+                PlatformRotator(config: $config)
+            }
             HSlider(position: $config.scale)
             Spacer()
             Clearing(config: $config)

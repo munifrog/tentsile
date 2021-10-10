@@ -30,6 +30,7 @@
 		8EC38315270A086E006D9AE6 /* LabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC38314270A086E006D9AE6 /* LabelView.swift */; };
 		8EC38317270A43D9006D9AE6 /* PlatformPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC38316270A43D9006D9AE6 /* PlatformPath.swift */; };
 		8EC38319270A43EA006D9AE6 /* PlatformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC38318270A43EA006D9AE6 /* PlatformView.swift */; };
+		8EC3831B2712430A006D9AE6 /* PlatformRotator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC3831A2712430A006D9AE6 /* PlatformRotator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,7 @@
 		8EC38314270A086E006D9AE6 /* LabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelView.swift; sourceTree = "<group>"; };
 		8EC38316270A43D9006D9AE6 /* PlatformPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlatformPath.swift; sourceTree = "<group>"; };
 		8EC38318270A43EA006D9AE6 /* PlatformView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlatformView.swift; sourceTree = "<group>"; };
+		8EC3831A2712430A006D9AE6 /* PlatformRotator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformRotator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +145,7 @@
 				8E0C687526F23050003EE614 /* PerimeterLabels.swift */,
 				8EC38316270A43D9006D9AE6 /* PlatformPath.swift */,
 				8E8C068726E5814A00F47062 /* PlatformPicker.swift */,
+				8EC3831A2712430A006D9AE6 /* PlatformRotator.swift */,
 				8EC38318270A43EA006D9AE6 /* PlatformView.swift */,
 				8E0C687726F2380C003EE614 /* TetherCenter.swift */,
 				8E0C687B26F2EB46003EE614 /* TetherView.swift */,
@@ -318,6 +321,7 @@
 				8E8C065D26E5797400F47062 /* ContentView.swift in Sources */,
 				8E0C687C26F2EB46003EE614 /* TetherView.swift in Sources */,
 				8E0C687026EDABB6003EE614 /* Coordinate.swift in Sources */,
+				8EC3831B2712430A006D9AE6 /* PlatformRotator.swift in Sources */,
 				8EC38317270A43D9006D9AE6 /* PlatformPath.swift in Sources */,
 				8E8C068626E57EF100F47062 /* HSlider.swift in Sources */,
 				8E0C687826F2380C003EE614 /* TetherCenter.swift in Sources */,

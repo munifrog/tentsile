@@ -21,4 +21,11 @@ struct TetherCenter {
         self.pc = pc
         self.flips = flips
     }
+
+    mutating func rotate() {
+        let placeholder: Float = self.pa
+        self.pa = self.pb
+        self.pb = self.pc
+        self.pc = placeholder
+    }
 }

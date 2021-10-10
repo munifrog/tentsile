@@ -37,6 +37,7 @@ private let TENTSILE_STRAPS_UNA: Float = 4.0
 struct PlatformDetails {
     var path: [[Coordinate]]
     var extremites: [Coordinate]
+    var rotates: Bool
     var strap: Float
 }
 
@@ -115,7 +116,7 @@ private func getTentsileEquilateral(longest: Float) -> PlatformDetails {
     shapes.append(grouping.rotated(by: -MATH_TWO_THIRDS_PI))
     let extremes: [Coordinate] = [shapes[0][0], shapes[1][0], shapes[2][0]]
 
-    return PlatformDetails(path: shapes, extremites: extremes, strap: TENTSILE_STRAPS_DEFAULT)
+    return PlatformDetails(path: shapes, extremites: extremes, rotates: false, strap: TENTSILE_STRAPS_DEFAULT)
 }
 
 private func getTenstsileIsosceles(hypotenuse: Float, base: Float) -> PlatformDetails {
@@ -141,7 +142,7 @@ private func getTenstsileIsosceles(hypotenuse: Float, base: Float, strap: Float)
     shapes.append(path)
     let extremes: [Coordinate] = [path[0], path[1], path[3]]
 
-    return PlatformDetails(path: shapes, extremites: extremes, strap: strap)
+    return PlatformDetails(path: shapes, extremites: extremes, rotates: true, strap: strap)
 }
 
 private func getIsoscelesMeasurements(hypotenuse: Float, base: Float) -> [Float] {
@@ -170,5 +171,5 @@ private func getTentsileTrilogy(hypotenuse: Float, base: Float) -> PlatformDetai
 
     let extremes: [Coordinate] = [shiftedPlatform[0][0], rotatedPlatformCCW[0][0], rotatedPlatformCW[0][0]]
 
-    return PlatformDetails(path: allShapes, extremites: extremes, strap: TENTSILE_STRAPS_DEFAULT)
+    return PlatformDetails(path: allShapes, extremites: extremes, rotates: false, strap: TENTSILE_STRAPS_DEFAULT)
 }

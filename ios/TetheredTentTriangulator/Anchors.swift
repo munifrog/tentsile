@@ -54,4 +54,11 @@ struct Anchors {
             y: (refLength * sin(angle))
         )
     }
+
+    mutating func rotate() {
+        let placeholder: Coordinate = self.a
+        self.a = self.b
+        self.b = self.c
+        self.c = placeholder
+    }
 }
