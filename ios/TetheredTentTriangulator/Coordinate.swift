@@ -54,6 +54,14 @@ struct Coordinate {
         return Coordinate(x: left.x + right.x, y: left.y + right.y)
     }
 
+    static func * (left: Float, right: Coordinate) -> Coordinate {
+        return Coordinate(x: left * right.x, y: left * right.y)
+    }
+
+    static func * (left: Coordinate, right: Float) -> Coordinate {
+        return Coordinate(x: right * left.x, y: right * left.y)
+    }
+
     static func += (left: inout Coordinate, right: Coordinate) {
         left.x = left.x + right.x
         left.y = left.y + right.y

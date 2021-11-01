@@ -12,6 +12,7 @@ class Util {
     private let ANGLE_ONE_FULL_CIRCLE: Float
     private let ANGLE_ONE_SIXTH_CIRCLE: Float
     private let ANGLE_ONE_THIRD_CIRCLE: Float
+    private let MATH_FEET_TO_METERS_CONVERSION: Float = 0.3048;
     private let SINE_TWO_PI_DIV_THREE: Float
 
     init() {
@@ -122,5 +123,39 @@ class Util {
         } else {
             return 0
         }
+    }
+
+    func getSegmentKnots(start: Coordinate, extremity: Coordinate, end: Coordinate, pixelsPerMeter: Float, strap: Float) -> [Coordinate] {
+        var knots: [Coordinate] = [Coordinate]()
+        knots.append(start)
+        knots.append(extremity)
+
+        // Between the platform extremity and anchor point, determine where the colors transition:
+        //   A. Segment connects platform center and platform extremity.
+        //   B. One imperial foot length connects ratchet to platform.
+        //   C. The provided strap (either 6m or 4m) defines what strap length the user will be guaranteed to own.
+        //   D. Any further distance will be split into lengths equal to extension straps (which are all 6m)
+        //   E. Last segment consists of the length remaining, (less than 6m) after the last extension
+        let pixelFullVector: Coordinate = end - start
+        let pixelFullAmount: Float = sqrt(pixelFullVector.x * pixelFullVector.x + pixelFullVector.y * pixelFullVector.y)
+
+        let angle: Float = getDirection(h: pixelFullAmount, delta_x: pixelFullVector.x, delta_y: pixelFullVector.y)
+        let sine = sin(angle)
+        let cosine = cos(angle)
+
+        let pixelExtremityVector: Coordinate = extremity - start
+        let pixelExtremityAmount: Float = sqrt(pixelExtremityVector.x * pixelExtremityVector.x + pixelExtremityVector.y * pixelExtremityVector.y)
+
+        var runningTotal = pixelExtremityAmount + (pixelsPerMeter * MATH_FEET_TO_METERS_CONVERSION)
+        if runningTotal < pixelFullAmount {
+            knots.append(Coordinate(x: start.x + runningTotal * cosine, y: start.y + runningTotal * sine))
+            runningTotal += pixelsPerMeter * strap
+            while runningTotal < pixelFullAmount {
+                knots.append(Coordinate(x: start.x + runningTotal * cosine, y: start.y + runningTotal * sine))
+                runningTotal += pixelsPerMeter * 6.0
+            }
+        }
+        knots.append(end)
+        return knots
     }
 }
