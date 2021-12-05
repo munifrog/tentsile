@@ -17,23 +17,7 @@ struct ContentView: View {
                     .font(.headline)
                     .colorInvert()
                 Spacer()
-                Menu {
-                    Button ("Reset Tether Points", action: resetAnchors)
-                    Button ("Tentsile Website", action: resetAnchors)
-                    VStack {
-                        if config.units == .metric {
-                            Button ("Use feet (ft)", action: setImperial)
-                        } else {
-                            Button ("Use meters (m)", action: setMetric)
-                        }
-                    }
-                } label: {
-                    Label("more", systemImage: "ellipsis")
-                        .labelStyle(IconOnlyLabelStyle())
-                        .frame(width: 30, height: 30, alignment: .center)
-                        .background(Color("ThemeDark"))
-                        .mask(Circle())
-                }
+                MenuView(config: $config)
             }
             .padding(.horizontal)
             .background(Color("ThemePrimary"))
@@ -46,18 +30,6 @@ struct ContentView: View {
             Clearing(config: $config)
         }
         .background(Color("ThemeLight"))
-    }
-
-    func resetAnchors() {
-        config.resetAnchors()
-    }
-
-    func setImperial() {
-        config.units = .imperial
-    }
-
-    func setMetric() {
-        config.units = .metric
     }
 }
 
