@@ -40,11 +40,16 @@ private let MATH_SCALE_SLOPE_01_02: Float =
 private let MATH_SCALE_SLOPE_02_03: Float =
     (MATH_SCALE_POINT_03 - MATH_SCALE_POINT_02) /
     (MATH_SLIDER_POINT_03 - MATH_SLIDER_POINT_02);
+private let USER_DEFAULTS_STORED_PLATFORM = "com.munifrog.tethered.tent.triangulator.config.platform"
 
 struct Configuration {
     var anchors: Anchors
     var center: TetherCenter?
-    var platform: Platform = .stingray
+    var platform: Platform {
+        didSet {
+            UserDefaults.standard.set(platform.rawValue, forKey: USER_DEFAULTS_STORED_PLATFORM)
+        }
+    }
     var scale: Float = 25.0 {
         didSet {
             updateConvertedScale()
@@ -65,6 +70,11 @@ struct Configuration {
     private var path: PlatformPath = PlatformPath()
 
     init() {
+        if let storedPlatform = UserDefaults.standard.string(forKey: USER_DEFAULTS_STORED_PLATFORM) {
+            self.platform = Platform(rawValue: storedPlatform)!
+        } else {
+            self.platform = .stingray
+        }
         self.anchors = Anchors()
         self.center = util.getTetherCenter(self.anchors)
         self.resetInitialPositions()
@@ -72,6 +82,11 @@ struct Configuration {
     }
 
     init(anchors: Anchors) {
+        if let storedPlatform = UserDefaults.standard.string(forKey: USER_DEFAULTS_STORED_PLATFORM) {
+            self.platform = Platform(rawValue: storedPlatform)!
+        } else {
+            self.platform = .stingray
+        }
         self.anchors = anchors
         self.center = util.getTetherCenter(self.anchors)
         self.resetInitialPositions()
