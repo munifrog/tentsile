@@ -113,6 +113,7 @@ struct Configuration {
     }
 
     mutating func resetAnchors() {
+        self.anchors.reset()
         self.anchors = Anchors()
         self.center = util.getTetherCenter(self.anchors)
     }
