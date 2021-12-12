@@ -14,17 +14,17 @@ private let USER_DEFAULTS_STORED_ANCHOR_C = "com.munifrog.tethered.tent.triangul
 struct Anchors {
     var a: Coordinate {
         didSet {
-            UserDefaults.standard.set([ a.x, a.y ], forKey: USER_DEFAULTS_STORED_ANCHOR_A)
+            storeA()
         }
     }
     var b: Coordinate {
         didSet {
-            UserDefaults.standard.set([ b.x, b.y ], forKey: USER_DEFAULTS_STORED_ANCHOR_B)
+            storeB()
         }
     }
     var c: Coordinate {
         didSet {
-            UserDefaults.standard.set([ c.x, c.y ], forKey: USER_DEFAULTS_STORED_ANCHOR_C)
+            storeC()
         }
     }
     var ab: Float {
@@ -99,11 +99,27 @@ struct Anchors {
         self.a = self.b
         self.b = self.c
         self.c = placeholder
+        // Force the storing of each anchor now that they are stable
+        storeA()
+        storeB()
+        storeC()
     }
 
     func reset() {
         UserDefaults.standard.removeObject(forKey: USER_DEFAULTS_STORED_ANCHOR_A)
         UserDefaults.standard.removeObject(forKey: USER_DEFAULTS_STORED_ANCHOR_B)
         UserDefaults.standard.removeObject(forKey: USER_DEFAULTS_STORED_ANCHOR_C)
+    }
+
+    func storeA() {
+        UserDefaults.standard.set([ a.x, a.y ], forKey: USER_DEFAULTS_STORED_ANCHOR_A)
+    }
+
+    func storeB() {
+        UserDefaults.standard.set([ b.x, b.y ], forKey: USER_DEFAULTS_STORED_ANCHOR_B)
+    }
+
+    func storeC() {
+        UserDefaults.standard.set([ c.x, c.y ], forKey: USER_DEFAULTS_STORED_ANCHOR_C)
     }
 }
