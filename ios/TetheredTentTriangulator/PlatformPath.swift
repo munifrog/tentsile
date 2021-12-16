@@ -19,6 +19,8 @@ private let TENTSILE_BASE_T_MINI: Float = 2.7
 private let TENTSILE_BASE_UNA: Float = 1.6
 private let TENTSILE_BASE_TRILOGY: Float = TENTSILE_BASE_CONNECT
 private let TENTSILE_CENTER_HOLE_HYPOTENUSE: Float = 0.6
+private let TENTSILE_CIRCUMFERENCE_DEFAULT: Float = 0.785398163397448 // pi * 25cm or 10inch diameter
+private let TENTSILE_CIRCUMFERENCE_UNA: Float = 0.628318530717959 // pi * 20cm or 8inch diameter
 private let TENTSILE_NOTCH_SCALE: Float = 0.5
 private let TENTSILE_HYPOTENUSE_CONNECT: Float = 4.0
 private let TENTSILE_HYPOTENUSE_DUO: Float = 4.0
@@ -36,6 +38,7 @@ private let TENTSILE_STRAPS_UNA: Float = 4.0
 
 struct PlatformDetails {
     var path: [[Coordinate]]
+    var circumference: Float
     var extremites: [Coordinate]
     var rotates: Bool
     var strap: Float
@@ -50,7 +53,11 @@ struct PlatformPath {
     private lazy var trillium: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_TRILLIUM)
     private lazy var trillium_xl: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_TRILLIUM_XL)
     private lazy var trilogy: PlatformDetails = getTentsileTrilogy(hypotenuse: TENTSILE_HYPOTENUSE_TRILOGY, base: TENTSILE_BASE_TRILOGY)
-    private lazy var una: PlatformDetails = getTenstsileIsosceles(hypotenuse: TENTSILE_HYPOTENUSE_UNA, base: TENTSILE_BASE_UNA, strap: TENTSILE_STRAPS_UNA)
+    private lazy var una: PlatformDetails = getTenstsileIsosceles(
+        hypotenuse: TENTSILE_HYPOTENUSE_UNA,
+        base: TENTSILE_BASE_UNA,
+        strap: TENTSILE_STRAPS_UNA,
+        circumference: TENTSILE_CIRCUMFERENCE_UNA)
     private lazy var universe: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_UNIVERSE)
     private lazy var vista: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_VISTA)
 
@@ -116,14 +123,23 @@ private func getTentsileEquilateral(longest: Float) -> PlatformDetails {
     shapes.append(grouping.rotated(by: -MATH_TWO_THIRDS_PI))
     let extremes: [Coordinate] = [shapes[0][0], shapes[1][0], shapes[2][0]]
 
-    return PlatformDetails(path: shapes, extremites: extremes, rotates: false, strap: TENTSILE_STRAPS_DEFAULT)
+    return PlatformDetails(
+        path: shapes,
+        circumference: TENTSILE_CIRCUMFERENCE_DEFAULT,
+        extremites: extremes,
+        rotates: false,
+        strap: TENTSILE_STRAPS_DEFAULT)
 }
 
 private func getTenstsileIsosceles(hypotenuse: Float, base: Float) -> PlatformDetails {
-    return getTenstsileIsosceles(hypotenuse: hypotenuse, base: base, strap: TENTSILE_STRAPS_DEFAULT)
+    return getTenstsileIsosceles(
+        hypotenuse: hypotenuse,
+        base: base,
+        strap: TENTSILE_STRAPS_DEFAULT,
+        circumference: TENTSILE_CIRCUMFERENCE_DEFAULT)
 }
 
-private func getTenstsileIsosceles(hypotenuse: Float, base: Float, strap: Float) -> PlatformDetails {
+private func getTenstsileIsosceles(hypotenuse: Float, base: Float, strap: Float, circumference: Float) -> PlatformDetails {
     let measurements = getIsoscelesMeasurements(hypotenuse: hypotenuse, base: base)
     var shapes = [[Coordinate]]()
 
@@ -142,7 +158,12 @@ private func getTenstsileIsosceles(hypotenuse: Float, base: Float, strap: Float)
     shapes.append(path)
     let extremes: [Coordinate] = [path[0], path[1], path[3]]
 
-    return PlatformDetails(path: shapes, extremites: extremes, rotates: true, strap: strap)
+    return PlatformDetails(
+        path: shapes,
+        circumference: circumference,
+        extremites: extremes,
+        rotates: true,
+        strap: strap)
 }
 
 private func getIsoscelesMeasurements(hypotenuse: Float, base: Float) -> [Float] {
@@ -171,5 +192,10 @@ private func getTentsileTrilogy(hypotenuse: Float, base: Float) -> PlatformDetai
 
     let extremes: [Coordinate] = [shiftedPlatform[0][0], rotatedPlatformCCW[0][0], rotatedPlatformCW[0][0]]
 
-    return PlatformDetails(path: allShapes, extremites: extremes, rotates: false, strap: TENTSILE_STRAPS_DEFAULT)
+    return PlatformDetails(
+        path: allShapes,
+        circumference: TENTSILE_CIRCUMFERENCE_DEFAULT,
+        extremites: extremes,
+        rotates: false,
+        strap: TENTSILE_STRAPS_DEFAULT)
 }

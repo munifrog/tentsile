@@ -54,6 +54,7 @@ struct Clearing: View {
             .overlay(PlatformView(config: $config))
             .overlay(PerimeterLabels(config: $config))
             .overlay(AnchorView(config: $config))
+            .overlay(TetherIconView(config: $config))
             .gesture(touches)
     }
 }

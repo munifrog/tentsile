@@ -7,6 +7,26 @@
 
 import Foundation
 
+private let STRAP_EXTENSION_LENGTH: Float = 6.0
+private let MINIMUM_METERS_ANCHOR_TO_CENTER: Float = 1.0
+
+enum AnchorIcon {
+    case impossible
+    case safe
+    case tricky
+    case warning
+}
+
+struct TetherDetails {
+    let icon: AnchorIcon
+    let knots: [Coordinate]
+
+    init(knots: [Coordinate], icon: AnchorIcon) {
+        self.icon = icon
+        self.knots = knots
+    }
+}
+
 class Util {
     private let ANGLE_ALLOWANCE: Float
     private let ANGLE_ONE_FULL_CIRCLE: Float
@@ -125,7 +145,15 @@ class Util {
         }
     }
 
-    func getSegmentKnots(start: Coordinate, extremity: Coordinate, end: Coordinate, pixelsPerMeter: Float, strap: Float) -> [Coordinate] {
+    func getSegmentKnots(
+        start: Coordinate,
+        extremity: Coordinate,
+        end: Coordinate,
+        pixelsPerMeter: Float,
+        strap: Float,
+        circumference: Float
+    ) -> TetherDetails {
+        var anchorIcon = AnchorIcon.safe
         var knots: [Coordinate] = [Coordinate]()
         knots.append(start)
         knots.append(extremity)
@@ -136,26 +164,42 @@ class Util {
         //   C. The provided strap (either 6m or 4m) defines what strap length the user will be guaranteed to own.
         //   D. Any further distance will be split into lengths equal to extension straps (which are all 6m)
         //   E. Last segment consists of the length remaining, (less than 6m) after the last extension
-        let pixelFullVector: Coordinate = end - start
-        let pixelFullAmount: Float = sqrt(pixelFullVector.x * pixelFullVector.x + pixelFullVector.y * pixelFullVector.y)
+        let pixelAnchorVector: Coordinate = end - start
+        let pixelAnchorAmount: Float = sqrt(pixelAnchorVector.x * pixelAnchorVector.x + pixelAnchorVector.y * pixelAnchorVector.y)
 
-        let angle: Float = getDirection(h: pixelFullAmount, delta_x: pixelFullVector.x, delta_y: pixelFullVector.y)
+        let angle: Float = getDirection(h: pixelAnchorAmount, delta_x: pixelAnchorVector.x, delta_y: pixelAnchorVector.y)
         let sine = sin(angle)
         let cosine = cos(angle)
 
         let pixelExtremityVector: Coordinate = extremity - start
         let pixelExtremityAmount: Float = sqrt(pixelExtremityVector.x * pixelExtremityVector.x + pixelExtremityVector.y * pixelExtremityVector.y)
 
-        var runningTotal = pixelExtremityAmount + (pixelsPerMeter * MATH_FEET_TO_METERS_CONVERSION)
-        if runningTotal < pixelFullAmount {
-            knots.append(Coordinate(x: start.x + runningTotal * cosine, y: start.y + runningTotal * sine))
-            runningTotal += pixelsPerMeter * strap
-            while runningTotal < pixelFullAmount {
-                knots.append(Coordinate(x: start.x + runningTotal * cosine, y: start.y + runningTotal * sine))
-                runningTotal += pixelsPerMeter * 6.0
+        let ratchetDistance = pixelExtremityAmount + (pixelsPerMeter * MATH_FEET_TO_METERS_CONVERSION)
+        let pixelStrapAllowance = pixelsPerMeter * (circumference)
+
+        if pixelAnchorAmount < pixelExtremityAmount {
+            anchorIcon = AnchorIcon.impossible
+        } else if pixelAnchorAmount <= ratchetDistance {
+            anchorIcon = AnchorIcon.tricky
+        } else { // pixelAnchorAmount > ratchetDistance
+            var pixelNextKnot = ratchetDistance
+            knots.append(Coordinate(x: start.x + pixelNextKnot * cosine, y: start.y + pixelNextKnot * sine))
+            // Provided straps
+            pixelNextKnot += pixelsPerMeter * strap
+            if pixelAnchorAmount + pixelStrapAllowance > pixelNextKnot {
+                anchorIcon = AnchorIcon.warning
+            }
+            // Extension straps
+            while pixelNextKnot < pixelAnchorAmount {
+                anchorIcon = AnchorIcon.safe
+                knots.append(Coordinate(x: start.x + pixelNextKnot * cosine, y: start.y + pixelNextKnot * sine))
+                pixelNextKnot += pixelsPerMeter * STRAP_EXTENSION_LENGTH
+                if pixelAnchorAmount + pixelStrapAllowance > pixelNextKnot {
+                    anchorIcon = AnchorIcon.warning
+                }
             }
         }
         knots.append(end)
-        return knots
+        return TetherDetails(knots: knots, icon: anchorIcon)
     }
 }

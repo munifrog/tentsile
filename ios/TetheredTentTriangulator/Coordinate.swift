@@ -164,3 +164,9 @@ extension Array where Element == [Coordinate] {
         return path
     }
 }
+
+extension CGPoint {
+    init(_ coord: Coordinate) {
+        self.init(x: CGFloat(coord.x), y: CGFloat(coord.y))
+    }
+}

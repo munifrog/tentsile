@@ -22,6 +22,7 @@ enum Units {
 }
 
 private let MATH_BASE_PIXELS_PER_METER: Float = 75;
+private let MATH_METERS_CENTER_TO_ANCHOR_MIN: Float = 1.0
 private let MATH_METERS_TO_FEET_CONVERSION: Float = 3.2808399;
 private let MATH_SLIDER_POINT_00: Float = 0.0;
 private let MATH_SLIDER_POINT_01: Float = 50.0;
@@ -46,15 +47,18 @@ private let USER_DEFAULTS_STORED_SCALE = "com.munifrog.tethered.tent.triangulato
 struct Configuration {
     var anchors: Anchors
     var center: TetherCenter?
+    var knots: TetherKnots?
     var platform: Platform {
         didSet {
             UserDefaults.standard.set(platform.rawValue, forKey: USER_DEFAULTS_STORED_PLATFORM)
+            updateKnots()
         }
     }
     var scale: Float {
         didSet {
             UserDefaults.standard.set(scale, forKey: USER_DEFAULTS_STORED_SCALE)
             updateConvertedScale()
+            updateKnots()
         }
     }
     var selection: Select = .none
@@ -86,6 +90,7 @@ struct Configuration {
         self.center = util.getTetherCenter(self.anchors)
         self.resetInitialPositions()
         self.updateConvertedScale()
+        // Update knots later, after the screen size is determined
     }
 
     init(anchors: Anchors) {
@@ -103,17 +108,20 @@ struct Configuration {
         self.center = util.getTetherCenter(self.anchors)
         self.resetInitialPositions()
         self.updateConvertedScale()
+        // Update knots later, after the screen size is determined
     }
 
     mutating func rotate() {
         self.anchors.rotate()
         if var c = center {
             c.rotate()
+            updateKnots()
         }
     }
 
     mutating func setLimits(screen: Coordinate) {
         self.limits = screen
+        updateKnots()
     }
 
     func getLimits() -> Coordinate {
@@ -128,6 +136,7 @@ struct Configuration {
         self.anchors.reset()
         self.anchors = Anchors()
         self.center = util.getTetherCenter(self.anchors)
+        self.updateKnots()
     }
 
     mutating private func resetInitialPositions() {
@@ -155,12 +164,15 @@ struct Configuration {
         case .anchor_a:
             anchors.a = getBoundedTouch(touch: touch)
             center = util.getTetherCenter(self.anchors)
+            updateKnots()
         case .anchor_b:
             anchors.b = getBoundedTouch(touch: touch)
             center = util.getTetherCenter(self.anchors)
+            updateKnots()
         case .anchor_c:
             anchors.c = getBoundedTouch(touch: touch)
             center = util.getTetherCenter(self.anchors)
+            updateKnots()
         case .missed:
             // Do nothing
             break
@@ -171,6 +183,7 @@ struct Configuration {
             self.selection = self.getSelection(touch: touch)
         case .point:
             self.updateAnchors(touch: touch)
+            updateKnots()
             break
         }
     }
@@ -363,5 +376,64 @@ struct Configuration {
 
     func getDistance(_ points: Float) -> Float {
         return points * distanceScale * (units == .metric ? 1.0 : MATH_METERS_TO_FEET_CONVERSION)
+    }
+
+    mutating func updateKnots() {
+        if let c = center {
+            let pixelsPerMeter = getImageScale()
+            let allowedRange = pixelsPerMeter * MATH_METERS_CENTER_TO_ANCHOR_MIN
+
+            let limits = getLimits()
+            let start = limits + c.p
+            let aAnchor = limits + anchors.a
+            let bAnchor = limits + anchors.b
+            let cAnchor = limits + anchors.c
+
+            if (c.pa > allowedRange) &&
+                (c.pb > allowedRange) &&
+                (c.pc > allowedRange)
+            {
+                let b_index = c.flips ? 2 : 1
+                let c_index = c.flips ? 1 : 2
+                let extremes = getExtremities()
+                let platform = getPlatform()
+                let strap = platform.strap
+                let circumference = platform.circumference
+
+                let aTether: TetherDetails = util.getSegmentKnots(
+                    start: start,
+                    extremity: extremes[0],
+                    end: aAnchor,
+                    pixelsPerMeter: pixelsPerMeter,
+                    strap: strap,
+                    circumference: circumference
+                )
+                let bTether: TetherDetails = util.getSegmentKnots(
+                    start: start,
+                    extremity: extremes[b_index],
+                    end: bAnchor,
+                    pixelsPerMeter: pixelsPerMeter,
+                    strap: strap,
+                    circumference: circumference
+                )
+                let cTether: TetherDetails = util.getSegmentKnots(
+                    start: start,
+                    extremity: extremes[c_index],
+                    end: cAnchor,
+                    pixelsPerMeter: pixelsPerMeter,
+                    strap: strap,
+                    circumference: circumference
+                )
+
+                self.knots = TetherKnots(a: aTether, b: bTether, c: cTether)
+            } else {
+                self.knots = TetherKnots(
+                    a: TetherDetails(knots: [start, aAnchor], icon: AnchorIcon.safe),
+                    b: TetherDetails(knots: [start, bAnchor], icon: AnchorIcon.safe),
+                    c: TetherDetails(knots: [start, cAnchor], icon: AnchorIcon.safe))
+            }
+        } else {
+            self.knots = nil
+        }
     }
 }

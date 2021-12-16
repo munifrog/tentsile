@@ -11,55 +11,26 @@ struct TetherView: View {
     @Binding var config: Configuration
 
     var body: some View {
-        if let center = config.center {
-            let b_index = center.flips ? 2 : 1
-            let c_index = center.flips ? 1 : 2
-            let extremes = config.getExtremities()
-            let limits = config.getLimits()
-            let pixelsPerMeter = config.getImageScale()
-            let strap = config.getPlatform().strap
-            let aTether: [Coordinate] = config.util.getSegmentKnots(
-                start: limits + center.p,
-                extremity: extremes[0],
-                end: limits + config.anchors.a,
-                pixelsPerMeter: pixelsPerMeter,
-                strap: strap
-            )
-            let aCount: Int = aTether.count
-            let bTether: [Coordinate] = config.util.getSegmentKnots(
-                start: limits + center.p,
-                extremity: extremes[b_index],
-                end: limits + config.anchors.b,
-                pixelsPerMeter: pixelsPerMeter,
-                strap: strap
-            )
-            let bCount: Int = bTether.count
-            let cTether: [Coordinate] = config.util.getSegmentKnots(
-                start: limits + center.p,
-                extremity: extremes[c_index],
-                end: limits + config.anchors.c,
-                pixelsPerMeter: pixelsPerMeter,
-                strap: strap
-            )
-            let cCount: Int = cTether.count
+        if let knots = config.knots {
             let knotSize: CGFloat = 7
             let tetherWidth: CGFloat = 3
+
+            let a = knots.a
+            let b = knots.b
+            let c = knots.c
+            let aCount: Int = a.count
+            let bCount: Int = b.count
+            let cCount: Int = c.count
             ZStack {
                 ForEach(1..<aCount, id: \.self) { i in
-                    let index = aTether.count - i
+                    let index = aCount - i
                     let previousIndex = index - 1
                     let color: Color = getColor(index)
-                    let knot = CGPoint(
-                        x: CGFloat(aTether[index].x),
-                        y: CGFloat(aTether[index].y)
-                    )
+                    let knot = CGPoint(a[index])
                     Rectangle()
                         .foregroundColor(.clear)
                         .overlay(Path() { path in
-                            path.move(to: CGPoint(
-                                x: CGFloat(aTether[previousIndex].x),
-                                y: CGFloat(aTether[previousIndex].y)
-                            ));
+                            path.move(to: CGPoint(a[previousIndex]));
                             path.addLine(to: knot)
                         }.stroke(style: StrokeStyle(lineWidth: tetherWidth))
                         .foregroundColor(color)
@@ -71,20 +42,14 @@ struct TetherView: View {
                         )
                 }
                 ForEach(1..<bCount, id: \.self) { i in
-                    let index = bTether.count - i
+                    let index = bCount - i
                     let previousIndex = index - 1
                     let color: Color = getColor(index)
-                    let knot = CGPoint(
-                        x: CGFloat(bTether[index].x),
-                        y: CGFloat(bTether[index].y)
-                    )
+                    let knot = CGPoint(b[index])
                     Rectangle()
                         .foregroundColor(.clear)
                         .overlay(Path() { path in
-                            path.move(to: CGPoint(
-                                x: CGFloat(bTether[previousIndex].x),
-                                y: CGFloat(bTether[previousIndex].y)
-                            ));
+                            path.move(to: CGPoint(b[previousIndex]));
                             path.addLine(to: knot)
                         }.stroke(style: StrokeStyle(lineWidth: tetherWidth))
                         .foregroundColor(color)
@@ -96,20 +61,14 @@ struct TetherView: View {
                         )
                 }
                 ForEach(1..<cCount, id: \.self) { i in
-                    let index = cTether.count - i
+                    let index = cCount - i
                     let previousIndex = index - 1
                     let color: Color = getColor(index)
-                    let knot = CGPoint(
-                        x: CGFloat(cTether[index].x),
-                        y: CGFloat(cTether[index].y)
-                    )
+                    let knot = CGPoint(c[index])
                     Rectangle()
                         .foregroundColor(.clear)
                         .overlay(Path() { path in
-                            path.move(to: CGPoint(
-                                x: CGFloat(cTether[previousIndex].x),
-                                y: CGFloat(cTether[previousIndex].y)
-                            ));
+                            path.move(to: CGPoint(c[previousIndex]));
                             path.addLine(to: knot)
                         }.stroke(style: StrokeStyle(lineWidth: tetherWidth))
                         .foregroundColor(color)
