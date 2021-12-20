@@ -55,6 +55,6 @@ struct PerimeterLabels: View {
 
 struct PerimeterLabels_Previews: PreviewProvider {
     static var previews: some View {
-        PerimeterLabels(config: .constant(Configuration(anchors: Anchors())))
+        PerimeterLabels(config: .constant(Configuration()))
     }
 }

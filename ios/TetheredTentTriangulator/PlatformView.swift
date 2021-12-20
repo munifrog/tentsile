@@ -26,6 +26,6 @@ struct PlatformView: View {
 
 struct PlatformView_Previews: PreviewProvider {
     static var previews: some View {
-        PlatformView(config: .constant(Configuration(anchors: Anchors())))
+        PlatformView(config: .constant(Configuration()))
     }
 }

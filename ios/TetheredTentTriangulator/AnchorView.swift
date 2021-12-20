@@ -58,6 +58,6 @@ struct AnchorView: View {
 
 struct AnchorView_Previews: PreviewProvider {
     static var previews: some View {
-        AnchorView(config: .constant(Configuration(anchors: Anchors())))
+        AnchorView(config: .constant(Configuration()))
     }
 }

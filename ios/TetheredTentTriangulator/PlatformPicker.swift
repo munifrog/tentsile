@@ -40,7 +40,7 @@ struct PlatformPicker: View {
 
 struct PlatformPicker_Previews: PreviewProvider {
     static var previews: some View {
-        let config = Configuration(anchors: Anchors())
+        let config = Configuration()
         PlatformPicker(platform: .constant(config.platform))
     }
 }

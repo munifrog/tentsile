@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var config = Configuration(anchors: Anchors())
+    @State private var config = Configuration()
 
     var body: some View {
         VStack {

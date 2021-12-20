@@ -37,6 +37,6 @@ struct PlatformRotator: View {
 
 struct PlatformRotator_Previews: PreviewProvider {
     static var previews: some View {
-        PlatformRotator(config: .constant(Configuration(anchors: Anchors())))
+        PlatformRotator(config: .constant(Configuration()))
     }
 }

@@ -61,6 +61,6 @@ struct Clearing: View {
 
 struct Clearing_Previews: PreviewProvider {
     static var previews: some View {
-        Clearing(config: .constant(Configuration(anchors: Anchors())))
+        Clearing(config: .constant(Configuration()))
     }
 }

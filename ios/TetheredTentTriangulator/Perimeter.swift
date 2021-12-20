@@ -39,6 +39,6 @@ struct Perimeter: View {
 
 struct Perimeter_Previews: PreviewProvider {
     static var previews: some View {
-        Perimeter(config: .constant(Configuration(anchors: Anchors())))
+        Perimeter(config: .constant(Configuration()))
     }
 }

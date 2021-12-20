@@ -92,23 +92,6 @@ struct Configuration {
         self.updateConvertedScale()
     }
 
-    init(anchors: Anchors) {
-        if let storedPlatform = UserDefaults.standard.string(forKey: USER_DEFAULTS_STORED_PLATFORM) {
-            self.platform = Platform(rawValue: storedPlatform)!
-        } else {
-            self.platform = .stingray
-        }
-        if let storedScale = UserDefaults.standard.object(forKey: USER_DEFAULTS_STORED_SCALE) as? Float {
-            self.scale = storedScale
-        } else {
-            self.scale = 25.0
-        }
-        self.anchors = anchors
-        self.updateTetherCenter()
-        self.resetInitialPositions()
-        self.updateConvertedScale()
-    }
-
     mutating func rotate() {
         self.anchors.rotate()
         if var c = center {
