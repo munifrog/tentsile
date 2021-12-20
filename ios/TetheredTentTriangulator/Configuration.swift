@@ -16,9 +16,9 @@ enum Select {
     case point
 }
 
-enum Units {
-    case imperial
-    case metric
+enum Units: String {
+    case imperial = "imperial"
+    case metric = "metric"
 }
 
 private let MATH_BASE_PIXELS_PER_METER: Float = 75;
@@ -43,6 +43,7 @@ private let MATH_SCALE_SLOPE_02_03: Float =
     (MATH_SLIDER_POINT_03 - MATH_SLIDER_POINT_02);
 private let USER_DEFAULTS_STORED_PLATFORM = "com.munifrog.tethered.tent.triangulator.config.platform"
 private let USER_DEFAULTS_STORED_SCALE = "com.munifrog.tethered.tent.triangulator.config.slider"
+private let USER_DEFAULTS_STORED_UNITS = "com.munifrog.tethered.tent.triangulator.config.units"
 
 struct Configuration {
     var anchors: Anchors
@@ -62,7 +63,11 @@ struct Configuration {
         }
     }
     var selection: Select = .none
-    var units: Units = .metric
+    var units: Units {
+        didSet {
+            UserDefaults.standard.set(units.rawValue, forKey: USER_DEFAULTS_STORED_UNITS)
+        }
+    }
     var util: Util = Util()
 
     private var radiusSquared: Float = 225
@@ -85,6 +90,11 @@ struct Configuration {
             self.scale = storedScale
         } else {
             self.scale = 25.0
+        }
+        if let storedUnits = UserDefaults.standard.string(forKey: USER_DEFAULTS_STORED_UNITS) {
+            self.units = Units(rawValue: storedUnits)!
+        } else {
+            self.units = .metric
         }
         self.anchors = Anchors()
         self.updateTetherCenter()
