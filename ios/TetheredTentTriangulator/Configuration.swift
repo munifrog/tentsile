@@ -87,10 +87,9 @@ struct Configuration {
             self.scale = 25.0
         }
         self.anchors = Anchors()
-        self.center = util.getTetherCenter(self.anchors)
+        self.updateTetherCenter()
         self.resetInitialPositions()
         self.updateConvertedScale()
-        // Update knots later, after the screen size is determined
     }
 
     init(anchors: Anchors) {
@@ -105,10 +104,9 @@ struct Configuration {
             self.scale = 25.0
         }
         self.anchors = anchors
-        self.center = util.getTetherCenter(self.anchors)
+        self.updateTetherCenter()
         self.resetInitialPositions()
         self.updateConvertedScale()
-        // Update knots later, after the screen size is determined
     }
 
     mutating func rotate() {
@@ -135,8 +133,7 @@ struct Configuration {
     mutating func resetAnchors() {
         self.anchors.reset()
         self.anchors = Anchors()
-        self.center = util.getTetherCenter(self.anchors)
-        self.updateKnots()
+        self.updateTetherCenter()
     }
 
     mutating private func resetInitialPositions() {
@@ -163,16 +160,13 @@ struct Configuration {
         switch selection {
         case .anchor_a:
             anchors.a = getBoundedTouch(touch: touch)
-            center = util.getTetherCenter(self.anchors)
-            updateKnots()
+            updateTetherCenter()
         case .anchor_b:
             anchors.b = getBoundedTouch(touch: touch)
-            center = util.getTetherCenter(self.anchors)
-            updateKnots()
+            updateTetherCenter()
         case .anchor_c:
             anchors.c = getBoundedTouch(touch: touch)
-            center = util.getTetherCenter(self.anchors)
-            updateKnots()
+            updateTetherCenter()
         case .missed:
             // Do nothing
             break
@@ -182,7 +176,7 @@ struct Configuration {
             self.selection = .missed
             self.selection = self.getSelection(touch: touch)
         case .point:
-            self.updateAnchors(touch: touch)
+            updateAnchors(touch: touch)
             updateKnots()
             break
         }
@@ -313,7 +307,8 @@ struct Configuration {
     }
 
     mutating func getPath() -> [[Coordinate]] {
-        return path.getDetails(platform).path
+        return getPlatform()
+            .path
             .rotated(by: getRotation())
             .scaled(by: getImageScale())
             .translated(by: getTranslation())
@@ -376,6 +371,13 @@ struct Configuration {
 
     func getDistance(_ points: Float) -> Float {
         return points * distanceScale * (units == .metric ? 1.0 : MATH_METERS_TO_FEET_CONVERSION)
+    }
+
+    mutating func updateTetherCenter() {
+        self.knots = nil
+        self.center = nil
+        self.center = util.getTetherCenter(self.anchors)
+        self.updateKnots()
     }
 
     mutating func updateKnots() {
