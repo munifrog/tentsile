@@ -22,7 +22,7 @@ enum Units: String {
 }
 
 private let MATH_BASE_PIXELS_PER_METER: Float = 75;
-private let MATH_METERS_CENTER_TO_ANCHOR_MIN: Float = 1.0
+private let MATH_METERS_CENTER_TO_ANCHOR_MIN: Float = 0.7
 private let MATH_METERS_TO_FEET_CONVERSION: Float = 3.2808399;
 private let MATH_SLIDER_POINT_00: Float = 0.0;
 private let MATH_SLIDER_POINT_01: Float = 50.0;
@@ -428,9 +428,9 @@ struct Configuration {
                 self.knots = TetherKnots(a: aTether, b: bTether, c: cTether)
             } else {
                 self.knots = TetherKnots(
-                    a: TetherDetails(knots: [start, aAnchor], icon: AnchorIcon.safe),
-                    b: TetherDetails(knots: [start, bAnchor], icon: AnchorIcon.safe),
-                    c: TetherDetails(knots: [start, cAnchor], icon: AnchorIcon.safe))
+                    a: TetherDetails(knots: [start, aAnchor], pixels: -1, icon: AnchorIcon.safe),
+                    b: TetherDetails(knots: [start, bAnchor], pixels: -1, icon: AnchorIcon.safe),
+                    c: TetherDetails(knots: [start, cAnchor], pixels: -1, icon: AnchorIcon.safe))
             }
         } else {
             self.knots = nil

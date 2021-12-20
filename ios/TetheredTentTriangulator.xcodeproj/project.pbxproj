@@ -30,6 +30,7 @@
 		8EB1CD832768FB11009E2036 /* AnchorIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB1CD822768FB11009E2036 /* AnchorIconView.swift */; };
 		8EB1CD8527696787009E2036 /* TetherKnots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB1CD8427696786009E2036 /* TetherKnots.swift */; };
 		8EB1CD8727697A84009E2036 /* TetherIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB1CD8627697A83009E2036 /* TetherIconView.swift */; };
+		8EB1CD8927711B17009E2036 /* PlatformLabelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB1CD8827711B15009E2036 /* PlatformLabelsView.swift */; };
 		8EBA707D275D6E410084093B /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBA707C275D6E400084093B /* MenuView.swift */; };
 		8EC38315270A086E006D9AE6 /* LabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC38314270A086E006D9AE6 /* LabelView.swift */; };
 		8EC38317270A43D9006D9AE6 /* PlatformPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC38316270A43D9006D9AE6 /* PlatformPath.swift */; };
@@ -84,6 +85,7 @@
 		8EB1CD822768FB11009E2036 /* AnchorIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorIconView.swift; sourceTree = "<group>"; };
 		8EB1CD8427696786009E2036 /* TetherKnots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TetherKnots.swift; sourceTree = "<group>"; };
 		8EB1CD8627697A83009E2036 /* TetherIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TetherIconView.swift; sourceTree = "<group>"; };
+		8EB1CD8827711B15009E2036 /* PlatformLabelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformLabelsView.swift; sourceTree = "<group>"; };
 		8EBA707C275D6E400084093B /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		8EC38314270A086E006D9AE6 /* LabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelView.swift; sourceTree = "<group>"; };
 		8EC38316270A43D9006D9AE6 /* PlatformPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlatformPath.swift; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 				8EBA707C275D6E400084093B /* MenuView.swift */,
 				8E0C687326F19AAF003EE614 /* Perimeter.swift */,
 				8E0C687526F23050003EE614 /* PerimeterLabels.swift */,
+				8EB1CD8827711B15009E2036 /* PlatformLabelsView.swift */,
 				8EC38316270A43D9006D9AE6 /* PlatformPath.swift */,
 				8E8C068726E5814A00F47062 /* PlatformPicker.swift */,
 				8EC3831A2712430A006D9AE6 /* PlatformRotator.swift */,
@@ -330,6 +333,7 @@
 				8E0C687426F19AAF003EE614 /* Perimeter.swift in Sources */,
 				8EC38319270A43EA006D9AE6 /* PlatformView.swift in Sources */,
 				8E0C686E26EDAB68003EE614 /* Anchors.swift in Sources */,
+				8EB1CD8927711B17009E2036 /* PlatformLabelsView.swift in Sources */,
 				8E8C065D26E5797400F47062 /* ContentView.swift in Sources */,
 				8E0C687C26F2EB46003EE614 /* TetherView.swift in Sources */,
 				8EB1CD8727697A84009E2036 /* TetherIconView.swift in Sources */,

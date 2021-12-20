@@ -8,7 +8,6 @@
 import Foundation
 
 private let STRAP_EXTENSION_LENGTH: Float = 6.0
-private let MINIMUM_METERS_ANCHOR_TO_CENTER: Float = 1.0
 
 enum AnchorIcon {
     case impossible
@@ -20,10 +19,12 @@ enum AnchorIcon {
 struct TetherDetails {
     let icon: AnchorIcon
     let knots: [Coordinate]
+    let pixels: Float
 
-    init(knots: [Coordinate], icon: AnchorIcon) {
+    init(knots: [Coordinate], pixels: Float, icon: AnchorIcon) {
         self.icon = icon
         self.knots = knots
+        self.pixels = pixels
     }
 }
 
@@ -167,6 +168,9 @@ class Util {
         let pixelAnchorVector: Coordinate = end - start
         let pixelAnchorAmount: Float = sqrt(pixelAnchorVector.x * pixelAnchorVector.x + pixelAnchorVector.y * pixelAnchorVector.y)
 
+        let pixelTetherVector = end - extremity
+        var pixelTetherAmount: Float = sqrt(pixelTetherVector.x * pixelTetherVector.x + pixelTetherVector.y * pixelTetherVector.y)
+
         let angle: Float = getDirection(h: pixelAnchorAmount, delta_x: pixelAnchorVector.x, delta_y: pixelAnchorVector.y)
         let sine = sin(angle)
         let cosine = cos(angle)
@@ -179,6 +183,7 @@ class Util {
 
         if pixelAnchorAmount < pixelExtremityAmount {
             anchorIcon = AnchorIcon.impossible
+            pixelTetherAmount *= -1
         } else if pixelAnchorAmount <= ratchetDistance {
             anchorIcon = AnchorIcon.tricky
         } else { // pixelAnchorAmount > ratchetDistance
@@ -200,6 +205,6 @@ class Util {
             }
         }
         knots.append(end)
-        return TetherDetails(knots: knots, icon: anchorIcon)
+        return TetherDetails(knots: knots, pixels: pixelTetherAmount, icon: anchorIcon)
     }
 }
