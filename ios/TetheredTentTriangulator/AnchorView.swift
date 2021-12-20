@@ -27,28 +27,19 @@ struct AnchorView: View {
                 Circle()
                     .fill(Color.green)
                     .frame(width: diamA, height: diamA, alignment: .center)
-                    .position(
-                        x: CGFloat(limits.x + config.anchors.a.x),
-                        y: CGFloat(limits.y + config.anchors.a.y)
-                    )
+                    .position(CGPoint(limits + config.anchors.a))
                 )
             .overlay(
                 Circle()
                     .fill(Color.green)
                     .frame(width: diamB, height: diamB, alignment: .center)
-                    .position(
-                        x: CGFloat(limits.x + config.anchors.b.x),
-                        y: CGFloat(limits.y + config.anchors.b.y)
-                    )
+                    .position(CGPoint(limits + config.anchors.b))
                 )
             .overlay(
                 Circle()
                     .fill(Color.green)
                     .frame(width: diamC, height: diamC, alignment: .center)
-                    .position(
-                        x: CGFloat(limits.x + config.anchors.c.x),
-                        y: CGFloat(limits.y + config.anchors.c.y)
-                    )
+                    .position(CGPoint(limits + config.anchors.c))
                 )
             .overlay(
                 HStack {
@@ -56,10 +47,7 @@ struct AnchorView: View {
                         Circle()
                             .fill(Color("TetherProvided"))
                             .frame(width: diamTether, height: diamTether, alignment: .center)
-                            .position(
-                                x: CGFloat(limits.x + center.p.x),
-                                y: CGFloat(limits.y + center.p.y)
-                            )
+                            .position(CGPoint(limits + center.p))
                     } else {
                         EmptyView()
                     }

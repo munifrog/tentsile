@@ -109,12 +109,9 @@ extension Array where Element == Coordinate {
     func asPathView() -> Path {
         var path = Path()
         if !isEmpty {
-            path.move(to: CGPoint(x: CGFloat(self[0].x), y: CGFloat(self[0].y)))
+            path.move(to: CGPoint(self[0]))
             for i in 1..<count  {
-                path.addLine(to: CGPoint(
-                    x: CGFloat(self[i].x),
-                    y: CGFloat(self[i].y)
-                ))
+                path.addLine(to: CGPoint(self[i]))
             }
         }
         return path
@@ -151,22 +148,13 @@ extension Array where Element == [Coordinate] {
         if !self.isEmpty {
             for index in self {
                 if !index.isEmpty {
-                    path.move(to: CGPoint(x: CGFloat(index[0].x), y: CGFloat(index[0].y)))
+                    path.move(to: CGPoint(index[0]))
                     for i in 1..<index.count {
-                        path.addLine(to: CGPoint(
-                            x: CGFloat(index[i].x),
-                            y: CGFloat(index[i].y)
-                        ))
+                        path.addLine(to: CGPoint(index[i]))
                     }
                 }
             }
         }
         return path
-    }
-}
-
-extension CGPoint {
-    init(_ coord: Coordinate) {
-        self.init(x: CGFloat(coord.x), y: CGFloat(coord.y))
     }
 }

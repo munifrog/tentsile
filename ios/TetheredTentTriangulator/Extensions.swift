@@ -8,6 +8,10 @@
 import SwiftUI
 
 extension CGPoint {
+    init(_ coord: Coordinate) {
+        self.init(x: CGFloat(coord.x), y: CGFloat(coord.y))
+    }
+
     static func - (left: CGPoint, right: CGPoint) -> Coordinate {
         return Coordinate(x: left.x - right.x, y: left.y - right.y)
     }
