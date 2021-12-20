@@ -135,7 +135,7 @@ struct Configuration {
         }
     }
 
-    mutating func getPlatform() -> PlatformDetails {
+    func getPlatform() -> PlatformDetails {
         return path.getDetails(platform)
     }
 
@@ -315,7 +315,7 @@ struct Configuration {
         self.anchors.c = initC + v + limitedV
     }
 
-    mutating func getPath() -> [[Coordinate]] {
+    func getPath() -> [[Coordinate]] {
         return getPlatform()
             .path
             .rotated(by: getRotation())
@@ -330,7 +330,7 @@ struct Configuration {
             .translated(by: getTranslation())
     }
 
-    mutating func getRotation() -> Float {
+    func getRotation() -> Float {
         if let focus = center {
             let delta = anchors.a - focus.p
             let hypotenuse = sqrt(delta.x * delta.x + delta.y * delta.y)
@@ -340,7 +340,7 @@ struct Configuration {
         }
     }
 
-    mutating func getTranslation() -> Coordinate {
+    func getTranslation() -> Coordinate {
         if let focus = center {
             return getLimits() + focus.p
         } else {
@@ -348,7 +348,7 @@ struct Configuration {
         }
     }
 
-    mutating func getImageScale() -> Float {
+    func getImageScale() -> Float {
         if let _ = center {
             return imageScale
         } else {

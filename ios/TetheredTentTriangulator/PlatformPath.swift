@@ -45,23 +45,23 @@ struct PlatformDetails {
 }
 
 struct PlatformPath {
-    private lazy var connect: PlatformDetails = getTenstsileIsosceles(hypotenuse: TENTSILE_HYPOTENUSE_CONNECT, base: TENTSILE_BASE_CONNECT)
-    private lazy var duo: PlatformDetails = getTenstsileIsosceles(hypotenuse: TENTSILE_HYPOTENUSE_DUO, base: TENTSILE_BASE_DUO)
-    private lazy var flite: PlatformDetails = getTenstsileIsosceles(hypotenuse: TENTSILE_HYPOTENUSE_FLITE, base: TENTSILE_BASE_FLITE)
-    private lazy var stingray: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_STINGRAY)
-    private lazy var t_mini: PlatformDetails = getTenstsileIsosceles(hypotenuse: TENTSILE_HYPOTENUSE_T_MINI, base: TENTSILE_BASE_T_MINI)
-    private lazy var trillium: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_TRILLIUM)
-    private lazy var trillium_xl: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_TRILLIUM_XL)
-    private lazy var trilogy: PlatformDetails = getTentsileTrilogy(hypotenuse: TENTSILE_HYPOTENUSE_TRILOGY, base: TENTSILE_BASE_TRILOGY)
-    private lazy var una: PlatformDetails = getTenstsileIsosceles(
+    private var connect: PlatformDetails = getTenstsileIsosceles(hypotenuse: TENTSILE_HYPOTENUSE_CONNECT, base: TENTSILE_BASE_CONNECT)
+    private var duo: PlatformDetails = getTenstsileIsosceles(hypotenuse: TENTSILE_HYPOTENUSE_DUO, base: TENTSILE_BASE_DUO)
+    private var flite: PlatformDetails = getTenstsileIsosceles(hypotenuse: TENTSILE_HYPOTENUSE_FLITE, base: TENTSILE_BASE_FLITE)
+    private var stingray: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_STINGRAY)
+    private var t_mini: PlatformDetails = getTenstsileIsosceles(hypotenuse: TENTSILE_HYPOTENUSE_T_MINI, base: TENTSILE_BASE_T_MINI)
+    private var trillium: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_TRILLIUM)
+    private var trillium_xl: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_TRILLIUM_XL)
+    private var trilogy: PlatformDetails = getTentsileTrilogy(hypotenuse: TENTSILE_HYPOTENUSE_TRILOGY, base: TENTSILE_BASE_TRILOGY)
+    private var una: PlatformDetails = getTenstsileIsosceles(
         hypotenuse: TENTSILE_HYPOTENUSE_UNA,
         base: TENTSILE_BASE_UNA,
         strap: TENTSILE_STRAPS_UNA,
         circumference: TENTSILE_CIRCUMFERENCE_UNA)
-    private lazy var universe: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_UNIVERSE)
-    private lazy var vista: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_VISTA)
+    private var universe: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_UNIVERSE)
+    private var vista: PlatformDetails = getTentsileEquilateral(longest: TENTSILE_HYPOTENUSE_VISTA)
 
-    mutating func getDetails(_ type: Platform) -> PlatformDetails {
+    func getDetails(_ type: Platform) -> PlatformDetails {
         switch type {
         case .connect:
             return self.connect
