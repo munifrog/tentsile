@@ -38,17 +38,6 @@ struct Clearing: View {
                     screen: Coordinate(coordinate: dimensions)
                 )
             })
-            .overlay(
-                Text("(\(Int(touchPoint.x)), \(Int(touchPoint.y)))")
-                    .font(.title)
-                    .colorInvert()
-                )
-            .overlay(
-                Circle()
-                    .fill(Color.green)
-                    .frame(width: 15, height: 15, alignment: .center)
-                    .position(touchPoint)
-                )
             .overlay(Perimeter(config: $config))
             .overlay(TetherView(config: $config))
             .overlay(PlatformView(config: $config))
