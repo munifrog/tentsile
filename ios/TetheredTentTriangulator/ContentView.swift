@@ -25,6 +25,7 @@ struct ContentView: View {
                 PlatformPicker(platform: $config.platform)
                 PlatformRotator(config: $config)
             }
+            .frame(height: 30, alignment: .center)
             HSlider(position: $config.scale)
             Spacer()
             Clearing(config: $config)
