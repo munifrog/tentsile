@@ -126,6 +126,15 @@ struct Configuration {
         return self.limits
     }
 
+    func getCanDrawPlatform() -> Bool {
+        if let c = center {
+            let allowance = getImageScale() * MATH_METERS_CENTER_TO_ANCHOR_MIN
+            return c.pa > allowance && c.pb > allowance && c.pc > allowance
+        } else {
+            return false
+        }
+    }
+
     mutating func getPlatform() -> PlatformDetails {
         return path.getDetails(platform)
     }
@@ -226,8 +235,8 @@ struct Configuration {
             closestDist = diffSquared
         }
 
-        if let center = self.center {
-            diff = touch - center.p
+        if getCanDrawPlatform() {
+            diff = touch - center!.p
             diffSquared = diff.x * diff.x + diff.y * diff.y
             if diffSquared < closestDist {
                 newSelection = .point
@@ -383,7 +392,6 @@ struct Configuration {
     mutating func updateKnots() {
         if let c = center {
             let pixelsPerMeter = getImageScale()
-            let allowedRange = pixelsPerMeter * MATH_METERS_CENTER_TO_ANCHOR_MIN
 
             let limits = getLimits()
             let start = limits + c.p
@@ -391,10 +399,7 @@ struct Configuration {
             let bAnchor = limits + anchors.b
             let cAnchor = limits + anchors.c
 
-            if (c.pa > allowedRange) &&
-                (c.pb > allowedRange) &&
-                (c.pc > allowedRange)
-            {
+            if getCanDrawPlatform() {
                 let b_index = c.flips ? 2 : 1
                 let c_index = c.flips ? 1 : 2
                 let extremes = getExtremities()
