@@ -10,10 +10,12 @@ import SwiftUI
 struct MenuView: View {
     @Binding var config: Configuration
 
+    private let URL_TENTSILE_WEBSITE: String = "https://www.tentsile.com/"
+
     var body: some View {
         Menu {
             Button ("Reset Tether Points", action: resetAnchors)
-            Button ("Tentsile Website", action: resetAnchors)
+            Link("Tentsile Website", destination: URL(string: URL_TENTSILE_WEBSITE)!)
             VStack {
                 if config.units == .metric {
                     Button ("Use feet (ft)", action: setImperial)
