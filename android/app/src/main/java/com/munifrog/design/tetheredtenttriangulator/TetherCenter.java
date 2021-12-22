@@ -3,6 +3,7 @@ package com.munifrog.design.tetheredtenttriangulator;
 class TetherCenter {
     private static final double MATH_ANGLE_ONE_THIRD_CIRCLE = 2 * Math.PI / 3;
     private static final double MATH_ANGLE_ONE_SIXTH_CIRCLE = Math.PI / 3;
+    private static final double MATH_SINE_ONE_THIRD_CIRCLE = Math.sin(MATH_ANGLE_ONE_THIRD_CIRCLE);
     private final float[][] mTethers = new float[3][2];
     private final float[] mNewPlatformCenter = new float[2];
 
@@ -41,12 +42,12 @@ class TetherCenter {
         // Equilateral triangle (simple) case: 2P0, 1P2 and 0P1 are all 120(o) or 2 * PI / 3
         // Rather than computing the sines of these angles, could compute them ahead of time and load per tent
 
-        double sine2P0 = Math.sin(MATH_ANGLE_ONE_THIRD_CIRCLE); // rho
-        double sine1P2 = Math.sin(MATH_ANGLE_ONE_THIRD_CIRCLE); // lambda
-        //double sine0P1 = Math.sin(MATH_ANGLE_ONE_THIRD_CIRCLE); // psi
+        //double sine2P0 = MATH_SINE_ONE_THIRD_CIRCLE; // rho
+        double sine1P2 = MATH_SINE_ONE_THIRD_CIRCLE; // lambda
+        //double sine0P1 = MATH_SINE_ONE_THIRD_CIRCLE; // psi
 
         double angleTheta =  MATH_ANGLE_ONE_THIRD_CIRCLE - angle021;
-        double angleP12 = Math.atan(dist20 * Math.sin(angleTheta) * sine1P2 / (dist12 * sine2P0 + dist20 * sine1P2 * Math.cos(angleTheta)));
+        double angleP12 = Math.atan(dist20 * Math.sin(angleTheta) / (dist12 + dist20 * Math.cos(angleTheta)));
         double angleP21 = MATH_ANGLE_ONE_SIXTH_CIRCLE - angleP12;
         double angleP20 = angle021 - angleP21;
 
