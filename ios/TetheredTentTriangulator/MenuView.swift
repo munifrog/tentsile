@@ -22,6 +22,7 @@ struct MenuView: View {
                 } else {
                     Button ("Use meters (m)", action: setMetric)
                 }
+                SymbolMenuView(symbols: $config.symbols)
             }
         } label: {
             Label("more", systemImage: "ellipsis")

@@ -16,6 +16,7 @@
 		8E0C687826F2380C003EE614 /* TetherCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C687726F2380C003EE614 /* TetherCenter.swift */; };
 		8E0C687A26F23AC7003EE614 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C687926F23AC7003EE614 /* Util.swift */; };
 		8E0C687C26F2EB46003EE614 /* TetherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C687B26F2EB46003EE614 /* TetherView.swift */; };
+		8E3B3A1927750D0B00BEA89B /* SymbolMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3B3A1827750D0B00BEA89B /* SymbolMenuView.swift */; };
 		8E61139426F58B6B007F48F8 /* ViewSizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61139326F58B6B007F48F8 /* ViewSizing.swift */; };
 		8E6F727826F7E6620099BB36 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6F727726F7E6620099BB36 /* Extensions.swift */; };
 		8E8C065B26E5797400F47062 /* TetheredTentTriangulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C065A26E5797400F47062 /* TetheredTentTriangulatorApp.swift */; };
@@ -65,6 +66,7 @@
 		8E0C687726F2380C003EE614 /* TetherCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TetherCenter.swift; sourceTree = "<group>"; };
 		8E0C687926F23AC7003EE614 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		8E0C687B26F2EB46003EE614 /* TetherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TetherView.swift; sourceTree = "<group>"; };
+		8E3B3A1827750D0B00BEA89B /* SymbolMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolMenuView.swift; sourceTree = "<group>"; };
 		8E61139326F58B6B007F48F8 /* ViewSizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewSizing.swift; sourceTree = "<group>"; };
 		8E6F727726F7E6620099BB36 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		8E8C065726E5797400F47062 /* TetheredTentTriangulator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TetheredTentTriangulator.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -160,6 +162,7 @@
 				8E8C068726E5814A00F47062 /* PlatformPicker.swift */,
 				8EC3831A2712430A006D9AE6 /* PlatformRotator.swift */,
 				8EC38318270A43EA006D9AE6 /* PlatformView.swift */,
+				8E3B3A1827750D0B00BEA89B /* SymbolMenuView.swift */,
 				8E0C687726F2380C003EE614 /* TetherCenter.swift */,
 				8EB1CD8627697A83009E2036 /* TetherIconView.swift */,
 				8EB1CD8427696786009E2036 /* TetherKnots.swift */,
@@ -353,6 +356,7 @@
 				8E8C065B26E5797400F47062 /* TetheredTentTriangulatorApp.swift in Sources */,
 				8E8C068A26E65EC200F47062 /* Clearing.swift in Sources */,
 				8E0C687226EE9010003EE614 /* AnchorView.swift in Sources */,
+				8E3B3A1927750D0B00BEA89B /* SymbolMenuView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -21,6 +21,45 @@ enum Units: String {
     case metric = "metric"
 }
 
+enum Symbols: Int, Comparable {
+    case none = 0
+    case cannot
+    case tricky
+    case warn
+
+    static func < (left: Symbols, right: Symbols) -> Bool {
+        return left.rawValue < right.rawValue
+    }
+
+    static postfix func ++ (symbol: inout Symbols) {
+        switch symbol {
+        case none:
+            symbol = Symbols.cannot
+        case cannot:
+            symbol = Symbols.tricky
+        case tricky:
+            symbol = Symbols.warn
+        case warn:
+            // Do nothing
+            return
+        }
+    }
+
+    static postfix func -- (symbol: inout Symbols) {
+        switch symbol {
+        case warn:
+            symbol = Symbols.tricky
+        case tricky:
+            symbol = Symbols.cannot
+        case cannot:
+            symbol = Symbols.none
+        case none:
+            // Do nothing
+            return
+        }
+    }
+}
+
 private let MATH_BASE_PIXELS_PER_METER: Float = 75;
 private let MATH_METERS_CENTER_TO_ANCHOR_MIN: Float = 0.7
 private let MATH_METERS_TO_FEET_CONVERSION: Float = 3.2808399;
@@ -43,6 +82,7 @@ private let MATH_SCALE_SLOPE_02_03: Float =
     (MATH_SLIDER_POINT_03 - MATH_SLIDER_POINT_02);
 private let USER_DEFAULTS_STORED_PLATFORM = "com.munifrog.tethered.tent.triangulator.config.platform"
 private let USER_DEFAULTS_STORED_SCALE = "com.munifrog.tethered.tent.triangulator.config.slider"
+private let USER_DEFAULTS_STORED_SYMBOLS = "com.munifrog.tethered.tent.triangulator.config.symbols"
 private let USER_DEFAULTS_STORED_UNITS = "com.munifrog.tethered.tent.triangulator.config.units"
 
 struct Configuration {
@@ -63,6 +103,11 @@ struct Configuration {
         }
     }
     var selection: Select = .none
+    var symbols: Symbols {
+        didSet {
+            UserDefaults.standard.set(symbols.rawValue, forKey: USER_DEFAULTS_STORED_SYMBOLS)
+        }
+    }
     var units: Units {
         didSet {
             UserDefaults.standard.set(units.rawValue, forKey: USER_DEFAULTS_STORED_UNITS)
@@ -90,6 +135,11 @@ struct Configuration {
             self.scale = storedScale
         } else {
             self.scale = 25.0
+        }
+        if let storedSymbols = UserDefaults.standard.object(forKey: USER_DEFAULTS_STORED_SYMBOLS) as? Int {
+            self.symbols = Symbols(rawValue: storedSymbols)!
+        } else {
+            self.symbols = .warn
         }
         if let storedUnits = UserDefaults.standard.string(forKey: USER_DEFAULTS_STORED_UNITS) {
             self.units = Units(rawValue: storedUnits)!

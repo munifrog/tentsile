@@ -14,13 +14,13 @@ struct TetherIconView: View {
         if let knots = config.knots {
             let dimen = CGFloat(20)
             let limits = config.getLimits()
-            AnchorIconView(icon: knots.icon_a)
+            AnchorIconView(icon: knots.icon_a, level: config.symbols)
                 .frame(width: dimen, height: dimen, alignment: .center)
                 .position(CGPoint(limits + config.anchors.a))
-            AnchorIconView(icon: knots.icon_b)
+            AnchorIconView(icon: knots.icon_b, level: config.symbols)
                 .frame(width: dimen, height: dimen, alignment: .center)
                 .position(CGPoint(limits + config.anchors.b))
-            AnchorIconView(icon: knots.icon_c)
+            AnchorIconView(icon: knots.icon_c, level: config.symbols)
                 .frame(width: dimen, height: dimen, alignment: .center)
                 .position(CGPoint(limits + config.anchors.c))
         } else {
