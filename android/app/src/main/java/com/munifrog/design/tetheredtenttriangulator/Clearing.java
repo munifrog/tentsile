@@ -439,7 +439,7 @@ public class Clearing
                     int startIdx;
                     for (int j = strapKnots.length - 1; j > 0; j--) {
                         startIdx = j - 1;
-                        color = (j < 3) ? mTetherPaintStraps : mTetherPaintExtensions;
+                        color = getPaint(j);
                         canvas.drawLine(
                                 strapKnots[startIdx][0],
                                 strapKnots[startIdx][1],
@@ -460,6 +460,16 @@ public class Clearing
             }
         } else {
             drawTethers(canvas);
+        }
+    }
+
+    private Paint getPaint(int index) {
+        if (index < 3) {
+            return mTetherPaintStraps;
+        } else if ((index % 2) == 1) {
+            return mTetherPaintExtensions;
+        } else {
+            return mTetherPaintStraps;
         }
     }
 
