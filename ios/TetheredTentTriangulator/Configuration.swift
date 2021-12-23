@@ -52,14 +52,14 @@ struct Configuration {
     var platform: Platform {
         didSet {
             UserDefaults.standard.set(platform.rawValue, forKey: USER_DEFAULTS_STORED_PLATFORM)
-            updateKnots()
+            updateKnots(self.center)
         }
     }
     var scale: Float {
         didSet {
             UserDefaults.standard.set(scale, forKey: USER_DEFAULTS_STORED_SCALE)
             updateConvertedScale()
-            updateKnots()
+            updateKnots(self.center)
         }
     }
     var selection: Select = .none
@@ -106,13 +106,13 @@ struct Configuration {
         self.anchors.rotate()
         if var c = center {
             c.rotate()
-            updateKnots()
+            updateKnots(c)
         }
     }
 
     mutating func setLimits(screen: Coordinate) {
         self.limits = screen
-        updateKnots()
+        updateKnots(self.center)
     }
 
     func getLimits() -> Coordinate {
@@ -179,7 +179,7 @@ struct Configuration {
             self.selection = self.getSelection(touch: touch)
         case .point:
             updateAnchors(touch: touch)
-            updateKnots()
+            updateKnots(self.center)
             break
         }
     }
@@ -379,10 +379,11 @@ struct Configuration {
         self.knots = nil
         self.center = nil
         self.center = util.getTetherCenter(self.anchors)
-        self.updateKnots()
+        self.updateKnots(self.center)
     }
 
-    mutating func updateKnots() {
+    // Pass in a copy of the TetherCenter? in case it transitions to/from nil
+    mutating func updateKnots(_ center: TetherCenter?) {
         if let c = center {
             let pixelsPerMeter = getImageScale()
 
