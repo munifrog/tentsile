@@ -9,28 +9,23 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var config = Configuration()
+    @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
 
     var body: some View {
-        VStack {
-            HStack {
-                Text("Tethered Tent Triangulator")
-                    .font(.headline)
-                    .colorInvert()
-                Spacer()
-                MenuView(config: $config)
+        Group {
+            if orientation.isPortrait {
+                VContentView(config: $config)
+                    .background(Color("ThemeLight"))
+            } else {
+                HContentView(config: $config)
+                    .background(Color("ThemeLight"))
             }
-            .padding(.horizontal)
-            .background(Color("ThemePrimary"))
-            HStack {
-                PlatformPicker(platform: $config.platform)
-                PlatformRotator(config: $config)
-            }
-            .frame(height: 30, alignment: .center)
-            HSlider(position: $config.scale)
-            Spacer()
-            Clearing(config: $config)
         }
         .background(Color("ThemeLight"))
+        .onReceive(NotificationCenter.Publisher(center: .default, name: UIDevice.orientationDidChangeNotification)) { _ in
+            // See https://stackoverflow.com/a/58738150
+            self.orientation = UIDevice.current.orientation
+        }
     }
 }
 

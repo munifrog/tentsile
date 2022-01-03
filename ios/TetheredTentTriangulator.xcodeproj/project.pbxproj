@@ -17,6 +17,9 @@
 		8E0C687A26F23AC7003EE614 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C687926F23AC7003EE614 /* Util.swift */; };
 		8E0C687C26F2EB46003EE614 /* TetherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0C687B26F2EB46003EE614 /* TetherView.swift */; };
 		8E3B3A1927750D0B00BEA89B /* SymbolMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3B3A1827750D0B00BEA89B /* SymbolMenuView.swift */; };
+		8E3B3A1B27752EDE00BEA89B /* VSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3B3A1A27752EDE00BEA89B /* VSliderView.swift */; };
+		8E3B3A1D277548CC00BEA89B /* HContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3B3A1C277548CC00BEA89B /* HContentView.swift */; };
+		8E3B3A1F277548E200BEA89B /* VContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E3B3A1E277548E200BEA89B /* VContentView.swift */; };
 		8E61139426F58B6B007F48F8 /* ViewSizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61139326F58B6B007F48F8 /* ViewSizing.swift */; };
 		8E6F727826F7E6620099BB36 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E6F727726F7E6620099BB36 /* Extensions.swift */; };
 		8E8C065B26E5797400F47062 /* TetheredTentTriangulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C065A26E5797400F47062 /* TetheredTentTriangulatorApp.swift */; };
@@ -67,6 +70,9 @@
 		8E0C687926F23AC7003EE614 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		8E0C687B26F2EB46003EE614 /* TetherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TetherView.swift; sourceTree = "<group>"; };
 		8E3B3A1827750D0B00BEA89B /* SymbolMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolMenuView.swift; sourceTree = "<group>"; };
+		8E3B3A1A27752EDE00BEA89B /* VSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VSliderView.swift; sourceTree = "<group>"; };
+		8E3B3A1C277548CC00BEA89B /* HContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HContentView.swift; sourceTree = "<group>"; };
+		8E3B3A1E277548E200BEA89B /* VContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VContentView.swift; sourceTree = "<group>"; };
 		8E61139326F58B6B007F48F8 /* ViewSizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewSizing.swift; sourceTree = "<group>"; };
 		8E6F727726F7E6620099BB36 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		8E8C065726E5797400F47062 /* TetheredTentTriangulator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TetheredTentTriangulator.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -153,6 +159,7 @@
 				8E0C686F26EDABB6003EE614 /* Coordinate.swift */,
 				8E6F727726F7E6620099BB36 /* Extensions.swift */,
 				8E8C068526E57EF100F47062 /* HSlider.swift */,
+				8E3B3A1C277548CC00BEA89B /* HContentView.swift */,
 				8EC38314270A086E006D9AE6 /* LabelView.swift */,
 				8EBA707C275D6E400084093B /* MenuView.swift */,
 				8E0C687326F19AAF003EE614 /* Perimeter.swift */,
@@ -168,7 +175,9 @@
 				8EB1CD8427696786009E2036 /* TetherKnots.swift */,
 				8E0C687B26F2EB46003EE614 /* TetherView.swift */,
 				8E0C687926F23AC7003EE614 /* Util.swift */,
+				8E3B3A1E277548E200BEA89B /* VContentView.swift */,
 				8E61139326F58B6B007F48F8 /* ViewSizing.swift */,
+				8E3B3A1A27752EDE00BEA89B /* VSliderView.swift */,
 				8E8C065E26E5797600F47062 /* Assets.xcassets */,
 				8E8C066326E5797600F47062 /* Info.plist */,
 				8E8C066026E5797600F47062 /* Preview Content */,
@@ -340,15 +349,18 @@
 				8E8C065D26E5797400F47062 /* ContentView.swift in Sources */,
 				8E0C687C26F2EB46003EE614 /* TetherView.swift in Sources */,
 				8EB1CD8727697A84009E2036 /* TetherIconView.swift in Sources */,
+				8E3B3A1F277548E200BEA89B /* VContentView.swift in Sources */,
 				8EBA707D275D6E410084093B /* MenuView.swift in Sources */,
 				8EB1CD832768FB11009E2036 /* AnchorIconView.swift in Sources */,
 				8EB1CD8527696787009E2036 /* TetherKnots.swift in Sources */,
 				8E0C687026EDABB6003EE614 /* Coordinate.swift in Sources */,
 				8EC3831B2712430A006D9AE6 /* PlatformRotator.swift in Sources */,
 				8EC38317270A43D9006D9AE6 /* PlatformPath.swift in Sources */,
+				8E3B3A1B27752EDE00BEA89B /* VSliderView.swift in Sources */,
 				8E8C068626E57EF100F47062 /* HSlider.swift in Sources */,
 				8E0C687826F2380C003EE614 /* TetherCenter.swift in Sources */,
 				8E0C687A26F23AC7003EE614 /* Util.swift in Sources */,
+				8E3B3A1D277548CC00BEA89B /* HContentView.swift in Sources */,
 				8E0C687626F23050003EE614 /* PerimeterLabels.swift in Sources */,
 				8E61139426F58B6B007F48F8 /* ViewSizing.swift in Sources */,
 				8E6F727826F7E6620099BB36 /* Extensions.swift in Sources */,
