@@ -22,11 +22,7 @@ struct VContentView: View {
             .padding(.horizontal)
             .background(Color("ThemePrimary"))
 
-            HStack {
-                PlatformPicker(platform: $config.platform)
-                PlatformRotator(config: $config)
-            }
-            .frame(height: 30, alignment: .center)
+            PlatformPicker(config: $config)
 
             VStack {
                 HSlider(position: $config.scale)

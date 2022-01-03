@@ -24,23 +24,25 @@ enum Platform: String, CaseIterable, Identifiable {
 }
 
 struct PlatformPicker: View {
-    @Binding var platform: Platform
+    @Binding var config: Configuration
 
     var body: some View {
         HStack {
-            Picker("\(platform.rawValue)", selection: $platform) {
+            Picker("\(config.platform.rawValue)", selection: $config.platform) {
                 ForEach(Platform.allCases) { p in
                     Text(p.rawValue).tag(p)
                 }
             }
+            .pickerStyle(MenuPickerStyle())
+            PlatformRotator(config: $config)
         }
-        .pickerStyle(MenuPickerStyle())
+        .padding(.horizontal)
+        .frame(height: 30, alignment: .center)
     }
 }
 
 struct PlatformPicker_Previews: PreviewProvider {
     static var previews: some View {
-        let config = Configuration()
-        PlatformPicker(platform: .constant(config.platform))
+        PlatformPicker(config: .constant(Configuration()))
     }
 }

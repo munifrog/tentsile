@@ -38,11 +38,7 @@ struct HContentView: View {
                 VStack {
                     HStack {
                         Spacer()
-                        Group {
-                            PlatformPicker(platform: $config.platform)
-                            PlatformRotator(config: $config)
-                                .padding(.trailing)
-                        }
+                        PlatformPicker(config: $config)
                         .frame(height: pickerHeight)
                         .background(Color.clear)
                     }
