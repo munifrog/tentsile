@@ -12,20 +12,15 @@ struct PlatformRotator: View {
 
     var body: some View {
         Group {
-            if config.getPlatform().rotates {
-                if let center = config.center {
-                    Button(action: rotate) {
-                        Label("Rotate", systemImage:
-                                center.flips ? "arrow.counterclockwise" : "arrow.clockwise")
-                            .labelStyle(IconOnlyLabelStyle())
-                            .frame(alignment: .center)
-                    }
-                    .background(Color.clear)
-                } else {
-                    EmptyView()
+            if config.getPlatform().rotates,
+               let center = config.center {
+                Button(action: rotate) {
+                    Label("Rotate", systemImage:
+                            center.flips ? "arrow.counterclockwise" : "arrow.clockwise")
+                        .labelStyle(IconOnlyLabelStyle())
+                        .frame(alignment: .center)
                 }
-            } else {
-                EmptyView()
+                .background(Color.clear)
             }
         }
     }
