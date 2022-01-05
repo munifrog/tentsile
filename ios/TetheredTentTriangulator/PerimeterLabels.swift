@@ -23,7 +23,8 @@ struct PerimeterLabels: View {
                     a_y: config.anchors.a.y,
                     b_x: config.anchors.b.x,
                     b_y: config.anchors.b.y,
-                    units: config.units
+                    units: config.units,
+                    color: Color("FontPerimeter")
                 )
             )
             .overlay(
@@ -35,7 +36,8 @@ struct PerimeterLabels: View {
                     a_y: config.anchors.b.y,
                     b_x: config.anchors.c.x,
                     b_y: config.anchors.c.y,
-                    units: config.units
+                    units: config.units,
+                    color: Color("FontPerimeter")
                 )
             )
             .overlay(
@@ -47,7 +49,8 @@ struct PerimeterLabels: View {
                     a_y: config.anchors.c.y,
                     b_x: config.anchors.a.x,
                     b_y: config.anchors.a.y,
-                    units: config.units
+                    units: config.units,
+                    color: Color("FontPerimeter")
                 )
             )
     }

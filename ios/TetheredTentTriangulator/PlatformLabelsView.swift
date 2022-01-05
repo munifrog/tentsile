@@ -31,7 +31,9 @@ struct PlatformLabelsView: View {
                                 a_y: k.a[1].y,
                                 b_x: k.a[lastA].x,
                                 b_y: k.a[lastA].y,
-                                units: config.units)
+                                units: config.units,
+                                color: Color("FontTethers")
+                            )
                         )
                 }
                 if metersB > 0 {
@@ -46,7 +48,9 @@ struct PlatformLabelsView: View {
                                 a_y: k.b[1].y,
                                 b_x: k.b[lastB].x,
                                 b_y: k.b[lastB].y,
-                                units: config.units)
+                                units: config.units,
+                                color: Color("FontTethers")
+                            )
                         )
                 }
                 if metersC > 0 {
@@ -61,7 +65,9 @@ struct PlatformLabelsView: View {
                                 a_y: k.c[1].y,
                                 b_x: k.c[lastC].x,
                                 b_y: k.c[lastC].y,
-                                units: config.units)
+                                units: config.units,
+                                color: Color("FontTethers")
+                            )
                         )
                 }
             }

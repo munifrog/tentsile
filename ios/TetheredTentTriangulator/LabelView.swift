@@ -16,10 +16,12 @@ struct LabelView: View {
     var b_x: Float
     var b_y: Float
     var units: Units
+    var color: Color = .white
+
     var body: some View {
         Text(String(format: (units == .imperial ? "%3.0f ft" : "%3.1f m"), value))
             .font(.title)
-            .colorInvert()
+            .foregroundColor(color)
             .position(
                 x: CGFloat(offset_x + (a_x + b_x) / 2),
                 y: CGFloat(offset_y + (a_y + b_y) / 2)
