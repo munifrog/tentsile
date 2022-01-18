@@ -43,7 +43,6 @@ public class Clearing
     private final Paint mTetherPaintPlatform;
     private final Paint mTetherPaintStraps;
     private final Paint mTetherPaintExtensions;
-    private final Paint mTetherPaintTooClose;
     private final Paint mPerimeterPaint;
     private final Paint mPlatformPaint;
     private final Paint mTreePaint;
@@ -77,8 +76,8 @@ public class Clearing
     private boolean mTetherOrientationFLips = false;
     private boolean mComputeTetherCenterAgain = false;
     private boolean mComputingTetherCenter = false;
-    private boolean[] mAnchorTooClose = { false, false, false };
     private double mStrapLength;
+    private double mTreeCircumference;
 
     private int mStateTether = TETHER_SELECTION_NONE;
     private int mDrawTethers = DRAW_TETHERS_ENABLED;
@@ -89,6 +88,10 @@ public class Clearing
     private final ClearingListener mViewOwner;
     private Path mPlatformPath = new Path();
     private final Path mTransformedPath = new Path();
+
+    private Drawable mIconCannot = null;
+    private Drawable mIconTricky = null;
+    private Drawable mIconWarn = null;
 
     public Clearing(ClearingListener listener) {
         mViewOwner = listener;
@@ -108,11 +111,6 @@ public class Clearing
         mTetherPaintExtensions.setARGB(255, 255, 235, 59); // yellow
         mTetherPaintExtensions.setStrokeWidth(10);
         mTetherPaintExtensions.setStrokeCap(Paint.Cap.ROUND);
-
-        mTetherPaintTooClose = new Paint();
-        mTetherPaintTooClose.setARGB(255, 244, 67, 54); // red
-        mTetherPaintTooClose.setStrokeWidth(10);
-        mTetherPaintTooClose.setStrokeCap(Paint.Cap.ROUND);
 
         mLabelConnectionPaint = new Paint();
         mLabelConnectionPaint.setARGB(180, 0, 0, 0);
@@ -279,7 +277,7 @@ public class Clearing
         //  Tether-center computed
         computePlatform();
         //  Platform-tethers (if showing platform)
-        drawPlatformTethers(canvas);
+        Symbol[] symbolsTethers = drawPlatformTethers(canvas);
         //  Platform (if showing platform)
         drawPlatform(canvas);
         //  Tethers from platform-corners and stakes (if showing platform)
@@ -289,9 +287,10 @@ public class Clearing
         //  Distance between stakes
         drawConnectionLabels(canvas);
         //  Distance from platform-corners to stakes
-        drawPlatformLabels(canvas);
-        //  Anchor points that are too close
-        drawTooClose(canvas);
+        Symbol[] symbolsInside = drawPlatformLabels(canvas);
+        //  Draw any symbols on the anchor points
+        Symbol[] symbols = mergeSymbols(symbolsInside, symbolsTethers);
+        drawAnchorSymbols(canvas, symbols);
     }
 
     private void drawConnectionLines(Canvas canvas) {
@@ -403,7 +402,8 @@ public class Clearing
         }
     }
 
-    private void drawPlatformTethers(Canvas canvas) {
+    private Symbol[] drawPlatformTethers(Canvas canvas) {
+        Symbol[] symbols = new Symbol[3];
         if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
             int[] indices = { 0, 1, 2 };
             if (mTetherOrientationFLips) {
@@ -423,18 +423,20 @@ public class Clearing
                 // For each strap, draw between the extremity and tree according to extensions
                 // Use strap color for first 1ft (placing knot) then next 6m (or 4m), then extension
                 // color, with knots every 6m
-                float[][] strapKnots = Util.getTetherKnots(
+                Knots knots = Util.getTetherKnots(
                         scaledDimensionMeters(1.0),
                         mTransExtremities[indices[i]][0],
                         mTransExtremities[indices[i]][1],
                         mTethers[i][0],
                         mTethers[i][1],
                         mStrapLength,
-                        6 // strap extension default
+                        6, // strap extension default
+                        mTreeCircumference
                 );
+                float[][] strapKnots = knots.knots;
+                symbols[indices[i]] = knots.symbol;
 
                 if (strapKnots.length > 1) {
-                    mAnchorTooClose[i] = false;
                     Paint color;
                     int startIdx;
                     for (int j = strapKnots.length - 1; j > 0; j--) {
@@ -454,13 +456,15 @@ public class Clearing
                                 color
                         );
                     }
-                } else {
-                    mAnchorTooClose[i] = true;
                 }
             }
         } else {
             drawTethers(canvas);
+            symbols[0] = Symbol.safe;
+            symbols[1] = Symbol.safe;
+            symbols[2] = Symbol.safe;
         }
+        return symbols;
     }
 
     private Paint getPaint(int index) {
@@ -479,7 +483,8 @@ public class Clearing
         }
     }
 
-    private void drawPlatformLabels(Canvas canvas) {
+    private Symbol[] drawPlatformLabels(Canvas canvas) {
+        Symbol[] symbols = new Symbol[3];
         if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
             // Draw the platform and distances if platform not too far past the tether point
             // Label the distances at the platform extremities (corners)
@@ -506,8 +511,9 @@ public class Clearing
                         (float) mTransExtremities[0][1],
                         mLabelPlatformPaint
                 );
+                symbols[0] = Symbol.safe;
             } else {
-                mAnchorTooClose[0] = true;
+                symbols[0] = Symbol.impossible;
             }
 
             float diffExtremityBx = mPlatformCoordinates[0] - (float) mTransExtremities[index1][0];
@@ -526,8 +532,9 @@ public class Clearing
                         (float) mTransExtremities[index1][1],
                         mLabelPlatformPaint
                 );
+                symbols[1] = Symbol.safe;
             } else {
-                mAnchorTooClose[1] = true;
+                symbols[1] = Symbol.impossible;
             }
 
             float diffExtremityCx = mPlatformCoordinates[0] - (float) mTransExtremities[index2][0];
@@ -546,30 +553,48 @@ public class Clearing
                         (float) mTransExtremities[index2][1],
                         mLabelPlatformPaint
                 );
+                symbols[2] = Symbol.safe;
             } else {
-                mAnchorTooClose[2] = true;
+                symbols[2] = Symbol.impossible;
             }
+        } else {
+            symbols[0] = Symbol.safe;
+            symbols[1] = Symbol.safe;
+            symbols[2] = Symbol.safe;
         }
+        return symbols;
     }
 
-    private void drawTooClose(Canvas canvas) {
+    private void drawAnchorSymbols(Canvas canvas, Symbol[] symbols) {
         for (int i = 0; i < 3; i++) {
-            if (mAnchorTooClose[i]) {
-                float offset = metersToPixels() / 3.0f;
-                canvas.drawLine(
-                        (float) (mTethers[i][0] - offset),
-                        (float) (mTethers[i][1] + offset),
-                        (float) (mTethers[i][0] + offset),
-                        (float) (mTethers[i][1] - offset),
-                        mTetherPaintTooClose
-                );
-                canvas.drawLine(
-                        (float) (mTethers[i][0] - offset),
-                        (float) (mTethers[i][1] - offset),
-                        (float) (mTethers[i][0] + offset),
-                        (float) (mTethers[i][1] + offset),
-                        mTetherPaintTooClose
-                );
+            if (symbols[i] != Symbol.safe) {
+                int x = Math.round(mTethers[i][0]);
+                int y = Math.round(mTethers[i][1]);
+                int halfIconSize = 50;
+                int left = x - halfIconSize;
+                int right = x + halfIconSize;
+                int top = y - halfIconSize;
+                int bottom = y + halfIconSize;
+                switch (symbols[i]) {
+                    case impossible:
+                        if (mIconCannot != null) {
+                            mIconCannot.setBounds(left, top, right, bottom);
+                            mIconCannot.draw(canvas);
+                        }
+                        break;
+                    case scarce:
+                        if (mIconWarn != null) {
+                            mIconWarn.setBounds(left, top, right, bottom);
+                            mIconWarn.draw(canvas);
+                        }
+                        break;
+                    case tricky:
+                        if (mIconTricky != null) {
+                            mIconTricky.setBounds(left, top, right, bottom);
+                            mIconTricky.draw(canvas);
+                        }
+                        break;
+                }
             }
         }
     }
@@ -681,6 +706,7 @@ public class Clearing
         mPlatformPath = platform.getPath();
         mPlatformExtremities = platform.getTetherPoints();
         mStrapLength = platform.getStrapLength();
+        mTreeCircumference = platform.getCircumference();
     }
 
     public void rotatePlatform() {
@@ -739,4 +765,48 @@ public class Clearing
         mTethers[2][0] = mCenter[0] + newTethers[2][0];
         mTethers[2][1] = mCenter[1] + newTethers[2][1];
     }
+
+    public void setSymbolIcons(Drawable cannotIcon, Drawable warnIcon, Drawable trickyIcon) {
+        // List icons from more to less restrictive
+        mIconCannot = cannotIcon;
+        mIconTricky = trickyIcon;
+        mIconWarn = warnIcon;
+    }
+
+    private Symbol[] mergeSymbols(Symbol[] left, Symbol[] right) {
+        Symbol[] symbols = new Symbol[3];
+        for (int i = 0; i < 3; i++) {
+            symbols[i] = getMoreRestrictiveSymbol(left[i], right[i]);
+        }
+        return symbols;
+    }
+
+    private Symbol getMoreRestrictiveSymbol(Symbol left, Symbol right) {
+        switch (left) {
+            default:
+            case safe:
+                return right;
+            case tricky:
+                switch (right) {
+                    case safe:
+                    case tricky:
+                        return left;
+                    case scarce:
+                    case impossible:
+                        return right;
+                }
+            case scarce:
+                switch (right) {
+                    case safe:
+                    case tricky:
+                    case scarce:
+                        return left;
+                    case impossible:
+                        return right;
+                }
+            case impossible:
+                return left;
+        }
+    }
+
 }

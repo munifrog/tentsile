@@ -4,10 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -82,6 +87,30 @@ public class ComposeBaseActivity
                 getString(R.string.unit_meters_with_number),
                 getString(R.string.unit_imperial_with_number)
         );
+
+        Resources r = getResources();
+        String packageName = getPackageName();
+        Resources.Theme theme = getTheme();
+        // https://stackoverflow.com/a/22931750
+        // https://stackoverflow.com/a/10141607
+        int idCannot = r.getIdentifier("@android:drawable/ic_menu_close_clear_cancel", null, packageName);
+        Drawable cannotIcon = ResourcesCompat.getDrawable(r, idCannot, theme);
+        if (cannotIcon != null) {
+            cannotIcon.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+        }
+
+        int idWarn = r.getIdentifier("@android:drawable/stat_sys_warning", null, packageName);
+        Drawable warnIcon = ResourcesCompat.getDrawable(r, idWarn, theme);
+        if (warnIcon != null) {
+            warnIcon.setColorFilter(Color.YELLOW, PorterDuff.Mode.MULTIPLY);
+        }
+
+        int idTricky = r.getIdentifier("@android:drawable/stat_notify_error", null, packageName);
+        Drawable trickyIcon = ResourcesCompat.getDrawable(r, idTricky, theme);
+        if (trickyIcon != null) {
+            trickyIcon.setColorFilter(0xFFFF7F00, PorterDuff.Mode.MULTIPLY);
+        }
+        mClearing.setSymbolIcons(cannotIcon, warnIcon, trickyIcon);
 
         Toolbar toolbar = findViewById(R.id.tb_main);
         toolbar.setTitle(R.string.app_name_long);

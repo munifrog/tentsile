@@ -15,6 +15,8 @@ class UnitTestUtil {
     static final float[][] TETHERS_EQUILATERAL = UnitTestUtil.getEquilateral();
     static final float[][] TETHERS_ISOSCELES = UnitTestUtil.getIsosceles();
     static final float[][] TETHERS_SCALENE = UnitTestUtil.getScalene();
+    static final double TENTSILE_CIRCUMFERENCE_DEFAULT = 0.785398163397448; // pi * 25cm or 10inch diameter
+    static final double TENTSILE_CIRCUMFERENCE_UNA = 0.628318530717959; // pi * 20cm or 8inch diameter
 
     static final double STRAP_EXTENSION = 6;
     static final double STRAP_DEFAULT = 6;

@@ -23,6 +23,8 @@ public class ComposeActivity extends ComposeBaseActivity {
     private static final double TENTSILE_HYPOTENUSE_TRILOGY = TENTSILE_HYPOTENUSE_CONNECT;
     private static final double TENTSILE_STRAPS_DEFAULT = 6.0;
     private static final double TENTSILE_STRAPS_UNA = 4.0;
+    private static final double TENTSILE_CIRCUMFERENCE_DEFAULT = 0.785398163397448; // pi * 25cm or 10inch diameter
+    private static final double TENTSILE_CIRCUMFERENCE_UNA = 0.628318530717959; // pi * 20cm or 8inch diameter
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
@@ -40,15 +42,15 @@ public class ComposeActivity extends ComposeBaseActivity {
         } else if (platform.equals(getString(R.string.tentsile_base_trillium_xl))) {
             setEquilateral(Util.getTentsileEquilateral(TENTSILE_HYPOTENUSE_TRILLIUM_XL));
         } else if (platform.equals(getString(R.string.tentsile_tent_una))) {
-            setIsosceles(TENTSILE_HYPOTENUSE_UNA, TENTSILE_BASE_UNA, TENTSILE_STRAPS_UNA);
+            setIsosceles(TENTSILE_HYPOTENUSE_UNA, TENTSILE_BASE_UNA, TENTSILE_STRAPS_UNA, TENTSILE_CIRCUMFERENCE_UNA);
         } else if (platform.equals(getString(R.string.tentsile_tent_flite))) {
-            setIsosceles(TENTSILE_HYPOTENUSE_FLITE, TENTSILE_BASE_FLITE, TENTSILE_STRAPS_DEFAULT);
+            setIsosceles(TENTSILE_HYPOTENUSE_FLITE, TENTSILE_BASE_FLITE, TENTSILE_STRAPS_DEFAULT, TENTSILE_CIRCUMFERENCE_DEFAULT);
         } else if (platform.equals(getString(R.string.tentsile_tent_connect))) {
-            setIsosceles(TENTSILE_HYPOTENUSE_CONNECT, TENTSILE_BASE_CONNECT, TENTSILE_STRAPS_DEFAULT);
+            setIsosceles(TENTSILE_HYPOTENUSE_CONNECT, TENTSILE_BASE_CONNECT, TENTSILE_STRAPS_DEFAULT, TENTSILE_CIRCUMFERENCE_DEFAULT);
         } else if (platform.equals(getString(R.string.tentsile_base_duo))) {
-            setIsosceles(TENTSILE_HYPOTENUSE_DUO, TENTSILE_BASE_DUO, TENTSILE_STRAPS_DEFAULT);
+            setIsosceles(TENTSILE_HYPOTENUSE_DUO, TENTSILE_BASE_DUO, TENTSILE_STRAPS_DEFAULT, TENTSILE_CIRCUMFERENCE_DEFAULT);
         } else if (platform.equals(getString(R.string.tentsile_base_t_mini))) {
-            setIsosceles(TENTSILE_HYPOTENUSE_T_MINI, TENTSILE_BASE_T_MINI, TENTSILE_STRAPS_DEFAULT);
+            setIsosceles(TENTSILE_HYPOTENUSE_T_MINI, TENTSILE_BASE_T_MINI, TENTSILE_STRAPS_DEFAULT, TENTSILE_CIRCUMFERENCE_DEFAULT);
         } else {
             setEquilateral(Util.getTentsileEquilateral(TENTSILE_HYPOTENUSE_TRILLIUM));
         }
@@ -60,13 +62,19 @@ public class ComposeActivity extends ComposeBaseActivity {
         mClearing.setPlatformDrawPath(platform);
     }
 
-    private void setIsosceles(double hypotenuse, double base, double strap) {
+    private void setIsosceles(
+            double hypotenuse,
+            double base,
+            double strap,
+            double circumference
+    ) {
         double [] measurements = Util.getIsoscelesMeasurements(hypotenuse, base);
         Platform platform = Util.getTentsileIsosceles(
                 measurements[0],
                 measurements[1],
                 measurements[2],
-                strap
+                strap,
+                circumference
         );
         mClearing.setPlatformDrawPath(platform);
         mClearing.setPlatformSymmetricAngle();

@@ -26,6 +26,7 @@ class Util {
     private static final double TENTSILE_NOTCH_SCALED_SIN_PI = TENTSILE_NOTCH_SCALE * MATH_SIN_THREE_THIRDS_PI;
 
     private static final double TENTSILE_STRAPS_DEFAULT = 6.0;
+    private static final double TENTSILE_CIRCUMFERENCE_DEFAULT = 0.785398163397448; // pi * 25cm or 10inch diameter
 
     // deltaY = (distal Y - proximal Y); if deltaY >= 0, then angle is within Q1 or Q2;
     // if deltaY < 0, then angle within Q3 or Q4; allowing us to narrow down the quadrant
@@ -135,10 +136,16 @@ class Util {
         );
         path.close();
 
-        return new Platform(path, extremities, TENTSILE_STRAPS_DEFAULT);
+        return new Platform(path, extremities, TENTSILE_STRAPS_DEFAULT, TENTSILE_CIRCUMFERENCE_DEFAULT);
     }
 
-    static Platform getTentsileIsosceles(double point, double barb, double notch, double strap) {
+    static Platform getTentsileIsosceles(
+            double point,
+            double barb,
+            double notch,
+            double strap,
+            double circumference
+    ) {
         double [][] extremities = new double[3][2];
         extremities[0][0] = point * MATH_COS_ZERO;
         extremities[0][1] = point * MATH_SIN_ZERO;
@@ -175,7 +182,7 @@ class Util {
         );
         path.close();
 
-        return new Platform(path, extremities, strap);
+        return new Platform(path, extremities, strap, circumference);
     }
 
     static Platform getTentsileTrilogy(double hypotenuse, double base) {
@@ -224,7 +231,7 @@ class Util {
             path.close();
         }
 
-        return new Platform(path, extremities, TENTSILE_STRAPS_DEFAULT);
+        return new Platform(path, extremities, TENTSILE_STRAPS_DEFAULT, TENTSILE_CIRCUMFERENCE_DEFAULT);
     }
 
     static double [] getIsoscelesMeasurements(double hypotenuse, double base) {
@@ -236,13 +243,15 @@ class Util {
         return measurements;
     }
 
-    static float[][] getTetherKnots(
+    static Knots getTetherKnots(
             double pixelsToMetersConversion,
             double startX, double startY,
             double finishX, double finishY,
-            double strap, double extend
+            double strap, double extend,
+            double circumference
     ) {
         float[][] knots;
+        Symbol symbol;
         double metersToPixelsConversion = 1.0 / pixelsToMetersConversion;
         // Between the platform extremity and anchor point, determine where the colors transition:
         // First 1 foot is connected directly to tent, and should therefore be strap color.
@@ -253,34 +262,53 @@ class Util {
         double pixelDistTotal = Math.sqrt(pixelDiffX * pixelDiffX + pixelDiffY * pixelDiffY);
 
         double meterDistTotal = pixelsToMetersConversion * pixelDistTotal;
-        if (meterDistTotal >= MATH_FEET_TO_METERS_CONVERSION) {
+        double ratchetDist = MATH_FEET_TO_METERS_CONVERSION;
+        if (meterDistTotal >= ratchetDist) {
             double angle = getDirection(pixelDistTotal, pixelDiffX, pixelDiffY);
             double angleSine = Math.sin(angle);
             double angleCosine = Math.cos(angle);
             // Count how many knots there are
-            double defaultRange = MATH_FEET_TO_METERS_CONVERSION + strap;
-            if (meterDistTotal > defaultRange) {
-                int numExtensions = (int) Math.ceil((meterDistTotal - defaultRange) / extend);
-                int count = 3 + numExtensions;
+            double meterDefaultRange = ratchetDist + strap;
+            if (meterDistTotal > meterDefaultRange) {
+                double meterDistRemains = meterDistTotal - meterDefaultRange;
+                double numExtends = meterDistRemains / extend;
+                int numExtensions = (int) Math.ceil(numExtends);
+                meterDistRemains = numExtensions * extend - meterDistRemains;
+                int count = 3 + numExtensions; // 0 = start, 1 = ratchet, 2 = default strap
                 knots = new float[count][2];
-                knots[2][0] = (float) (startX + defaultRange * angleCosine * metersToPixelsConversion);
-                knots[2][1] = (float) (startY + defaultRange * angleSine * metersToPixelsConversion);
+                // First knot after ratchet (length depends on platform)
+                double pixelsDefaultRange = meterDefaultRange * metersToPixelsConversion;
+                knots[2][0] = (float) (startX + pixelsDefaultRange * angleCosine);
+                knots[2][1] = (float) (startY + pixelsDefaultRange * angleSine);
                 int last = count - 1;
                 double reach;
                 int index;
                 for (int i = 1; i < numExtensions; i++) {
-                    reach = (defaultRange + i * extend) * metersToPixelsConversion;
+                    // Extension knots (consistently six meters)
+                    reach = (meterDefaultRange + i * extend) * metersToPixelsConversion;
                     index = 2 + i;
                     knots[index][0] = (float) (startX + reach * angleCosine);
                     knots[index][1] = (float) (startY + reach * angleSine);
                 }
+                // Anchor knots
                 knots[last][0] = (float) finishX;
                 knots[last][1] = (float) finishY;
+                if (meterDistRemains < circumference) {
+                    symbol = Symbol.scarce;
+                } else {
+                    symbol = Symbol.safe;
+                }
             } else {
                 // The tent is in an acceptable range to reach the anchor point
                 knots = new float[3][2];
                 knots[2][0] = (float) finishX;
                 knots[2][1] = (float) finishY;
+                // anchor > knot - circumference -OR- anchor + circumference > knot
+                if (meterDistTotal + circumference > meterDefaultRange) {
+                    symbol = Symbol.scarce;
+                } else {
+                    symbol = Symbol.safe;
+                }
             }
             // The first knot away from the starting point
             double firstStrap = MATH_FEET_TO_METERS_CONVERSION * metersToPixelsConversion;
@@ -289,11 +317,12 @@ class Util {
         } else {
             // No need to compute angle and new coordinates
             knots = new float[1][2];
+            symbol = Symbol.tricky;
         }
         // All paths set the starting knot
         knots[0][0] = (float) startX;
         knots[0][1] = (float) startY;
-        return knots;
+        return new Knots(knots, symbol);
     }
 
     static double[][] shiftedCoordinates(double[][] points, double angle, double scale, double[] translation) {
