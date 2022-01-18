@@ -8,6 +8,7 @@ import androidx.core.content.res.ResourcesCompat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -113,7 +114,11 @@ public class ComposeBaseActivity
         mClearing.setSymbolIcons(cannotIcon, warnIcon, trickyIcon);
 
         Toolbar toolbar = findViewById(R.id.tb_main);
-        toolbar.setTitle(R.string.app_name_long);
+        if (r.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            toolbar.setTitle(R.string.app_name_long);
+        } else {
+            toolbar.setTitle(R.string.app_name_short);
+        }
         setSupportActionBar(toolbar);
         hideVirtualButtons();
 
