@@ -49,6 +49,12 @@ struct Anchors {
         self.c = anchors.c
     }
 
+    init(a: Coordinate, b: Coordinate, c: Coordinate) {
+        self.a = a
+        self.b = b
+        self.c = c
+    }
+
     init() {
         let refLength: Double = 125.0
         let offset = 15 * Double.pi / 180
