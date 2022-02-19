@@ -52,12 +52,15 @@ class UnitTestUtil {
         float[][] tethers = new float[3][2];
         float[] center = { (float) MATH_CENTER_X, (float) MATH_CENTER_Y };
 
+        // Length N
         tethers[0][0] = (float)(center[0] - MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N / 2);
-        tethers[0][1] = (float)(center[1] + MATH_BASE_LENGTH_N + MATH_BASE_LENGTH_N / 2);
+        tethers[0][1] = (float)(center[1] + MATH_BASE_LENGTH_N / 2);
+        // Length 2N
         tethers[1][0] = (float)(center[0] + MATH_SQUARE_ROOT_OF_THREE * MATH_BASE_LENGTH_N);
-        tethers[1][1] = (float)(center[1] + MATH_BASE_LENGTH_N + MATH_BASE_LENGTH_N);
+        tethers[1][1] = (float)(center[1] + MATH_BASE_LENGTH_N);
+        // Length 3N
         tethers[2][0] =        (center[0]);
-        tethers[2][1] = (float)(center[1] + MATH_BASE_LENGTH_N - 3 * MATH_BASE_LENGTH_N);
+        tethers[2][1] = (float)(center[1] - 3 * MATH_BASE_LENGTH_N);
         return tethers;
     }
 }

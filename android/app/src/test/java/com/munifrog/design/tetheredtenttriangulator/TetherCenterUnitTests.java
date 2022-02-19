@@ -7,6 +7,7 @@ import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.MATH_CEN
 import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.MATH_CENTER_Y;
 import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TETHERS_EQUILATERAL;
 import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TETHERS_ISOSCELES;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TETHERS_SCALENE;
 import static org.junit.Assert.*;
 
 public class TetherCenterUnitTests {
@@ -30,7 +31,7 @@ public class TetherCenterUnitTests {
 
     @Test
     public void PlatformCenterRun_scalene_isWorking() {
-        TetherCenter platformCenter = new TetherCenter(TETHERS_ISOSCELES);
+        TetherCenter platformCenter = new TetherCenter(TETHERS_SCALENE);
         platformCenter.process();
         float[] actual = platformCenter.getCenter();
         float[] expected = { (float) MATH_CENTER_X, (float) MATH_CENTER_Y };
