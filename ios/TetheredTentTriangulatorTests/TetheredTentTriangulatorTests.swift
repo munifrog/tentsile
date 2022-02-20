@@ -11,10 +11,12 @@ import XCTest
 class TetheredTentTriangulatorTests: XCTestCase {
 
     let MATH_BASE_LENGTH_N: Float = 200
+    let MATH_FEET_TO_METERS_CONVERSION: Float = 0.3048
     let MATH_SQUARE_ROOT_OF_THREE: Float = sqrt(3)
     let MATH_SQUARE_ROOT_OF_SEVEN: Float = sqrt(7)
     let MATH_SQUARE_ROOT_OF_THIRTEEN: Float = sqrt(13)
     let MATH_SQUARE_ROOT_OF_NINETEEN: Float = sqrt(19)
+    let MATH_TREE_CIRCUMFERENCE: Float = 0.785398163397448 // pi * 25cm or 10inch diameter
 
     let ALLOWANCE_DELTA_ONE: Float = 0.1;
     let ALLOWANCE_DELTA_TWO: Float = 0.01;
@@ -182,5 +184,194 @@ class TetheredTentTriangulatorTests: XCTestCase {
             derivedAngle = util.getDirection(h: hypotenuse, delta_x: deltaX, delta_y: deltaY)
             XCTAssertTrue(util.getAngleEquivalency(angle, derivedAngle))
         }
+    }
+
+    func testGetSegmentKnots() throws {
+        // From Start (S) to end, there can be extremity (E), ratchet (R), Circumference (C), and Knot (K)
+        // S ---- ---- ---- ---- E -- R ---- ---- ---- ---- ---- C1 ---- K1 ---- ---- ---- ---- ---- C2 ---- K2 ...
+        // These are the transition points, about which we need to check that results match expectations
+        let circumferenceMeters: Float = MATH_TREE_CIRCUMFERENCE
+        let extremityMeters: Float = 3.66 // "Connect" point
+        let offsetMeters: Float = MATH_FEET_TO_METERS_CONVERSION / 3
+        let pixelsPerMeter: Float = 35
+        let ratchetMeters: Float = MATH_FEET_TO_METERS_CONVERSION
+        let strapProvidedMeters: Float = 6.0
+        let strapExtensionMeters: Float = 6.0
+
+        let angle: Float = 37 * .pi / 180 // unnecessary angle adding interesting results
+        let cosinePixelsPerMeter = pixelsPerMeter * cos(angle)
+        let sinePixelsPerMeter = pixelsPerMeter * sin(angle)
+
+        let startCoord = Coordinate(x: CENTER_X, y: CENTER_Y)
+        let extremityCoord = Coordinate(
+            x: startCoord.x + extremityMeters * cosinePixelsPerMeter,
+            y: startCoord.y + extremityMeters * sinePixelsPerMeter
+        )
+
+        // Before EXTREMITY : Too short (impossible) : START-END-EXTREMITY
+        var pivotMeters = extremityMeters
+        var endMeters = pivotMeters - offsetMeters
+        var endCoord = Coordinate(
+            x: startCoord.x + endMeters * cosinePixelsPerMeter,
+            y: startCoord.y + endMeters * sinePixelsPerMeter
+        )
+        var details: TetherDetails = util.getSegmentKnots(
+            start: startCoord,
+            extremity: extremityCoord,
+            end: endCoord,
+            pixelsPerMeter: pixelsPerMeter,
+            strap: strapProvidedMeters,
+            circumference: circumferenceMeters
+        )
+        XCTAssertTrue(details.icon == AnchorIcon.impossible)
+
+        // After EXTREMITY : Rachet area (tricky) : EXTREMITY-END-RATCHET
+        endMeters = pivotMeters + offsetMeters
+        endCoord = Coordinate(
+            x: startCoord.x + endMeters * cosinePixelsPerMeter,
+            y: startCoord.y + endMeters * sinePixelsPerMeter
+        )
+        details = util.getSegmentKnots(
+            start: startCoord,
+            extremity: extremityCoord,
+            end: endCoord,
+            pixelsPerMeter: pixelsPerMeter,
+            strap: strapProvidedMeters,
+            circumference: circumferenceMeters
+        )
+        XCTAssertTrue(details.icon == AnchorIcon.tricky)
+
+        // Before RATCHET : Rachet area (tricky) : EXTREMITY-END-RATCHET
+        pivotMeters = extremityMeters + ratchetMeters
+        endMeters = pivotMeters - offsetMeters
+        endCoord = Coordinate(
+            x: startCoord.x + endMeters * cosinePixelsPerMeter,
+            y: startCoord.y + endMeters * sinePixelsPerMeter
+        )
+        details = util.getSegmentKnots(
+            start: startCoord,
+            extremity: extremityCoord,
+            end: endCoord,
+            pixelsPerMeter: pixelsPerMeter,
+            strap: strapProvidedMeters,
+            circumference: circumferenceMeters
+        )
+        XCTAssertTrue(details.icon == AnchorIcon.tricky)
+
+        // After RATCHET : Provided strap (safe) : RATCHET-END-CIRCUMFERENCE1
+        endMeters = pivotMeters + offsetMeters
+        endCoord = Coordinate(
+            x: startCoord.x + endMeters * cosinePixelsPerMeter,
+            y: startCoord.y + endMeters * sinePixelsPerMeter
+        )
+        details = util.getSegmentKnots(
+            start: startCoord,
+            extremity: extremityCoord,
+            end: endCoord,
+            pixelsPerMeter: pixelsPerMeter,
+            strap: strapProvidedMeters,
+            circumference: circumferenceMeters
+        )
+        XCTAssertTrue(details.icon == AnchorIcon.safe)
+
+        // Before CIRCUMFERENCE : Provided strap (safe) : RATCHET-END-CIRCUMFERENCE1
+        pivotMeters = extremityMeters + ratchetMeters + strapProvidedMeters - circumferenceMeters
+        endMeters = pivotMeters - offsetMeters
+        endCoord = Coordinate(
+            x: startCoord.x + endMeters * cosinePixelsPerMeter,
+            y: startCoord.y + endMeters * sinePixelsPerMeter
+        )
+        details = util.getSegmentKnots(
+            start: startCoord,
+            extremity: extremityCoord,
+            end: endCoord,
+            pixelsPerMeter: pixelsPerMeter,
+            strap: strapProvidedMeters,
+            circumference: circumferenceMeters
+        )
+        XCTAssertTrue(details.icon == AnchorIcon.safe)
+
+        // After CIRCUMFERENCE : During tree wrap (warning) : CIRCUMFERENCE1-END-KNOT1
+        endMeters = pivotMeters + offsetMeters
+        endCoord = Coordinate(
+            x: startCoord.x + endMeters * cosinePixelsPerMeter,
+            y: startCoord.y + endMeters * sinePixelsPerMeter
+        )
+        details = util.getSegmentKnots(
+            start: startCoord,
+            extremity: extremityCoord,
+            end: endCoord,
+            pixelsPerMeter: pixelsPerMeter,
+            strap: strapProvidedMeters,
+            circumference: circumferenceMeters
+        )
+        XCTAssertTrue(details.icon == AnchorIcon.warning)
+
+        // Before KNOT : During tree wrap (warning) : CIRCUMFERENCE1-END-KNOT1
+        pivotMeters = extremityMeters + ratchetMeters + strapProvidedMeters
+        endMeters = pivotMeters - offsetMeters
+        endCoord = Coordinate(
+            x: startCoord.x + endMeters * cosinePixelsPerMeter,
+            y: startCoord.y + endMeters * sinePixelsPerMeter
+        )
+        details = util.getSegmentKnots(
+            start: startCoord,
+            extremity: extremityCoord,
+            end: endCoord,
+            pixelsPerMeter: pixelsPerMeter,
+            strap: strapProvidedMeters,
+            circumference: circumferenceMeters
+        )
+        XCTAssertTrue(details.icon == AnchorIcon.warning)
+
+        // After KNOT : First extension (safe) : KNOT1-END-CIRCUMFERENCE2
+        endMeters = pivotMeters + offsetMeters
+        endCoord = Coordinate(
+            x: startCoord.x + endMeters * cosinePixelsPerMeter,
+            y: startCoord.y + endMeters * sinePixelsPerMeter
+        )
+        details = util.getSegmentKnots(
+            start: startCoord,
+            extremity: extremityCoord,
+            end: endCoord,
+            pixelsPerMeter: pixelsPerMeter,
+            strap: strapProvidedMeters,
+            circumference: circumferenceMeters
+        )
+        XCTAssertTrue(details.icon == AnchorIcon.safe)
+
+        // Before CIRCUMFERENCE : First extension (safe) : KNOT1-END-CIRCUMFERENCE2
+        pivotMeters = extremityMeters + ratchetMeters + strapProvidedMeters + strapExtensionMeters - circumferenceMeters
+        endMeters = pivotMeters - offsetMeters
+        endCoord = Coordinate(
+            x: startCoord.x + endMeters * cosinePixelsPerMeter,
+            y: startCoord.y + endMeters * sinePixelsPerMeter
+        )
+        details = util.getSegmentKnots(
+            start: startCoord,
+            extremity: extremityCoord,
+            end: endCoord,
+            pixelsPerMeter: pixelsPerMeter,
+            strap: strapProvidedMeters,
+            circumference: circumferenceMeters
+        )
+        XCTAssertTrue(details.icon == AnchorIcon.safe)
+
+        // After CIRCUMFERENCE : During tree wrap (warning) : CIRCUMFERENCE2-END-KNOT2
+        pivotMeters = extremityMeters + ratchetMeters + strapProvidedMeters + strapExtensionMeters - circumferenceMeters
+        endMeters = pivotMeters + offsetMeters
+        endCoord = Coordinate(
+            x: startCoord.x + endMeters * cosinePixelsPerMeter,
+            y: startCoord.y + endMeters * sinePixelsPerMeter
+        )
+        details = util.getSegmentKnots(
+            start: startCoord,
+            extremity: extremityCoord,
+            end: endCoord,
+            pixelsPerMeter: pixelsPerMeter,
+            strap: strapProvidedMeters,
+            circumference: circumferenceMeters
+        )
+        XCTAssertTrue(details.icon == AnchorIcon.warning)
     }
 }
