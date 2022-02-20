@@ -117,9 +117,13 @@ class Util {
         }
     }
 
+    // Arcsine ranges from -pi/2 (Quadrant 4) to +pi/2 (Quadrant 1)
+    // When delta_x is positive then we are in Quadrant 1 or 4, corresponding to the arcsine results;
+    // When delta_x is negative then we are in Quadrant 2 or 3.
+    // The same delta_y at a negative delta_x, occurs exactly pi away from the arcsine results;
     func getDirection(h: Float, delta_x: Float, delta_y: Float) -> Float {
         var angle = asin(delta_y / h)
-        if (angle >= 0 && delta_x < 0) || (angle < 0 && delta_x < 0) {
+        if (delta_x < 0) {
             angle = .pi - angle
         }
         return angle
