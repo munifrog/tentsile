@@ -136,4 +136,21 @@ class TetheredTentTriangulatorTests: XCTestCase {
         let tetherCenter: TetherCenter? = util.getTetherCenter(anchors)
         XCTAssertTrue(tetherCenter == nil)
     }
+
+    func testAngleEquivalency() throws {
+        let fullCircle: Float = 2 * .pi
+        let twoCircles: Float = 4 * .pi
+
+        let iterations: Int = 360
+        let angleDiff: Float = fullCircle / Float(iterations)
+
+        var angle: Float
+        for number in 0...iterations {
+            angle = Float(number) * angleDiff
+            XCTAssertTrue(util.getAngleEquivalency(angle, angle - fullCircle))
+            XCTAssertTrue(util.getAngleEquivalency(angle, angle - twoCircles))
+            XCTAssertTrue(util.getAngleEquivalency(angle, angle + fullCircle))
+            XCTAssertTrue(util.getAngleEquivalency(angle, angle + twoCircles))
+        }
+    }
 }

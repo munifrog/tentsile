@@ -125,24 +125,15 @@ class Util {
         return angle
     }
 
-    private func getAngleEquivalency(_ a: Float, _ b: Float) -> Bool {
+    func getAngleEquivalency(_ a: Float, _ b: Float) -> Bool {
+        let full_circle: Float = 2 * .pi
         let rawDelta = abs(b - a)
         if rawDelta < ANGLE_ALLOWANCE {
             return true
-        } else if signum(a) != signum(b) {
-            // In theory we would need to handle N*2*PI, but in practice it suffices to compare +/-
-            return abs(ANGLE_ONE_FULL_CIRCLE - rawDelta) < ANGLE_ALLOWANCE
-        }
-        return false
-    }
-
-    private func signum(_ num: Float) -> Int {
-        if num < 0 {
-            return -1
-        } else if num > 0 {
-            return  1
         } else {
-            return 0
+            let numCircles: Float = round(rawDelta / full_circle)
+            let modDelta = abs(rawDelta - numCircles * full_circle)
+            return modDelta < ANGLE_ALLOWANCE
         }
     }
 
