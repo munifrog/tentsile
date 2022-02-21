@@ -26,8 +26,6 @@ class TetheredTentTriangulatorTests: XCTestCase {
     let CENTER_X: Float = 100
     let CENTER_Y: Float = 300
 
-    let util = Util()
-
     func setupEquilateralAnchors(center: Coordinate) -> Anchors {
         let a = Coordinate (
             x: center.x,
@@ -99,7 +97,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
     func testEquilateralTetherCenter() throws {
         let solution = Coordinate(x: CENTER_X, y: CENTER_Y)
         let anchors = setupEquilateralAnchors(center: solution)
-        let tetherCenter: TetherCenter? = util.getTetherCenter(anchors)
+        let tetherCenter: TetherCenter? = Util.getTetherCenter(anchors)
         if let center = tetherCenter {
             XCTAssertEqual(solution.x, center.p.x, accuracy: ALLOWANCE_DELTA_THREE)
             XCTAssertEqual(solution.y, center.p.y, accuracy: ALLOWANCE_DELTA_THREE)
@@ -111,7 +109,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
     func testIsoscelesTetherCenter() throws {
         let solution = Coordinate(x: CENTER_X, y: CENTER_Y)
         let anchors = setupIsoscelesAnchors(center: solution)
-        let tetherCenter: TetherCenter? = util.getTetherCenter(anchors)
+        let tetherCenter: TetherCenter? = Util.getTetherCenter(anchors)
         if let center = tetherCenter {
             XCTAssertEqual(solution.x, center.p.x, accuracy: ALLOWANCE_DELTA_THREE)
             XCTAssertEqual(solution.y, center.p.y, accuracy: ALLOWANCE_DELTA_THREE)
@@ -123,7 +121,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
     func testScaleneTetherCenter() throws {
         let solution = Coordinate(x: CENTER_X, y: CENTER_Y)
         let anchors = setupScaleneAnchors(center: solution)
-        let tetherCenter: TetherCenter? = util.getTetherCenter(anchors)
+        let tetherCenter: TetherCenter? = Util.getTetherCenter(anchors)
         if let center = tetherCenter {
             XCTAssertEqual(solution.x, center.p.x, accuracy: ALLOWANCE_DELTA_THREE)
             XCTAssertEqual(solution.y, center.p.y, accuracy: ALLOWANCE_DELTA_THREE)
@@ -135,7 +133,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
     func testNoTetherCenter() throws {
         let solution = Coordinate(x: CENTER_X, y: CENTER_Y)
         let anchors = setupNoCenterAnchors(center: solution)
-        let tetherCenter: TetherCenter? = util.getTetherCenter(anchors)
+        let tetherCenter: TetherCenter? = Util.getTetherCenter(anchors)
         XCTAssertTrue(tetherCenter == nil)
     }
 
@@ -149,10 +147,10 @@ class TetheredTentTriangulatorTests: XCTestCase {
         var angle: Float
         for number in 0...iterations {
             angle = Float(number) * angleDiff
-            XCTAssertTrue(util.getAngleEquivalency(angle, angle - fullCircle))
-            XCTAssertTrue(util.getAngleEquivalency(angle, angle - twoCircles))
-            XCTAssertTrue(util.getAngleEquivalency(angle, angle + fullCircle))
-            XCTAssertTrue(util.getAngleEquivalency(angle, angle + twoCircles))
+            XCTAssertTrue(Util.getAngleEquivalency(angle, angle - fullCircle))
+            XCTAssertTrue(Util.getAngleEquivalency(angle, angle - twoCircles))
+            XCTAssertTrue(Util.getAngleEquivalency(angle, angle + fullCircle))
+            XCTAssertTrue(Util.getAngleEquivalency(angle, angle + twoCircles))
         }
     }
 
@@ -174,15 +172,15 @@ class TetheredTentTriangulatorTests: XCTestCase {
             angle = Float(number) * angleDiff
             deltaX = hypotenuse * cos(angle)
             deltaY = hypotenuse * sin(angle)
-            derivedAngle = util.getDirection(h: hypotenuse, delta_x: deltaX, delta_y: deltaY)
-            XCTAssertTrue(util.getAngleEquivalency(angle, derivedAngle))
+            derivedAngle = Util.getDirection(h: hypotenuse, delta_x: deltaX, delta_y: deltaY)
+            XCTAssertTrue(Util.getAngleEquivalency(angle, derivedAngle))
 
             // Negative angles
             negAngle = angle - fullCircle
             deltaX = hypotenuse * cos(negAngle)
             deltaY = hypotenuse * sin(negAngle)
-            derivedAngle = util.getDirection(h: hypotenuse, delta_x: deltaX, delta_y: deltaY)
-            XCTAssertTrue(util.getAngleEquivalency(angle, derivedAngle))
+            derivedAngle = Util.getDirection(h: hypotenuse, delta_x: deltaX, delta_y: deltaY)
+            XCTAssertTrue(Util.getAngleEquivalency(angle, derivedAngle))
         }
     }
 
@@ -215,7 +213,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
             x: startCoord.x + endMeters * cosinePixelsPerMeter,
             y: startCoord.y + endMeters * sinePixelsPerMeter
         )
-        var details: TetherDetails = util.getSegmentKnots(
+        var details: TetherDetails = Util.getSegmentKnots(
             start: startCoord,
             extremity: extremityCoord,
             end: endCoord,
@@ -231,7 +229,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
             x: startCoord.x + endMeters * cosinePixelsPerMeter,
             y: startCoord.y + endMeters * sinePixelsPerMeter
         )
-        details = util.getSegmentKnots(
+        details = Util.getSegmentKnots(
             start: startCoord,
             extremity: extremityCoord,
             end: endCoord,
@@ -248,7 +246,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
             x: startCoord.x + endMeters * cosinePixelsPerMeter,
             y: startCoord.y + endMeters * sinePixelsPerMeter
         )
-        details = util.getSegmentKnots(
+        details = Util.getSegmentKnots(
             start: startCoord,
             extremity: extremityCoord,
             end: endCoord,
@@ -264,7 +262,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
             x: startCoord.x + endMeters * cosinePixelsPerMeter,
             y: startCoord.y + endMeters * sinePixelsPerMeter
         )
-        details = util.getSegmentKnots(
+        details = Util.getSegmentKnots(
             start: startCoord,
             extremity: extremityCoord,
             end: endCoord,
@@ -281,7 +279,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
             x: startCoord.x + endMeters * cosinePixelsPerMeter,
             y: startCoord.y + endMeters * sinePixelsPerMeter
         )
-        details = util.getSegmentKnots(
+        details = Util.getSegmentKnots(
             start: startCoord,
             extremity: extremityCoord,
             end: endCoord,
@@ -297,7 +295,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
             x: startCoord.x + endMeters * cosinePixelsPerMeter,
             y: startCoord.y + endMeters * sinePixelsPerMeter
         )
-        details = util.getSegmentKnots(
+        details = Util.getSegmentKnots(
             start: startCoord,
             extremity: extremityCoord,
             end: endCoord,
@@ -314,7 +312,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
             x: startCoord.x + endMeters * cosinePixelsPerMeter,
             y: startCoord.y + endMeters * sinePixelsPerMeter
         )
-        details = util.getSegmentKnots(
+        details = Util.getSegmentKnots(
             start: startCoord,
             extremity: extremityCoord,
             end: endCoord,
@@ -330,7 +328,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
             x: startCoord.x + endMeters * cosinePixelsPerMeter,
             y: startCoord.y + endMeters * sinePixelsPerMeter
         )
-        details = util.getSegmentKnots(
+        details = Util.getSegmentKnots(
             start: startCoord,
             extremity: extremityCoord,
             end: endCoord,
@@ -347,7 +345,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
             x: startCoord.x + endMeters * cosinePixelsPerMeter,
             y: startCoord.y + endMeters * sinePixelsPerMeter
         )
-        details = util.getSegmentKnots(
+        details = Util.getSegmentKnots(
             start: startCoord,
             extremity: extremityCoord,
             end: endCoord,
@@ -364,7 +362,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
             x: startCoord.x + endMeters * cosinePixelsPerMeter,
             y: startCoord.y + endMeters * sinePixelsPerMeter
         )
-        details = util.getSegmentKnots(
+        details = Util.getSegmentKnots(
             start: startCoord,
             extremity: extremityCoord,
             end: endCoord,

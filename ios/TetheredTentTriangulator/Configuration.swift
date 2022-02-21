@@ -113,7 +113,6 @@ struct Configuration {
             UserDefaults.standard.set(units.rawValue, forKey: USER_DEFAULTS_STORED_UNITS)
         }
     }
-    var util: Util = Util()
 
     private var radiusSquared: Float = 225
     private var distanceScale: Float = 25.0
@@ -377,7 +376,7 @@ struct Configuration {
         if let focus = center {
             let delta = anchors.a - focus.p
             let hypotenuse = sqrt(delta.x * delta.x + delta.y * delta.y)
-            return util.getDirection(h: hypotenuse, delta_x: delta.x, delta_y: delta.y)
+            return Util.getDirection(h: hypotenuse, delta_x: delta.x, delta_y: delta.y)
         } else {
             return 0
         }
@@ -428,7 +427,7 @@ struct Configuration {
     mutating func updateTetherCenter() {
         self.knots = nil
         self.center = nil
-        self.center = util.getTetherCenter(self.anchors)
+        self.center = Util.getTetherCenter(self.anchors)
         self.updateKnots(self.center)
     }
 
@@ -451,7 +450,7 @@ struct Configuration {
                 let strap = platform.strap
                 let circumference = platform.circumference
 
-                let aTether: TetherDetails = util.getSegmentKnots(
+                let aTether: TetherDetails = Util.getSegmentKnots(
                     start: start,
                     extremity: extremes[0],
                     end: aAnchor,
@@ -459,7 +458,7 @@ struct Configuration {
                     strap: strap,
                     circumference: circumference
                 )
-                let bTether: TetherDetails = util.getSegmentKnots(
+                let bTether: TetherDetails = Util.getSegmentKnots(
                     start: start,
                     extremity: extremes[b_index],
                     end: bAnchor,
@@ -467,7 +466,7 @@ struct Configuration {
                     strap: strap,
                     circumference: circumference
                 )
-                let cTether: TetherDetails = util.getSegmentKnots(
+                let cTether: TetherDetails = Util.getSegmentKnots(
                     start: start,
                     extremity: extremes[c_index],
                     end: cAnchor,

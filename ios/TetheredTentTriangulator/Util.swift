@@ -29,22 +29,14 @@ struct TetherDetails {
 }
 
 class Util {
-    private let ANGLE_ALLOWANCE: Float
-    private let ANGLE_ONE_FULL_CIRCLE: Float
-    private let ANGLE_ONE_SIXTH_CIRCLE: Float
-    private let ANGLE_ONE_THIRD_CIRCLE: Float
-    private let MATH_FEET_TO_METERS_CONVERSION: Float = 0.3048;
-    private let SINE_TWO_PI_DIV_THREE: Float
+    private static let ANGLE_ALLOWANCE = Float(0.001)
+    private static let ANGLE_ONE_FULL_CIRCLE = Float(2.0 * .pi)
+    private static let ANGLE_ONE_SIXTH_CIRCLE = Float(ANGLE_ONE_FULL_CIRCLE / 6.0)
+    private static let ANGLE_ONE_THIRD_CIRCLE = Float(ANGLE_ONE_FULL_CIRCLE / 3.0)
+    private static let MATH_FEET_TO_METERS_CONVERSION = Float(0.3048)
+    private static let SINE_TWO_PI_DIV_THREE = Float(sqrt(3.0) / 2.0)
 
-    init() {
-        ANGLE_ALLOWANCE = 0.001
-        ANGLE_ONE_FULL_CIRCLE = 2.0 * .pi
-        ANGLE_ONE_THIRD_CIRCLE = ANGLE_ONE_FULL_CIRCLE / 3.0
-        ANGLE_ONE_SIXTH_CIRCLE = ANGLE_ONE_FULL_CIRCLE / 6.0
-        SINE_TWO_PI_DIV_THREE = sqrt(3.0) / 2.0
-    }
-
-    func getTetherCenter(_ anchors: Anchors) -> TetherCenter? {
+    static func getTetherCenter(_ anchors: Anchors) -> TetherCenter? {
         // Compute where the tether center will exist
         let diffAB_x = anchors.a.x - anchors.b.x
         let diffAB_y = anchors.a.y - anchors.b.y
@@ -121,7 +113,7 @@ class Util {
     // When delta_x is positive then we are in Quadrant 1 or 4, corresponding to the arcsine results;
     // When delta_x is negative then we are in Quadrant 2 or 3.
     // The same delta_y at a negative delta_x, occurs exactly pi away from the arcsine results;
-    func getDirection(h: Float, delta_x: Float, delta_y: Float) -> Float {
+    static func getDirection(h: Float, delta_x: Float, delta_y: Float) -> Float {
         var angle = asin(delta_y / h)
         if (delta_x < 0) {
             angle = .pi - angle
@@ -129,7 +121,7 @@ class Util {
         return angle
     }
 
-    func getAngleEquivalency(_ a: Float, _ b: Float) -> Bool {
+    static func getAngleEquivalency(_ a: Float, _ b: Float) -> Bool {
         let full_circle: Float = 2 * .pi
         let rawDelta = abs(b - a)
         if rawDelta < ANGLE_ALLOWANCE {
@@ -141,7 +133,7 @@ class Util {
         }
     }
 
-    func getSegmentKnots(
+    static func getSegmentKnots(
         start: Coordinate,
         extremity: Coordinate,
         end: Coordinate,
