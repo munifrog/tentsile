@@ -50,7 +50,11 @@ struct HContentView: View {
 }
 
 struct HContentView_Previews: PreviewProvider {
+    @State private static var config = Configuration(
+        Coordinate(x: 120.0, y: 217.0)
+    )
+
     static var previews: some View {
-        HContentView(config: .constant(Configuration()))
+        HContentView(config: $config)
     }
 }

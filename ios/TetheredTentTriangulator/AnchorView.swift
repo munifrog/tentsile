@@ -57,7 +57,11 @@ struct AnchorView: View {
 }
 
 struct AnchorView_Previews: PreviewProvider {
+    @State private static var config = Configuration(
+        Coordinate(x: 160.0, y: 217.0)
+    )
+
     static var previews: some View {
-        AnchorView(config: .constant(Configuration()))
+        AnchorView(config: $config)
     }
 }

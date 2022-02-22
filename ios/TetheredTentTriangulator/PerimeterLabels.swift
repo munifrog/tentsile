@@ -74,12 +74,14 @@ struct PerimeterLabels: View {
 }
 
 struct PerimeterLabels_Previews: PreviewProvider {
-    private static var config = Configuration()
+    @State private static var config = Configuration(
+        Coordinate(x: 160.0, y: 217.0)
+    )
 
     static var previews: some View {
         PerimeterLabels(
             setup: config.getDrawableSetup(),
             units: config.units
-        )
+        ).colorInvert()
     }
 }

@@ -38,7 +38,11 @@ struct Perimeter: View {
 }
 
 struct Perimeter_Previews: PreviewProvider {
+    @State private static var config = Configuration(
+        Coordinate(x: 160.0, y: 217.0)
+    )
+
     static var previews: some View {
-        Perimeter(config: .constant(Configuration()))
+        Perimeter(config: $config)
     }
 }

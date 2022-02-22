@@ -151,6 +151,11 @@ struct Configuration {
         self.updateConvertedScale()
     }
 
+    init(_ screen: Coordinate) {
+        self.init()
+        self.setLimits(screen: screen)
+    }
+
     mutating func rotate() {
         self.anchors.rotate()
         if var c = center {

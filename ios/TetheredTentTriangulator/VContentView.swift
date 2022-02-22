@@ -34,7 +34,11 @@ struct VContentView: View {
 }
 
 struct VContentView_Previews: PreviewProvider {
+    @State private static var config = Configuration(
+        Coordinate(x: 160.0, y: 217.0)
+    )
+
     static var previews: some View {
-        VContentView(config: .constant(Configuration()))
+        VContentView(config: $config)
     }
 }

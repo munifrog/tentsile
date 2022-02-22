@@ -24,11 +24,13 @@ struct PlatformView: View {
 }
 
 struct PlatformView_Previews: PreviewProvider {
-    private static var config = Configuration()
+    @State private static var config = Configuration(
+        Coordinate(x: 160.0, y: 217.0)
+    )
 
     static var previews: some View {
         PlatformView(
             setup: config.getDrawableSetup()
-        )
+        ).colorInvert()
     }
 }
