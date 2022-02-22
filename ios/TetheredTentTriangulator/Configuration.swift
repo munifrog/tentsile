@@ -88,18 +88,17 @@ private let USER_DEFAULTS_STORED_UNITS = "com.munifrog.tethered.tent.triangulato
 struct Configuration {
     var anchors: Anchors
     var center: TetherCenter?
-    var knots: TetherKnots?
     var platform: Platform {
         didSet {
             UserDefaults.standard.set(platform.rawValue, forKey: USER_DEFAULTS_STORED_PLATFORM)
-            updateKnots(self.center)
+            updateTetherCenter()
         }
     }
     var scale: Float {
         didSet {
             UserDefaults.standard.set(scale, forKey: USER_DEFAULTS_STORED_SCALE)
             updateConvertedScale()
-            updateKnots(self.center)
+            updateTetherCenter()
         }
     }
     var selection: Select = .none
@@ -116,6 +115,7 @@ struct Configuration {
 
     private var radiusSquared: Float = 225
     private var distanceScale: Float = 25.0
+    private var drawable: DrawableSetup?
     private var imageScale: Float = 0.04
     private var initial_p: Coordinate?
     private var initial_a: Coordinate?
@@ -155,17 +155,31 @@ struct Configuration {
         self.anchors.rotate()
         if var c = center {
             c.rotate()
-            updateKnots(c)
+            updateTetherCenter()
         }
     }
 
     mutating func setLimits(screen: Coordinate) {
         self.limits = screen
-        updateKnots(self.center)
+        updateTetherCenter()
     }
 
     func getLimits() -> Coordinate {
         return self.limits
+    }
+
+    func getDrawableSetup() -> DrawableSetup {
+        return drawable!
+    }
+
+    func computeDrawableSetup() -> DrawableSetup {
+        DrawableSetup(
+            anchors: self.anchors,
+            center: self.center,
+            platform: getPlatform(),
+            scale: imageScale,
+            offset: getLimits()
+        )
     }
 
     func getCanDrawPlatform() -> Bool {
@@ -228,7 +242,7 @@ struct Configuration {
             self.selection = self.getSelection(touch: touch)
         case .point:
             updateAnchors(touch: touch)
-            updateKnots(self.center)
+            updateTetherCenter()
             break
         }
     }
@@ -357,39 +371,6 @@ struct Configuration {
         self.anchors.c = initC + v + limitedV
     }
 
-    func getPath() -> [[Coordinate]] {
-        return getPlatform()
-            .path
-            .rotated(by: getRotation())
-            .scaled(by: getImageScale())
-            .translated(by: getTranslation())
-    }
-
-    mutating func getExtremities() -> [Coordinate] {
-        return path.getDetails(platform).extremites
-            .rotated(by: getRotation())
-            .scaled(by: getImageScale())
-            .translated(by: getTranslation())
-    }
-
-    func getRotation() -> Float {
-        if let focus = center {
-            let delta = anchors.a - focus.p
-            let hypotenuse = sqrt(delta.x * delta.x + delta.y * delta.y)
-            return Util.getDirection(h: hypotenuse, delta_x: delta.x, delta_y: delta.y)
-        } else {
-            return 0
-        }
-    }
-
-    func getTranslation() -> Coordinate {
-        if let focus = center {
-            return getLimits() + focus.p
-        } else {
-            return Coordinate()
-        }
-    }
-
     func getImageScale() -> Float {
         if let _ = center {
             return imageScale
@@ -420,70 +401,8 @@ struct Configuration {
         imageScale = MATH_BASE_PIXELS_PER_METER / scale
     }
 
-    func getDistance(_ points: Float) -> Float {
-        return points * distanceScale * (units == .metric ? 1.0 : MATH_METERS_TO_FEET_CONVERSION)
-    }
-
     mutating func updateTetherCenter() {
-        self.knots = nil
-        self.center = nil
         self.center = Util.getTetherCenter(self.anchors)
-        self.updateKnots(self.center)
-    }
-
-    // Pass in a copy of the TetherCenter? in case it transitions to/from nil
-    mutating func updateKnots(_ center: TetherCenter?) {
-        if let c = center {
-            let pixelsPerMeter = getImageScale()
-
-            let limits = getLimits()
-            let start = limits + c.p
-            let aAnchor = limits + anchors.a
-            let bAnchor = limits + anchors.b
-            let cAnchor = limits + anchors.c
-
-            if getCanDrawPlatform() {
-                let b_index = c.flips ? 2 : 1
-                let c_index = c.flips ? 1 : 2
-                let extremes = getExtremities()
-                let platform = getPlatform()
-                let strap = platform.strap
-                let circumference = platform.circumference
-
-                let aTether: TetherDetails = Util.getSegmentKnots(
-                    start: start,
-                    extremity: extremes[0],
-                    end: aAnchor,
-                    pixelsPerMeter: pixelsPerMeter,
-                    strap: strap,
-                    circumference: circumference
-                )
-                let bTether: TetherDetails = Util.getSegmentKnots(
-                    start: start,
-                    extremity: extremes[b_index],
-                    end: bAnchor,
-                    pixelsPerMeter: pixelsPerMeter,
-                    strap: strap,
-                    circumference: circumference
-                )
-                let cTether: TetherDetails = Util.getSegmentKnots(
-                    start: start,
-                    extremity: extremes[c_index],
-                    end: cAnchor,
-                    pixelsPerMeter: pixelsPerMeter,
-                    strap: strap,
-                    circumference: circumference
-                )
-
-                self.knots = TetherKnots(a: aTether, b: bTether, c: cTether)
-            } else {
-                self.knots = TetherKnots(
-                    a: TetherDetails(knots: [start, aAnchor], pixels: -1, icon: AnchorIcon.safe),
-                    b: TetherDetails(knots: [start, bAnchor], pixels: -1, icon: AnchorIcon.safe),
-                    c: TetherDetails(knots: [start, cAnchor], pixels: -1, icon: AnchorIcon.safe))
-            }
-        } else {
-            self.knots = nil
-        }
+        self.drawable = computeDrawableSetup()
     }
 }

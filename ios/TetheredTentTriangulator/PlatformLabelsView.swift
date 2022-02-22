@@ -8,13 +8,27 @@
 import SwiftUI
 
 struct PlatformLabelsView: View {
-    @Binding var config: Configuration
+    var setup: DrawableSetup
+    var units: Units
 
     var body: some View {
-        if let k = config.knots {
-            let metersA = config.getDistance(k.pixels_a)
-            let metersB = config.getDistance(k.pixels_b)
-            let metersC = config.getDistance(k.pixels_c)
+        if let k = setup.knots {
+            let metersA = Util.getMetersFromPixels(
+                pixels: k.pixels_a,
+                meterScale: setup.scaleMeters,
+                units: units
+            )
+            let metersB = Util.getMetersFromPixels(
+                pixels: k.pixels_b,
+                meterScale: setup.scaleMeters,
+                units: units
+            )
+            let metersC = Util.getMetersFromPixels(
+                pixels: k.pixels_c,
+                meterScale: setup.scaleMeters,
+                units: units
+            )
+
             let lastA = k.a.count - 1
             let lastB = k.b.count - 1
             let lastC = k.c.count - 1
@@ -31,7 +45,7 @@ struct PlatformLabelsView: View {
                                 a_y: k.a[1].y,
                                 b_x: k.a[lastA].x,
                                 b_y: k.a[lastA].y,
-                                units: config.units,
+                                units: units,
                                 color: Color("FontTethers")
                             )
                         )
@@ -48,7 +62,7 @@ struct PlatformLabelsView: View {
                                 a_y: k.b[1].y,
                                 b_x: k.b[lastB].x,
                                 b_y: k.b[lastB].y,
-                                units: config.units,
+                                units: units,
                                 color: Color("FontTethers")
                             )
                         )
@@ -65,7 +79,7 @@ struct PlatformLabelsView: View {
                                 a_y: k.c[1].y,
                                 b_x: k.c[lastC].x,
                                 b_y: k.c[lastC].y,
-                                units: config.units,
+                                units: units,
                                 color: Color("FontTethers")
                             )
                         )
@@ -78,7 +92,12 @@ struct PlatformLabelsView: View {
 }
 
 struct PlatformLabelsView_Previews: PreviewProvider {
+    private static var config = Configuration()
+
     static var previews: some View {
-        PlatformLabelsView(config: .constant(Configuration()))
+        PlatformLabelsView(
+            setup: config.getDrawableSetup(),
+            units: config.units
+        )
     }
 }

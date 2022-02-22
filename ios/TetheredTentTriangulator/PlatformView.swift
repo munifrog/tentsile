@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct PlatformView: View {
-    @Binding var config: Configuration
+    var setup: DrawableSetup
 
     var body: some View {
         HStack {
-            if config.getCanDrawPlatform() {
-                config
-                    .getPath()
+            if setup.getCanDrawPlatform() {
+                setup.getPlatformPath()
                     .asPathView()
                     .foregroundColor(Color("Platform"))
             } else {
@@ -25,7 +24,11 @@ struct PlatformView: View {
 }
 
 struct PlatformView_Previews: PreviewProvider {
+    private static var config = Configuration()
+
     static var previews: some View {
-        PlatformView(config: .constant(Configuration()))
+        PlatformView(
+            setup: config.getDrawableSetup()
+        )
     }
 }

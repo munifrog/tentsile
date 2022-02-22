@@ -8,6 +8,7 @@
 import Foundation
 
 private let STRAP_EXTENSION_LENGTH: Float = 6.0
+private let MATH_METERS_TO_FEET_CONVERSION: Float = 3.2808399;
 
 enum AnchorIcon {
     case impossible
@@ -193,5 +194,13 @@ class Util {
         }
         knots.append(end)
         return TetherDetails(knots: knots, pixels: pixelTetherAmount, icon: anchorIcon)
+    }
+
+    static func getMetersFromPixels(
+        pixels: Float,
+        meterScale: Float,
+        units: Units
+    ) -> Float {
+        return pixels * meterScale * (units == .metric ? 1.0 : MATH_METERS_TO_FEET_CONVERSION)
     }
 }

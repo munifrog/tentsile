@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct TetherView: View {
-    @Binding var config: Configuration
+    var setup: DrawableSetup
 
     var body: some View {
-        if let knots = config.knots {
+        if let knots = setup.knots {
             let knotSize: CGFloat = 7
             let tetherWidth: CGFloat = 3
 
@@ -99,7 +99,11 @@ struct TetherView: View {
 }
 
 struct TetherView_Previews: PreviewProvider {
+    private static var config = Configuration()
+
     static var previews: some View {
-        TetherView(config: .constant(Configuration()))
+        TetherView(
+            setup: config.getDrawableSetup()
+        )
     }
 }

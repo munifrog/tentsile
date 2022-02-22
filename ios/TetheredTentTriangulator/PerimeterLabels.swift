@@ -8,48 +8,65 @@
 import SwiftUI
 
 struct PerimeterLabels: View {
-    @Binding var config: Configuration
+    var setup: DrawableSetup
+    var units: Units
 
     var body: some View {
-        let limits = config.getLimits()
+        let limits = setup.offset
+        let metersA = Util.getMetersFromPixels(
+            pixels: setup.anchors.ab,
+            meterScale: setup.scaleMeters,
+            units: units
+        )
+        let metersB = Util.getMetersFromPixels(
+            pixels: setup.anchors.bc,
+            meterScale: setup.scaleMeters,
+            units: units
+        )
+        let metersC = Util.getMetersFromPixels(
+            pixels: setup.anchors.ca,
+            meterScale: setup.scaleMeters,
+            units: units
+        )
+
         Rectangle()
             .foregroundColor(.clear)
             .overlay(
                 LabelView(
-                    value: config.getDistance(config.anchors.ab),
+                    value: metersA,
                     offset_x: limits.x,
                     offset_y: limits.y,
-                    a_x: config.anchors.a.x,
-                    a_y: config.anchors.a.y,
-                    b_x: config.anchors.b.x,
-                    b_y: config.anchors.b.y,
-                    units: config.units,
+                    a_x: setup.anchors.a.x,
+                    a_y: setup.anchors.a.y,
+                    b_x: setup.anchors.b.x,
+                    b_y: setup.anchors.b.y,
+                    units: units,
                     color: Color("FontPerimeter")
                 )
             )
             .overlay(
                 LabelView(
-                    value: config.getDistance(config.anchors.bc),
+                    value: metersB,
                     offset_x: limits.x,
                     offset_y: limits.y,
-                    a_x: config.anchors.b.x,
-                    a_y: config.anchors.b.y,
-                    b_x: config.anchors.c.x,
-                    b_y: config.anchors.c.y,
-                    units: config.units,
+                    a_x: setup.anchors.b.x,
+                    a_y: setup.anchors.b.y,
+                    b_x: setup.anchors.c.x,
+                    b_y: setup.anchors.c.y,
+                    units: units,
                     color: Color("FontPerimeter")
                 )
             )
             .overlay(
                 LabelView(
-                    value: config.getDistance(config.anchors.ca),
+                    value: metersC,
                     offset_x: limits.x,
                     offset_y: limits.y,
-                    a_x: config.anchors.c.x,
-                    a_y: config.anchors.c.y,
-                    b_x: config.anchors.a.x,
-                    b_y: config.anchors.a.y,
-                    units: config.units,
+                    a_x: setup.anchors.c.x,
+                    a_y: setup.anchors.c.y,
+                    b_x: setup.anchors.a.x,
+                    b_y: setup.anchors.a.y,
+                    units: units,
                     color: Color("FontPerimeter")
                 )
             )
@@ -57,7 +74,12 @@ struct PerimeterLabels: View {
 }
 
 struct PerimeterLabels_Previews: PreviewProvider {
+    private static var config = Configuration()
+
     static var previews: some View {
-        PerimeterLabels(config: .constant(Configuration()))
+        PerimeterLabels(
+            setup: config.getDrawableSetup(),
+            units: config.units
+        )
     }
 }

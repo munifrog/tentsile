@@ -8,21 +8,22 @@
 import SwiftUI
 
 struct TetherIconView: View {
-    @Binding var config: Configuration
+    var setup: DrawableSetup
+    var symbols: Symbols
 
     var body: some View {
-        if let knots = config.knots {
+        if let knots = setup.knots {
             let dimen = CGFloat(20)
-            let limits = config.getLimits()
-            AnchorIconView(icon: knots.icon_a, level: config.symbols)
+            let limits = setup.offset
+            AnchorIconView(icon: knots.icon_a, level: symbols)
                 .frame(width: dimen, height: dimen, alignment: .center)
-                .position(CGPoint(limits + config.anchors.a))
-            AnchorIconView(icon: knots.icon_b, level: config.symbols)
+                .position(CGPoint(limits + setup.anchors.a))
+            AnchorIconView(icon: knots.icon_b, level: symbols)
                 .frame(width: dimen, height: dimen, alignment: .center)
-                .position(CGPoint(limits + config.anchors.b))
-            AnchorIconView(icon: knots.icon_c, level: config.symbols)
+                .position(CGPoint(limits + setup.anchors.b))
+            AnchorIconView(icon: knots.icon_c, level: symbols)
                 .frame(width: dimen, height: dimen, alignment: .center)
-                .position(CGPoint(limits + config.anchors.c))
+                .position(CGPoint(limits + setup.anchors.c))
         } else {
             EmptyView()
         }
@@ -30,7 +31,12 @@ struct TetherIconView: View {
 }
 
 struct TetherIconView_Previews: PreviewProvider {
+    private static var config = Configuration()
+
     static var previews: some View {
-        TetherIconView(config: .constant(Configuration()))
+        TetherIconView(
+            setup: config.getDrawableSetup(),
+            symbols: config.symbols
+        )
     }
 }

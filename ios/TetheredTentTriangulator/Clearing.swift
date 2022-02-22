@@ -39,12 +39,12 @@ struct Clearing: View {
                 )
             })
             .overlay(Perimeter(config: $config))
-            .overlay(TetherView(config: $config))
-            .overlay(PlatformView(config: $config))
-            .overlay(PerimeterLabels(config: $config))
+            .overlay(TetherView(setup: config.getDrawableSetup()))
+            .overlay(PlatformView(setup: config.getDrawableSetup()))
+            .overlay(PerimeterLabels(setup: config.getDrawableSetup(), units: config.units))
             .overlay(AnchorView(config: $config))
-            .overlay(TetherIconView(config: $config))
-            .overlay(PlatformLabelsView(config: $config))
+            .overlay(TetherIconView(setup: config.getDrawableSetup(), symbols: config.symbols))
+            .overlay(PlatformLabelsView(setup: config.getDrawableSetup(), units: config.units))
             .gesture(touches)
     }
 }
