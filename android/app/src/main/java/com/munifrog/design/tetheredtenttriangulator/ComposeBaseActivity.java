@@ -17,7 +17,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import androidx.preference.PreferenceManager;
 
 public class ComposeBaseActivity
         extends AppCompatActivity
@@ -44,6 +44,7 @@ public class ComposeBaseActivity
     private static final String SAVE_STATE_TETHERS_1Y = "remembered_tether_position_1y";
     private static final String SAVE_STATE_TETHERS_2X = "remembered_tether_position_2x";
     private static final String SAVE_STATE_TETHERS_2Y = "remembered_tether_position_2y";
+    private static final String SAVE_STATE_SYMBOL_VERBOSITY = "remembered_selection_symbol_verbosity";
 
     public final Clearing mClearing = new Clearing(this);
 
@@ -69,6 +70,7 @@ public class ComposeBaseActivity
     private SeekBar mSeekBar;
     private Spinner mSpinner;
     private ArrayAdapter<String> mSpinAdapter;
+    private Symbol mSymbolVerbosity = Symbol.safe; // Initially draw the least restrictive symbols
 
     private int mCanvasLeft = 0;
     private int mCanvasTop = 0;
@@ -177,7 +179,7 @@ public class ComposeBaseActivity
         mToolbarMenu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.toolbar, menu);
-        matchUnits();
+        updateMenu();
         return true;
     }
 
@@ -242,6 +244,14 @@ public class ComposeBaseActivity
         } else if (id == R.id.action_enable_meters) {
             setUnits(false);
             return true;
+        } else if (id == R.id.action_decrease_symbols) {
+            updateSymbol(Symbol.next(mSymbolVerbosity));
+            updateMenu();
+            return true;
+        } else if (id == R.id.action_increase_symbols) {
+            updateSymbol(Symbol.prev(mSymbolVerbosity));
+            updateMenu();
+            return true;
         } else {
             return super.onOptionsItemSelected(item);
         }
@@ -269,6 +279,7 @@ public class ComposeBaseActivity
         if (mSpinner.getSelectedItem() != null) {
             edit.putString(SAVE_STATE_PLATFORM, mSpinner.getSelectedItem().toString());
         }
+        edit.putString(SAVE_STATE_SYMBOL_VERBOSITY, mSymbolVerbosity.name());
         edit.apply();
     }
 
@@ -314,6 +325,10 @@ public class ComposeBaseActivity
                 mSpinner.setSelection(platformSelection);
             }
         }
+        if (prefs.contains(SAVE_STATE_SYMBOL_VERBOSITY)) {
+            String verbosity = prefs.getString(SAVE_STATE_SYMBOL_VERBOSITY, "safe");
+            updateSymbol(Symbol.valueOf(verbosity));
+        }
     }
 
     private void setSeekBarPosition(int position) {
@@ -350,14 +365,17 @@ public class ComposeBaseActivity
 
     private void setUnits(boolean isImperial) {
         mClearing.setIsImperial(isImperial);
-        matchUnits();
+        updateMenu();
     }
 
-    private void matchUnits() {
+    private void updateMenu() {
         boolean isImperial = mClearing.getIsImperial();
         // The unit displayed should be what it will become if pushed, not what it currently is
         mToolbarMenu.findItem(R.id.action_enable_imperial).setVisible(!isImperial);
         mToolbarMenu.findItem(R.id.action_enable_meters).setVisible(isImperial);
+        int current = mSymbolVerbosity.ordinal();
+        mToolbarMenu.findItem(R.id.action_decrease_symbols).setVisible(current < Symbol.impossible.ordinal());
+        mToolbarMenu.findItem(R.id.action_increase_symbols).setVisible(current > Symbol.safe.ordinal());
     }
 
     // http://www.pixnbgames.com/blog/libgdx/how-to-hide-virtual-buttons-in-android-libgdx/
@@ -376,6 +394,11 @@ public class ComposeBaseActivity
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
             );
         }
+    }
+
+    private void updateSymbol(Symbol symbol) {
+        mSymbolVerbosity = symbol;
+        mClearing.setSymbolVerbosity(symbol);
     }
 
     @Override

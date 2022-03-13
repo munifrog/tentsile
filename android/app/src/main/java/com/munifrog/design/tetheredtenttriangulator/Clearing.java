@@ -89,6 +89,7 @@ public class Clearing
     private Path mPlatformPath = new Path();
     private final Path mTransformedPath = new Path();
 
+    private Symbol mSymbolVerbosity = Symbol.safe;
     private Drawable mIconCannot = null;
     private Drawable mIconTricky = null;
     private Drawable mIconWarn = null;
@@ -145,6 +146,11 @@ public class Clearing
         mScaleSlider = 1.0;
 
         setPlatformSymmetricAngle();
+    }
+
+    public void setSymbolVerbosity(Symbol level) {
+        mSymbolVerbosity = level;
+        invalidateSelf();
     }
 
     public void setUnitStrings(String meters, String imperial) {
@@ -566,34 +572,33 @@ public class Clearing
     }
 
     private void drawAnchorSymbols(Canvas canvas, Symbol[] symbols) {
+        int verbosity = mSymbolVerbosity.ordinal();
         for (int i = 0; i < 3; i++) {
-            if (symbols[i] != Symbol.safe) {
+            if (symbols[i].ordinal() > verbosity) {
                 int x = Math.round(mTethers[i][0]);
                 int y = Math.round(mTethers[i][1]);
                 int halfIconSize = 50;
-                int left = x - halfIconSize;
-                int right = x + halfIconSize;
-                int top = y - halfIconSize;
-                int bottom = y + halfIconSize;
+                Drawable icon;
                 switch (symbols[i]) {
+                    default:
                     case impossible:
-                        if (mIconCannot != null) {
-                            mIconCannot.setBounds(left, top, right, bottom);
-                            mIconCannot.draw(canvas);
-                        }
+                        icon = mIconCannot;
                         break;
                     case scarce:
-                        if (mIconWarn != null) {
-                            mIconWarn.setBounds(left, top, right, bottom);
-                            mIconWarn.draw(canvas);
-                        }
+                        icon = mIconWarn;
                         break;
                     case tricky:
-                        if (mIconTricky != null) {
-                            mIconTricky.setBounds(left, top, right, bottom);
-                            mIconTricky.draw(canvas);
-                        }
+                        icon = mIconTricky;
                         break;
+                }
+                if (icon != null) {
+                    icon.setBounds(
+                            x - halfIconSize,
+                            y - halfIconSize,
+                            x + halfIconSize,
+                            y + halfIconSize
+                    );
+                    icon.draw(canvas);
                 }
             }
         }
@@ -776,37 +781,8 @@ public class Clearing
     private Symbol[] mergeSymbols(Symbol[] left, Symbol[] right) {
         Symbol[] symbols = new Symbol[3];
         for (int i = 0; i < 3; i++) {
-            symbols[i] = getMoreRestrictiveSymbol(left[i], right[i]);
+            symbols[i] = Symbol.getMoreRestrictiveSymbol(left[i], right[i]);
         }
         return symbols;
     }
-
-    private Symbol getMoreRestrictiveSymbol(Symbol left, Symbol right) {
-        switch (left) {
-            default:
-            case safe:
-                return right;
-            case tricky:
-                switch (right) {
-                    case safe:
-                    case tricky:
-                        return left;
-                    case scarce:
-                    case impossible:
-                        return right;
-                }
-            case scarce:
-                switch (right) {
-                    case safe:
-                    case tricky:
-                    case scarce:
-                        return left;
-                    case impossible:
-                        return right;
-                }
-            case impossible:
-                return left;
-        }
-    }
-
 }

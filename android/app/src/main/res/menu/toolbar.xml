@@ -17,4 +17,12 @@
     <item android:id="@+id/action_enable_meters"
         android:title="@string/menu_switch_to_meters"
         app:showAsAction="never" />
+
+    <item android:id="@+id/action_increase_symbols"
+        android:title="@string/menu_increase_symbols"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_decrease_symbols"
+        android:title="@string/menu_decrease_symbols"
+        app:showAsAction="never" />
 </menu>

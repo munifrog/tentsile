@@ -1,12 +1,5 @@
 package com.munifrog.design.tetheredtenttriangulator;
 
-enum Symbol {
-    safe,
-    tricky,
-    scarce,
-    impossible
-}
-
 class Knots {
     float [][] knots;
     Symbol symbol;

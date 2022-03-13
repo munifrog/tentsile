@@ -17,6 +17,9 @@
     <string name="menu_browser_tentsile">Tentsile Website</string>
     <string name="menu_switch_to_imperial">Use feet (ft)</string>
     <string name="menu_switch_to_meters">Use meters (m)</string>
+    <string name="menu_increase_symbols">Increase symbols</string>
+    <string name="menu_decrease_symbols">Decrease symbols</string>
+
 
     <string name="url_tentsile_website_main">https://www.tentsile.com/</string>
 </resources>
