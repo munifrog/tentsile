@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,6 +31,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import androidx.preference.PreferenceManager;
+
+import java.util.Objects;
 
 public class ComposeBaseActivity
         extends AppCompatActivity
@@ -122,7 +125,9 @@ public class ComposeBaseActivity
             toolbar.setTitle(R.string.app_name_short);
         }
         setSupportActionBar(toolbar);
+
         hideVirtualButtons();
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         mSpinner = findViewById(R.id.sp_models);
         int mPlatformSelection = R.array.tent_models;
@@ -252,8 +257,21 @@ public class ComposeBaseActivity
             updateSymbol(Symbol.prev(mSymbolVerbosity));
             updateMenu();
             return true;
+        } else if (id == android.R.id.home) {
+            closeApp();
+            return true;
         } else {
             return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            closeApp();
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
         }
     }
 
@@ -357,6 +375,14 @@ public class ComposeBaseActivity
     private void launchTentsile() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_tentsile_website_main)));
         startActivity(browserIntent);
+    }
+
+    private void closeApp() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            finishAndRemoveTask();
+        } else {
+            finish();
+        }
     }
 
     private void initializeUnits() {
