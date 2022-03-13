@@ -751,12 +751,12 @@ public class Clearing
 
     public float[][] getTetherPoints() {
         float[][] offsetTethers = new float[3][2];
-        offsetTethers[0][0] = mTethers[0][0] - mPlatformCoordinates[0];
-        offsetTethers[0][1] = mTethers[0][1] - mPlatformCoordinates[1];
-        offsetTethers[1][0] = mTethers[1][0] - mPlatformCoordinates[0];
-        offsetTethers[1][1] = mTethers[1][1] - mPlatformCoordinates[1];
-        offsetTethers[2][0] = mTethers[2][0] - mPlatformCoordinates[0];
-        offsetTethers[2][1] = mTethers[2][1] - mPlatformCoordinates[1];
+        offsetTethers[0][0] = mTethers[0][0] - mCenter[0];
+        offsetTethers[0][1] = mTethers[0][1] - mCenter[1];
+        offsetTethers[1][0] = mTethers[1][0] - mCenter[0];
+        offsetTethers[1][1] = mTethers[1][1] - mCenter[1];
+        offsetTethers[2][0] = mTethers[2][0] - mCenter[0];
+        offsetTethers[2][1] = mTethers[2][1] - mCenter[1];
         return offsetTethers;
     }
 
