@@ -16,6 +16,7 @@ import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TENTSILE
 import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TETHERS_EQUILATERAL;
 import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TETHERS_ISOSCELES;
 import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TETHERS_SCALENE;
+import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.MATH_ANGLE_FULL_CIRCLE;
 
 import static org.junit.Assert.*;
 
@@ -55,12 +56,11 @@ public class UtilUnitTests {
         for (int i = 0; i < iterations; i++) {
             // In theory we could handle any two angles, but since the greatest an angle could be in
             // a triangle is 1/2 a circle, it should suffice to test from -pi to +pi.
-            // Positive circle (0 to 2pi)
             angle = i * angleDiff;
-            assertTrue(Util.areAnglesEquivalent(angle, angle));
-            // Negative circle (-2pi to 0)
-            negAngle = angle - 2 * Math.PI;
-            assertTrue(Util.areAnglesEquivalent(angle, negAngle));
+            assertTrue(Util.areAnglesEquivalent(angle, angle + MATH_ANGLE_FULL_CIRCLE));
+            assertTrue(Util.areAnglesEquivalent(angle, angle + 2 * MATH_ANGLE_FULL_CIRCLE));
+            assertTrue(Util.areAnglesEquivalent(angle, angle - MATH_ANGLE_FULL_CIRCLE));
+            assertTrue(Util.areAnglesEquivalent(angle, angle - 2 * MATH_ANGLE_FULL_CIRCLE));
         }
     }
 

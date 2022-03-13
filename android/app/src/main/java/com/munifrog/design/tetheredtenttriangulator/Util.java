@@ -28,12 +28,13 @@ class Util {
     private static final double TENTSILE_STRAPS_DEFAULT = 6.0;
     private static final double TENTSILE_CIRCUMFERENCE_DEFAULT = 0.785398163397448; // pi * 25cm or 10inch diameter
 
-    // deltaY = (distal Y - proximal Y); if deltaY >= 0, then angle is within Q1 or Q2;
-    // if deltaY < 0, then angle within Q3 or Q4; allowing us to narrow down the quadrant
+    // Arcsine ranges from -pi/2 (Quadrant 4) to +pi/2 (Quadrant 1)
+    // When deltaX is positive then we are in Quadrant 1 or 4, corresponding to the arcsine results;
+    // When deltaX is negative then we are in Quadrant 2 or 3.
+    // The same deltaY at a negative deltaX, occurs exactly pi away from the arcsine results;
     static double getDirection(double hypotenuse, double deltaX, double deltaY) {
         double angle = Math.asin(deltaY / hypotenuse);
-        if ((angle >= 0) && (deltaX < 0) || ((angle < 0) && (deltaX < 0))) {
-            // symmetric with respect to line (x = 0)
+        if (deltaX < 0) {
             angle = Math.PI - angle;
         }
         return angle;
@@ -43,11 +44,11 @@ class Util {
         double rawDelta = Math.abs(angleB - angleA);
         if (rawDelta < MATH_ANGLE_PRECISION_ALLOWANCE) {
             return true;
-        } else if (Math.signum(angleA) != Math.signum(angleB)) {
-            // In theory we would need to handle N 2*PI, but in practice it suffices to compare +/-
-            return (Math.abs(MATH_ANGLE_FULL_CIRCLE - rawDelta) < MATH_ANGLE_PRECISION_ALLOWANCE);
+        } else {
+            long numCircles = Math.round(rawDelta / MATH_ANGLE_FULL_CIRCLE);
+            double modularDelta = Math.abs(rawDelta - numCircles * MATH_ANGLE_FULL_CIRCLE);
+            return modularDelta < MATH_ANGLE_PRECISION_ALLOWANCE;
         }
-        return false;
     }
 
     static double[] getPerimeter(float[][] tethers) {
