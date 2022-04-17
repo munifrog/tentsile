@@ -615,6 +615,7 @@ public class Clearing
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public int getOpacity() {
         // Must be PixelFormat.UNKNOWN, TRANSLUCENT, TRANSPARENT, or OPAQUE
         return PixelFormat.OPAQUE;

@@ -11,13 +11,11 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -74,6 +72,7 @@ public class ComposeBaseActivity
     private Spinner mSpinner;
     private ArrayAdapter<String> mSpinAdapter;
     private Symbol mSymbolVerbosity = Symbol.safe; // Initially draw the least restrictive symbols
+    private VersionSupport mVersionSupport;
 
     private int mCanvasLeft = 0;
     private int mCanvasTop = 0;
@@ -84,9 +83,8 @@ public class ComposeBaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Display window = getWindowManager().getDefaultDisplay();
-        Rect actualSize = new Rect();
-        window.getRectSize(actualSize);
+        mVersionSupport = new VersionSupport(this);
+        Rect actualSize = mVersionSupport.getBounds();
         mClearing.setFullWindowBounds(actualSize);
 
         mClearing.setUnitStrings(
@@ -101,21 +99,13 @@ public class ComposeBaseActivity
         // https://stackoverflow.com/a/10141607
         int idCannot = r.getIdentifier("@android:drawable/ic_menu_close_clear_cancel", null, packageName);
         Drawable cannotIcon = ResourcesCompat.getDrawable(r, idCannot, theme);
-        if (cannotIcon != null) {
-            cannotIcon.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-        }
-
+        mVersionSupport.colorDrawable(cannotIcon, Color.RED);
         int idWarn = r.getIdentifier("@android:drawable/stat_sys_warning", null, packageName);
         Drawable warnIcon = ResourcesCompat.getDrawable(r, idWarn, theme);
-        if (warnIcon != null) {
-            warnIcon.setColorFilter(Color.YELLOW, PorterDuff.Mode.MULTIPLY);
-        }
-
+        mVersionSupport.colorDrawable(warnIcon, Color.YELLOW);
         int idTricky = r.getIdentifier("@android:drawable/stat_notify_error", null, packageName);
         Drawable trickyIcon = ResourcesCompat.getDrawable(r, idTricky, theme);
-        if (trickyIcon != null) {
-            trickyIcon.setColorFilter(0xFFFF7F00, PorterDuff.Mode.MULTIPLY);
-        }
+        mVersionSupport.colorDrawable(trickyIcon, 0xFFFF7F00);
         mClearing.setSymbolIcons(cannotIcon, warnIcon, trickyIcon);
 
         Toolbar toolbar = findViewById(R.id.tb_main);
@@ -126,7 +116,7 @@ public class ComposeBaseActivity
         }
         setSupportActionBar(toolbar);
 
-        hideVirtualButtons();
+        mVersionSupport.hideVirtualButtons();
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         mSpinner = findViewById(R.id.sp_models);
@@ -197,7 +187,7 @@ public class ComposeBaseActivity
         mCanvasLeft = viewLoc[0];
         mCanvasTop = viewLoc[1];
         if (hasFocus) {
-            hideVirtualButtons();
+            mVersionSupport.hideVirtualButtons();
         }
     }
 
@@ -206,7 +196,7 @@ public class ComposeBaseActivity
         int x, y;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                hideVirtualButtons();
+                mVersionSupport.hideVirtualButtons();
                 x = (int) event.getX();
                 y = (int) event.getY();
                 mClearing.selectTether(x - mCanvasLeft,y - mCanvasTop);
@@ -402,24 +392,6 @@ public class ComposeBaseActivity
         int current = mSymbolVerbosity.ordinal();
         mToolbarMenu.findItem(R.id.action_decrease_symbols).setVisible(current < Symbol.impossible.ordinal());
         mToolbarMenu.findItem(R.id.action_increase_symbols).setVisible(current > Symbol.safe.ordinal());
-    }
-
-    // http://www.pixnbgames.com/blog/libgdx/how-to-hide-virtual-buttons-in-android-libgdx/
-    // https://developer.android.com/training/system-ui/immersive
-    private void hideVirtualButtons() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_IMMERSIVE
-                    // Set the content to appear under the system bars so that the
-                    // content doesn't resize when the system bars hide and show.
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    // Hide the nav bar and status bar
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-            );
-        }
     }
 
     private void updateSymbol(Symbol symbol) {
