@@ -215,7 +215,7 @@ public class ComposeBaseActivity
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-        // Override this method in the free or paid ComposeActivity.java
+        // Override this method in the lite or full ComposeActivity.java
     }
 
     @Override
