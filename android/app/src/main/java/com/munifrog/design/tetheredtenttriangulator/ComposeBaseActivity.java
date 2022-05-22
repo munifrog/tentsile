@@ -233,6 +233,9 @@ public class ComposeBaseActivity
         } else if (id == R.id.action_browser_tentsile) {
             launchTentsile();
             return true;
+        } else if (id == R.id.action_browser_source_code) {
+            launchSourceCode();
+            return true;
         } else if (id == R.id.action_enable_imperial) {
             setUnits(true);
             return true;
@@ -364,6 +367,11 @@ public class ComposeBaseActivity
 
     private void launchTentsile() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_tentsile_website_main)));
+        startActivity(browserIntent);
+    }
+
+    private void launchSourceCode() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_source_code_android)));
         startActivity(browserIntent);
     }
 

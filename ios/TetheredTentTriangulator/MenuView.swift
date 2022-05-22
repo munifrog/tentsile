@@ -11,6 +11,7 @@ struct MenuView: View {
     @Binding var config: Configuration
 
     private let URL_TENTSILE_WEBSITE: String = "https://www.tentsile.com/"
+    private let URL_SOURCE_CODE_IOS: String = "https://github.com/munifrog/tentsile/tree/master/ios/TetheredTentTriangulator"
 
     var body: some View {
         Menu {
@@ -24,6 +25,7 @@ struct MenuView: View {
                 }
                 SymbolMenuView(symbols: $config.symbols)
             }
+            Link("View the code!", destination: URL(string: URL_SOURCE_CODE_IOS)!)
         } label: {
             Label("more", systemImage: "ellipsis")
                 .labelStyle(IconOnlyLabelStyle())
