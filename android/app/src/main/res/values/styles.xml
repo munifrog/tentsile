@@ -23,4 +23,23 @@
         <item name="android:textColor">@color/colorTextMenu</item>
         <item name="android:background">@color/colorBackMenu</item>
     </style>
+
+    <style name="FAQ_Question" >
+        <item name="android:background">@color/colorBackButton</item>
+        <item name="android:gravity">center</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textColor">@color/colorTextButton</item>
+        <item name="android:textSize">@dimen/text_faq_question</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="FAQ_Answer" >
+        <item name="android:gravity">start</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">24dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:textSize">@dimen/text_faq_answer</item>
+    </style>
+
 </resources>

@@ -1,4 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="tent_models"/>
+
+    <string-array name="faq_questions">
+        <item>@string/faq_accuracy_question</item>
+        <item>@string/faq_all_at_once_question</item>
+        <item>@string/faq_measurement_1_question</item>
+        <item>@string/faq_measurement_2_question</item>
+        <item>@string/faq_missing_platform_question</item>
+        <item>@string/faq_tools_question</item>
+        <item>@string/faq_symbol_orange_triangle_question</item>
+        <item>@string/faq_symbol_yellow_triangle_question</item>
+        <item>@string/faq_symbol_red_x_question</item>
+    </string-array>
+
+    <string-array name="faq_answers">
+        <item>@string/faq_accuracy_answer</item>
+        <item>@string/faq_all_at_once_answer</item>
+        <item>@string/faq_measurement_1_answer</item>
+        <item>@string/faq_measurement_2_answer</item>
+        <item>@string/faq_missing_platform_answer</item>
+        <item>@string/faq_tools_answer</item>
+        <item>@string/faq_symbol_orange_triangle_answer</item>
+        <item>@string/faq_symbol_yellow_triangle_answer</item>
+        <item>@string/faq_symbol_red_x_answer</item>
+    </string-array>
+
 </resources>

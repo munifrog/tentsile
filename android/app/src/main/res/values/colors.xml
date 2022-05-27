@@ -14,5 +14,9 @@
     <color name="colorClearingBackground">#AFCA89</color>
     <color name="colorButton">#5B659811</color>
 
+    <color name="colorBackButton">#425C16</color>
+    <color name="colorTextButton">#FFFFFF</color>
+    <color name="colorSeparator">#FFFFFF</color>
+
     <color name="ic_launcher_background">#F1FFEA</color>
 </resources>

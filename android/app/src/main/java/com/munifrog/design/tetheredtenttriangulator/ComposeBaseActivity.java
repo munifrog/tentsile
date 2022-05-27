@@ -230,6 +230,9 @@ public class ComposeBaseActivity
             mClearing.configDefault();
             mClearing.releaseTether();
             return true;
+        } else if (id == R.id.action_faq) {
+            launchFrequentlyAskedQuestions();
+            return true;
         } else if (id == R.id.action_browser_tentsile) {
             launchTentsile();
             return true;
@@ -363,6 +366,11 @@ public class ComposeBaseActivity
             slope = MATH_SCALE_SLOPE_02_03;
         }
         return offset + slope * diff;
+    }
+
+    private void launchFrequentlyAskedQuestions() {
+        Intent faqIntent = new Intent(this, FAQActivity.class);
+        startActivity(faqIntent);
     }
 
     private void launchTentsile() {

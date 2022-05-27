@@ -26,6 +26,10 @@
         android:title="@string/menu_decrease_symbols"
         app:showAsAction="never" />
 
+    <item android:id="@+id/action_faq"
+        android:title="@string/menu_faq"
+        app:showAsAction="never" />
+
     <item android:id="@+id/action_browser_source_code"
         android:title="@string/menu_browser_source_code"
         app:showAsAction="never" />

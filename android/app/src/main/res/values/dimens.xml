@@ -13,4 +13,6 @@
     <dimen name="text_toolbar_menu">20sp</dimen>
     <dimen name="text_tent_model">24sp</dimen>
     <dimen name="text_span">20sp</dimen>
+    <dimen name="text_faq_question">24sp</dimen>
+    <dimen name="text_faq_answer">20sp</dimen>
 </resources>
