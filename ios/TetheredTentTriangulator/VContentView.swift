@@ -9,19 +9,22 @@ import SwiftUI
 
 struct VContentView: View {
     @Binding var config: Configuration
+    @Binding var showFaq: Bool
 
     var body: some View {
-        VStack {
+        VStack(spacing:0) {
             HStack {
-                Text("Tethered Tent Triangulator")
+                Text("Tethered Tents")
                     .font(.headline)
                     .colorInvert()
                 Spacer()
-                MenuView(config: $config)
+                MenuView(
+                    config: $config,
+                    showFaq: $showFaq
+                )
             }
             .padding(.horizontal)
             .background(Color("ThemePrimary"))
-
             PlatformPicker(config: $config)
 
             VStack {
@@ -39,6 +42,9 @@ struct VContentView_Previews: PreviewProvider {
     )
 
     static var previews: some View {
-        VContentView(config: $config)
+        VContentView(
+            config: $config,
+            showFaq: .constant(false)
+        )
     }
 }

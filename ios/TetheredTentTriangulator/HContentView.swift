@@ -9,19 +9,23 @@ import SwiftUI
 
 struct HContentView: View {
     @Binding var config: Configuration
+    @Binding var showFaq: Bool
 
     private let pickerHeight = CGFloat(30.0)
     private let sliderWidth = CGFloat(50.0)
 
     var body: some View {
         let limits = config.getLimits()
-        VStack {
+        VStack(spacing: 0) {
             HStack {
                 Text("Tethered Tent Triangulator")
                     .font(.headline)
                     .colorInvert()
                 Spacer()
-                MenuView(config: $config)
+                MenuView(
+                    config: $config,
+                    showFaq: $showFaq
+                )
             }
             .padding(.horizontal)
             .background(Color("ThemePrimary"))
@@ -55,6 +59,9 @@ struct HContentView_Previews: PreviewProvider {
     )
 
     static var previews: some View {
-        HContentView(config: $config)
+        HContentView(
+            config: $config,
+            showFaq: .constant(false)
+        )
     }
 }

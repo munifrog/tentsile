@@ -31,6 +31,9 @@
 		8E8C068626E57EF100F47062 /* HSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C068526E57EF100F47062 /* HSlider.swift */; };
 		8E8C068826E5814A00F47062 /* PlatformPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C068726E5814A00F47062 /* PlatformPicker.swift */; };
 		8E8C068A26E65EC200F47062 /* Clearing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8C068926E65EC200F47062 /* Clearing.swift */; };
+		8EA1FE2F284067590012E74B /* FAQView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA1FE2E284067590012E74B /* FAQView.swift */; };
+		8EA1FE3128406AC60012E74B /* FAQListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA1FE3028406AC60012E74B /* FAQListView.swift */; };
+		8EA1FE372849B16E0012E74B /* DraggableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA1FE362849B16E0012E74B /* DraggableView.swift */; };
 		8EB1CD832768FB11009E2036 /* AnchorIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB1CD822768FB11009E2036 /* AnchorIconView.swift */; };
 		8EB1CD8527696787009E2036 /* TetherKnots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB1CD8427696786009E2036 /* TetherKnots.swift */; };
 		8EB1CD8727697A84009E2036 /* TetherIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB1CD8627697A83009E2036 /* TetherIconView.swift */; };
@@ -91,6 +94,9 @@
 		8E8C068526E57EF100F47062 /* HSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HSlider.swift; sourceTree = "<group>"; };
 		8E8C068726E5814A00F47062 /* PlatformPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformPicker.swift; sourceTree = "<group>"; };
 		8E8C068926E65EC200F47062 /* Clearing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clearing.swift; sourceTree = "<group>"; };
+		8EA1FE2E284067590012E74B /* FAQView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQView.swift; sourceTree = "<group>"; };
+		8EA1FE3028406AC60012E74B /* FAQListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FAQListView.swift; sourceTree = "<group>"; };
+		8EA1FE362849B16E0012E74B /* DraggableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableView.swift; sourceTree = "<group>"; };
 		8EB1CD822768FB11009E2036 /* AnchorIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchorIconView.swift; sourceTree = "<group>"; };
 		8EB1CD8427696786009E2036 /* TetherKnots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TetherKnots.swift; sourceTree = "<group>"; };
 		8EB1CD8627697A83009E2036 /* TetherIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TetherIconView.swift; sourceTree = "<group>"; };
@@ -159,8 +165,11 @@
 				8E8C068926E65EC200F47062 /* Clearing.swift */,
 				8E0C686B26EDAB41003EE614 /* Configuration.swift */,
 				8E0C686F26EDABB6003EE614 /* Coordinate.swift */,
+				8EA1FE362849B16E0012E74B /* DraggableView.swift */,
 				8EB7061C27C439B5009D56F5 /* DrawableSetup.swift */,
 				8E6F727726F7E6620099BB36 /* Extensions.swift */,
+				8EA1FE3028406AC60012E74B /* FAQListView.swift */,
+				8EA1FE2E284067590012E74B /* FAQView.swift */,
 				8E8C068526E57EF100F47062 /* HSlider.swift */,
 				8E3B3A1C277548CC00BEA89B /* HContentView.swift */,
 				8EC38314270A086E006D9AE6 /* LabelView.swift */,
@@ -343,6 +352,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8EA1FE2F284067590012E74B /* FAQView.swift in Sources */,
 				8E0C686C26EDAB41003EE614 /* Configuration.swift in Sources */,
 				8EB7061D27C439B6009D56F5 /* DrawableSetup.swift in Sources */,
 				8EC38315270A086E006D9AE6 /* LabelView.swift in Sources */,
@@ -368,7 +378,9 @@
 				8E0C687626F23050003EE614 /* PerimeterLabels.swift in Sources */,
 				8E61139426F58B6B007F48F8 /* ViewSizing.swift in Sources */,
 				8E6F727826F7E6620099BB36 /* Extensions.swift in Sources */,
+				8EA1FE372849B16E0012E74B /* DraggableView.swift in Sources */,
 				8E8C068826E5814A00F47062 /* PlatformPicker.swift in Sources */,
+				8EA1FE3128406AC60012E74B /* FAQListView.swift in Sources */,
 				8E8C065B26E5797400F47062 /* TetheredTentTriangulatorApp.swift in Sources */,
 				8E8C068A26E65EC200F47062 /* Clearing.swift in Sources */,
 				8E0C687226EE9010003EE614 /* AnchorView.swift in Sources */,

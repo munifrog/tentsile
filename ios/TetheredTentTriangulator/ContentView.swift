@@ -10,25 +10,37 @@ import SwiftUI
 struct ContentView: View {
     @State private var config = Configuration()
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
+    @State private var showFaq: Bool = false
 
     init() {
         self.orientation = getCurrentOrientation()
     }
 
     var body: some View {
-        Group {
-            if orientation.isPortrait {
-                VContentView(config: $config)
-            } else {
-                HContentView(config: $config)
+        ZStack {
+            Group {
+                if orientation.isPortrait {
+                    VContentView(
+                        config: $config,
+                        showFaq: $showFaq
+                    )
+                } else {
+                    HContentView(
+                        config: $config,
+                        showFaq: $showFaq
+                    )
+                }
             }
-        }
-        .background(Color("ThemeLight"))
-        .onReceive(NotificationCenter.Publisher(center: .default, name: UIDevice.orientationDidChangeNotification)) { _ in
-            // See https://stackoverflow.com/a/58738150
-            let orientation = UIDevice.current.orientation
-            if orientation != UIDeviceOrientation.portraitUpsideDown {
-                self.orientation = orientation
+            .background(Color("ThemeLight"))
+            .onReceive(NotificationCenter.Publisher(center: .default, name: UIDevice.orientationDidChangeNotification)) { _ in
+                // See https://stackoverflow.com/a/58738150
+                let orientation = UIDevice.current.orientation
+                if orientation != UIDeviceOrientation.portraitUpsideDown {
+                    self.orientation = orientation
+                }
+            }
+            if showFaq {
+                DraggableView(isPresented: $showFaq)
             }
         }
     }
