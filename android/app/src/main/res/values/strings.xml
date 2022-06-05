@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name_long">Tethered Tent Triangulator</string>
     <string name="app_name_short">Tethered Tents</string>
     <string name="desc_clearing">Clearing Layout</string>
@@ -22,45 +22,50 @@
     <string name="menu_increase_symbols">Increase symbols</string>
     <string name="menu_decrease_symbols">Decrease symbols</string>
 
-    <string name="faq_activity_title">Frequently Asked Questions</string>
-    <string name="faq_activity_description">Tap on the questions you want answered</string>
     <string name="faq_accuracy_question">How accurately do I need to measure?</string>
-    <string name="faq_accuracy_answer">The App itself is accurate to one imperial foot. You can use
-        the app to get the measurement sufficiently close to then be able to align the tent
-        according to the manufacturers instructions.</string>
+    <string name="faq_accuracy_answer">The App itself is accurate to one decimeter or imperial
+        foot.\n\nYou can use the app to get the measurements sufficiently close to then be able to
+        align the tent according to the manufacturers instructions.</string>
     <string name="faq_all_at_once_question">What if my measurement goes off the screen?</string>
-    <string name="faq_all_at_once_answer">If the tether intersection point is visible, you can drag
-        it to move all the anchors simultaneously. You can also change the units using the
-        measurement scale feature.</string>
+    <string name="faq_all_at_once_answer" tools:ignore="TypographyEllipsis">Depending on the issue,
+        you have a few options. You can...
+        \n\n... drag the tether intersection point (if visible) to move all the anchors simultaneously.
+        \n\n... tilt the device and modify anchors in that orientation.
+        \n\n... reset the anchors using the menu option.
+        \n\n... change the scale of the units using the slider.</string>
     <string name="faq_measurement_1_question">Do I need to know how thick the tree is?</string>
     <string name="faq_measurement_1_answer">You do not need to know where the center of the tree is.
-        Instead, imagine a knot on the surface of each tree about where the tent tether would attach,
-        and measure the distance from the imaginary knot on one tree to the imaginary knot on the
-        next anchoring tree, etc.</string>
+        Instead, imagine a knot on the surface of each tree about where the tent tether would attach.
+        Measure the distance from the imaginary knot on one tree to the imaginary knot on the next
+        anchoring tree, etc.</string>
     <string name="faq_measurement_2_question">What am I measuring?</string>
-    <string name="faq_measurement_2_answer">You are measuring the distances between (approximate
-        locations of the) knots.</string>
+    <string name="faq_measurement_2_answer">You are measuring the distances between approximate
+        locations of the knots.</string>
     <string name="faq_missing_platform_question">Why is my tent not in the list?</string>
-    <string name="faq_missing_platform_answer">Try dragging the list with your finger to view tents
-        that are not in view. Otherwise, if it is a newer product, we may need to add it. In that
-        case try using a tent or hammock with a similar \"footprint\" as yours.</string>
+    <string name="faq_missing_platform_answer">Try dragging the list to see tents that are not in
+        view. Otherwise, if it is a newer product, we may need to add it. In the meantime try using
+        a tent or hammock with a similar \"footprint\" as yours.</string>
     <string name="faq_tools_question">What tools will I need?</string>
     <string name="faq_tools_answer">It helps to have a measuring tool handy, such as measuring tape
         or laser measuring tool. But, you could perform the measurements using consistently-spaced
-        units, such as equally-spaced knots in a string, sufficiently consistent paces, or even the
-        straps that come with the tent. The point here is to measure using consistent units.</string>
+        units, such as equally-spaced knots in a (low-stretch) string, sufficiently consistent
+        paces, or even the straps that come with the tent. The point here is to measure using
+        consistent units.</string>
     <string name="faq_symbol_orange_triangle_question">What does the orange triangle indicate?</string>
     <string name="faq_symbol_orange_triangle_answer">The orange triangle indicates that setup is
-        possible, but involves a non-intuitive \"trick\". After wrapping the strap around the tree,
-        (as you usually do), pass the ratchet (rather than the loose end of the strap) through the
-        strap loop, and then use the ratchet to tighten the strap.</string>
+        possible, but involves a non-intuitive \"trick\".\n\nWrap the strap around the tree, as you
+        usually do. Pass the ratchet, rather than the loose end of the strap, through the strap loop.
+        Then tighten the strap as usual.</string>
     <string name="faq_symbol_yellow_triangle_question">What does the yellow triangle indicate?</string>
-    <string name="faq_symbol_yellow_triangle_answer">The yellow triangle indicates that you will
-        probably not have sufficient strap length to wrap around the tree according to the manufacturers
-        recommendations. Setup requires a strap extension.</string>
+    <string name="faq_symbol_yellow_triangle_answer">The yellow triangle indicates that you will not
+        have sufficient strap length to wrap around the tree according to recommendations.\n\nSetup
+        using trees requires an extension or tree-protector strap for the tree with this symbol over
+        it.</string>
     <string name="faq_symbol_red_x_question">What does the red X indicate?</string>
     <string name="faq_symbol_red_x_answer">The red X indicates that (ideal) setup is not possible.
-        The tree with the red X over it is too close.</string>
+        \n\nThe tree with the red X over it is too close.</string>
+    <string name="faq_exiting_faq_page_question">How do I close this FAQ page?</string>
+    <string name="faq_exiting_faq_page_answer">Press the back button to close this page.</string>
 
     <string name="url_source_code_android">https://github.com/munifrog/tentsile/tree/master/android/app/src</string>
     <string name="url_tentsile_website_main">https://www.tentsile.com/</string>

@@ -12,6 +12,7 @@
         <item>@string/faq_symbol_orange_triangle_question</item>
         <item>@string/faq_symbol_yellow_triangle_question</item>
         <item>@string/faq_symbol_red_x_question</item>
+        <item>@string/faq_exiting_faq_page_question</item>
     </string-array>
 
     <string-array name="faq_answers">
@@ -24,6 +25,7 @@
         <item>@string/faq_symbol_orange_triangle_answer</item>
         <item>@string/faq_symbol_yellow_triangle_answer</item>
         <item>@string/faq_symbol_red_x_answer</item>
+        <item>@string/faq_exiting_faq_page_answer</item>
     </string-array>
 
 </resources>

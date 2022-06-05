@@ -11,11 +11,11 @@ struct SymbolMenuView: View {
     @Binding var symbols: Symbols
 
     var body: some View {
-        if symbols > Symbols.none {
-            Button ("Decrease symbols", action: decrease)
-        }
         if symbols < Symbols.warn {
             Button ("Increase symbols", action: increase)
+        }
+        if symbols > Symbols.none {
+            Button ("Decrease symbols", action: decrease)
         }
     }
 
