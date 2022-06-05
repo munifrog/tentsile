@@ -293,10 +293,12 @@ public class Clearing
         //  Distance between stakes
         drawConnectionLabels(canvas);
         //  Distance from platform-corners to stakes
-        Symbol[] symbolsInside = drawPlatformLabels(canvas);
+        AnchorDetails anchorDetails = computeDistancesAndSymbols();
         //  Draw any symbols on the anchor points
-        Symbol[] symbols = mergeSymbols(symbolsInside, symbolsTethers);
+        Symbol[] symbols = mergeSymbols(anchorDetails.symbols, symbolsTethers);
         drawAnchorSymbols(canvas, symbols);
+        // Draw the distances last
+        drawPlatformLabels(canvas, anchorDetails.distances);
     }
 
     private void drawConnectionLines(Canvas canvas) {
@@ -408,19 +410,25 @@ public class Clearing
         }
     }
 
+    private int[] getIndexOrder() {
+        int[] indices = { 0, 1, 2 };
+        if (mTetherOrientationFLips) {
+            indices[1] = 2;
+            indices[2] = 1;
+        }
+        return indices;
+    }
+
     private Symbol[] drawPlatformTethers(Canvas canvas) {
         Symbol[] symbols = new Symbol[3];
         if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
-            int[] indices = { 0, 1, 2 };
-            if (mTetherOrientationFLips) {
-                indices[1] = 2;
-                indices[2] = 1;
-            }
+            int[] indices = getIndexOrder();
             for (int i = 0; i < 3; i++) {
+                int index = indices[i];
                 // Draw skeleton of the platform
                 canvas.drawLine(
-                        (float) mTransExtremities[indices[i]][0],
-                        (float) mTransExtremities[indices[i]][1],
+                        (float) mTransExtremities[index][0],
+                        (float) mTransExtremities[index][1],
                         mPlatformCoordinates[0],
                         mPlatformCoordinates[1],
                         mTetherPaintPlatform
@@ -431,8 +439,8 @@ public class Clearing
                 // color, with knots every 6m
                 Knots knots = Util.getTetherKnots(
                         scaledDimensionMeters(1.0),
-                        mTransExtremities[indices[i]][0],
-                        mTransExtremities[indices[i]][1],
+                        mTransExtremities[index][0],
+                        mTransExtremities[index][1],
                         mTethers[i][0],
                         mTethers[i][1],
                         mStrapLength,
@@ -440,7 +448,8 @@ public class Clearing
                         mTreeCircumference
                 );
                 float[][] strapKnots = knots.knots;
-                symbols[indices[i]] = knots.symbol;
+                // Since the symbol goes over the anchor, its index does not flip
+                symbols[i] = knots.symbol;
 
                 if (strapKnots.length > 1) {
                     Paint color;
@@ -489,18 +498,16 @@ public class Clearing
         }
     }
 
-    private Symbol[] drawPlatformLabels(Canvas canvas) {
+    private AnchorDetails computeDistancesAndSymbols() {
         Symbol[] symbols = new Symbol[3];
+        double[] distances = new double[3];
         if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
             // Draw the platform and distances if platform not too far past the tether point
             // Label the distances at the platform extremities (corners)
             String units = (mIsImperial ? mStringImperial : mStringMeters);
             // Determine the distance between the platform corner and tether location
-            int index1 = 1, index2 = 2;
-            if (mTetherOrientationFLips) {
-                index1 = 2;
-                index2 = 1;
-            }
+            int[] indices = getIndexOrder();
+            int index1 = indices[1], index2 = indices[2];
             float diffExtremityAx = mPlatformCoordinates[0] - (float) mTransExtremities[0][0];
             float diffExtremityAy = mPlatformCoordinates[1] - (float) mTransExtremities[0][1];
             float squareExtremityA = diffExtremityAx * diffExtremityAx + diffExtremityAy * diffExtremityAy;
@@ -510,15 +517,10 @@ public class Clearing
             if (squareExtremityA < squareFullA) {
                 float diffRemainAx = (float) mTransExtremities[0][0] - mTethers[0][0];
                 float diffRemainAy = (float) mTransExtremities[0][1] - mTethers[0][1];
-                float distA = (float) Math.sqrt(diffRemainAx * diffRemainAx + diffRemainAy * diffRemainAy);
-                canvas.drawText(
-                        String.format(units, scaledDimension(distA)),
-                        (float) mTransExtremities[0][0],
-                        (float) mTransExtremities[0][1],
-                        mLabelPlatformPaint
-                );
+                distances[0] = Math.sqrt(diffRemainAx * diffRemainAx + diffRemainAy * diffRemainAy);
                 symbols[0] = Symbol.safe;
             } else {
+                distances[0] = -1;
                 symbols[0] = Symbol.impossible;
             }
 
@@ -531,15 +533,12 @@ public class Clearing
             if (squareExtremityB < squareFullB) {
                 float diffRemainBx = (float) mTransExtremities[index1][0] - mTethers[1][0];
                 float diffRemainBy = (float) mTransExtremities[index1][1] - mTethers[1][1];
-                float distB = (float) Math.sqrt(diffRemainBx * diffRemainBx + diffRemainBy * diffRemainBy);
-                canvas.drawText(
-                        String.format(units, scaledDimension(distB)),
-                        (float) mTransExtremities[index1][0],
-                        (float) mTransExtremities[index1][1],
-                        mLabelPlatformPaint
-                );
+                distances[index1] = Math.sqrt(diffRemainBx * diffRemainBx + diffRemainBy * diffRemainBy);
+                // Since the symbol goes over the anchor, its index does not flip
                 symbols[1] = Symbol.safe;
             } else {
+                distances[index1] = -1;
+                // Since the symbol goes over the anchor, its index does not flip
                 symbols[1] = Symbol.impossible;
             }
 
@@ -552,27 +551,61 @@ public class Clearing
             if (squareExtremityC < squareFullC) {
                 float diffRemainCx = (float) mTransExtremities[index2][0] - mTethers[2][0];
                 float diffRemainCy = (float) mTransExtremities[index2][1] - mTethers[2][1];
-                float distRemainC = (float) Math.sqrt(diffRemainCx * diffRemainCx + diffRemainCy * diffRemainCy);
-                canvas.drawText(
-                        String.format(units, scaledDimension(distRemainC)),
-                        (float) mTransExtremities[index2][0],
-                        (float) mTransExtremities[index2][1],
-                        mLabelPlatformPaint
-                );
+                distances[index2] = Math.sqrt(diffRemainCx * diffRemainCx + diffRemainCy * diffRemainCy);
+                // Since the symbol goes over the anchor, its index does not flip
                 symbols[2] = Symbol.safe;
             } else {
+                distances[index2] = -1;
+                // Since the symbol goes over the anchor, its index does not flip
                 symbols[2] = Symbol.impossible;
             }
         } else {
+            distances[0] = -1;
+            distances[1] = -1;
+            distances[2] = -1;
             symbols[0] = Symbol.safe;
             symbols[1] = Symbol.safe;
             symbols[2] = Symbol.safe;
         }
-        return symbols;
+        return new AnchorDetails(distances, symbols);
+    }
+
+    private void drawPlatformLabels(Canvas canvas, double[] distances) {
+        if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
+            String units = (mIsImperial ? mStringImperial : mStringMeters);
+            int[] indices = getIndexOrder();
+            if (distances[0] > -1) {
+                canvas.drawText(
+                        String.format(units, scaledDimension(distances[0])),
+                        (float) mTransExtremities[0][0],
+                        (float) mTransExtremities[0][1],
+                        mLabelPlatformPaint
+                );
+            }
+            int index1 = indices[1];
+            if (distances[index1] > -1) {
+                canvas.drawText(
+                        String.format(units, scaledDimension(distances[index1])),
+                        (float) mTransExtremities[index1][0],
+                        (float) mTransExtremities[index1][1],
+                        mLabelPlatformPaint
+                );
+            }
+            int index2 = indices[2];
+            if (distances[index2] > -1) {
+                canvas.drawText(
+                        String.format(units, scaledDimension(distances[index2])),
+                        (float) mTransExtremities[index2][0],
+                        (float) mTransExtremities[index2][1],
+                        mLabelPlatformPaint
+                );
+            }
+        }
     }
 
     private void drawAnchorSymbols(Canvas canvas, Symbol[] symbols) {
         int verbosity = mSymbolVerbosity.ordinal();
+        // Since the symbol goes over the anchor, its index does not flip
         for (int i = 0; i < 3; i++) {
             if (symbols[i].ordinal() > verbosity) {
                 int x = Math.round(mTethers[i][0]);
