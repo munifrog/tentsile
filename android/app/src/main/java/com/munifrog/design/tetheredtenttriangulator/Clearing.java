@@ -114,23 +114,23 @@ public class Clearing
         mTetherPaintExtensions.setStrokeCap(Paint.Cap.ROUND);
 
         mLabelConnectionPaint = new Paint();
-        mLabelConnectionPaint.setARGB(180, 0, 0, 0);
-        mLabelConnectionPaint.setTextSize(56f);
+        mLabelConnectionPaint.setARGB(255, 254, 255, 57);
+        mLabelConnectionPaint.setTextSize(72f);
         mLabelConnectionPaint.setStrokeWidth(4);
-        mLabelConnectionPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        mLabelConnectionPaint.setTypeface(Typeface.DEFAULT);
 
         mLabelPlatformPaint = new Paint();
-        mLabelPlatformPaint.setARGB(255, 0, 0, 0);
-        mLabelPlatformPaint.setTextSize(56f);
+        mLabelPlatformPaint.setARGB(255, 255, 255, 255);
+        mLabelPlatformPaint.setTextSize(72f);
         mLabelPlatformPaint.setStrokeWidth(4);
-        mLabelPlatformPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        mLabelPlatformPaint.setTypeface(Typeface.DEFAULT);
 
         mPerimeterPaint = new Paint();
-        mPerimeterPaint.setARGB(255, 92, 113, 72);
+        mPerimeterPaint.setARGB(255, 100, 100, 100);
         mPerimeterPaint.setStyle(Paint.Style.STROKE);
-        mPerimeterPaint.setPathEffect(new DashPathEffect(new float[] {15f, 20f}, 0f));
-        mPerimeterPaint.setStrokeWidth(5);
-        mPerimeterPaint.setStrokeCap(Paint.Cap.ROUND);
+        mPerimeterPaint.setPathEffect(new DashPathEffect(new float[] {40f, 20f, 4f, 20f}, 0f));
+        mPerimeterPaint.setStrokeWidth(8);
+        mPerimeterPaint.setStrokeCap(Paint.Cap.SQUARE);
 
         mPlatformPaint = new Paint();
         mPlatformPaint.setARGB(127, 255, 255, 255);
@@ -337,7 +337,7 @@ public class Clearing
                 mRadiusTetherSize,
                 mRadiusTetherSize,
                 mRadiusTetherSize,
-                3 * mRadiusTetherSize / 4
+                mRadiusTetherSize
         };
         if (mStateTether >= 0) {
             radii[mStateTether] = mRadiusSelectionSize;
@@ -472,6 +472,12 @@ public class Clearing
                         );
                     }
                 }
+                canvas.drawCircle(
+                        (float) mTransExtremities[index][0],
+                        (float) mTransExtremities[index][1],
+                        mRadiusTetherSize / 2,
+                        mTetherPaintPlatform
+                );
             }
         } else {
             drawTethers(canvas);
@@ -577,8 +583,8 @@ public class Clearing
             if (distances[0] > -1) {
                 canvas.drawText(
                         String.format(units, scaledDimension(distances[0])),
-                        (float) mTransExtremities[0][0],
-                        (float) mTransExtremities[0][1],
+                        (float) (mTransExtremities[0][0] + mTethers[0][0]) / 2f,
+                        (float) (mTransExtremities[0][1] + mTethers[0][1]) / 2f,
                         mLabelPlatformPaint
                 );
             }
@@ -586,8 +592,8 @@ public class Clearing
             if (distances[index1] > -1) {
                 canvas.drawText(
                         String.format(units, scaledDimension(distances[index1])),
-                        (float) mTransExtremities[index1][0],
-                        (float) mTransExtremities[index1][1],
+                        (float) (mTransExtremities[index1][0] + mTethers[1][0]) / 2f,
+                        (float) (mTransExtremities[index1][1] + mTethers[1][1]) / 2f,
                         mLabelPlatformPaint
                 );
             }
@@ -595,8 +601,8 @@ public class Clearing
             if (distances[index2] > -1) {
                 canvas.drawText(
                         String.format(units, scaledDimension(distances[index2])),
-                        (float) mTransExtremities[index2][0],
-                        (float) mTransExtremities[index2][1],
+                        (float) (mTransExtremities[index2][0] + mTethers[2][0]) / 2f,
+                        (float) (mTransExtremities[index2][1] + mTethers[2][1]) / 2f,
                         mLabelPlatformPaint
                 );
             }
