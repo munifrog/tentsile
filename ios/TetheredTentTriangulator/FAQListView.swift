@@ -36,8 +36,8 @@ struct FAQListView: View {
             Q: "What does the yellow triangle indicate?",
             A: "The yellow triangle indicates that you will not have sufficient strap length to wrap around the tree according to recommendations.\n\nSetup using trees requires an extension or tree-protector strap for the tree with this symbol over it."),
         FAQView(
-            Q: "What does the red X indicate?",
-            A: "The red X indicates that (ideal) setup is not possible.\n\nThe tree with the red X over it is too close."),
+            Q: "What does the red circle and slash indicate?",
+            A: "The red circle and slash indicates that (ideal) setup is not possible.\n\nThe tree with the red circle and slash over it is too close."),
         FAQView(
             Q: "How do I close this FAQ page?",
             A: "Swipe left or right to dismiss this page.\n\nIf your swipe gesture is more up or down than left or right you will engage the scroll feature instead. In that case try swiping again.")
