@@ -317,7 +317,9 @@ class Util {
             knots[1][1] = (float) (startY + firstStrap * angleSine);
         } else {
             // No need to compute angle and new coordinates
-            knots = new float[1][2];
+            knots = new float[2][2];
+            knots[1][0] = (float) finishX;
+            knots[1][1] = (float) finishY;
             symbol = Symbol.tricky;
         }
         // All paths set the starting knot
