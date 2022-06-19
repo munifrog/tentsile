@@ -734,7 +734,7 @@ public class Clearing
             mTethers[i][0] = (float)(mCenter[0] + lengthReference * Math.cos(currentAngle));
             mTethers[i][1] = (float)(mCenter[1] + lengthReference * Math.sin(currentAngle));
         }
-        invalidateSelf();
+        getPlatformCenterOccasionally();
     }
 
     private void configRotate() {
