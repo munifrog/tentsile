@@ -419,4 +419,9 @@ public class ComposeBaseActivity
     public void computePlatformCenter(PlatformCenterRun run) {
         runOnUiThread(run);
     }
+
+    @Override
+    public void triangleHasFlipped(boolean isFlipped) {
+        mPlatformRotation.setScaleX(isFlipped ? -1 : 1);
+    }
 }

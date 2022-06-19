@@ -19,6 +19,7 @@ public class Clearing
 {
     interface ClearingListener {
         void computePlatformCenter(PlatformCenterRun run);
+        void triangleHasFlipped(boolean isFlipped);
     }
 
     private static final int TETHER_SELECTION_NONE = -1;
@@ -73,7 +74,8 @@ public class Clearing
     private double mDist20; // b
     private double mScaleBase; // Units per pixel
     private double mScaleSlider; // Scaled multiplier
-    private boolean mTetherOrientationFLips = false;
+    private boolean mLatestFlippedState = false;
+    private boolean mTetherOrientationFlips = false;
     private boolean mComputeTetherCenterAgain = false;
     private boolean mComputingTetherCenter = false;
     private double mStrapLength;
@@ -412,7 +414,7 @@ public class Clearing
 
     private int[] getIndexOrder() {
         int[] indices = { 0, 1, 2 };
-        if (mTetherOrientationFLips) {
+        if (mTetherOrientationFlips) {
             indices[1] = 2;
             indices[2] = 1;
         }
@@ -712,10 +714,14 @@ public class Clearing
     public void onPlatformComputed(float[] newPlatform, boolean orientation) {
         mComputingTetherCenter = false;
         mPlatformCoordinates = newPlatform;
-        mTetherOrientationFLips = orientation;
+        mTetherOrientationFlips = orientation;
         if (mComputeTetherCenterAgain) {
             getPlatformCenterOccasionally();
         }
+        if (mTetherOrientationFlips != mLatestFlippedState) {
+            mViewOwner.triangleHasFlipped(mTetherOrientationFlips);
+        }
+        mLatestFlippedState = mTetherOrientationFlips;
         invalidateSelf();
     }
 
