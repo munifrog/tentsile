@@ -11,7 +11,7 @@ struct SymbolMenuView: View {
     @Binding var symbols: Symbols
 
     var body: some View {
-        if symbols < Symbols.warn {
+        if symbols < Symbols.tricky {
             Button ("Increase symbols", action: increase)
         }
         if symbols > Symbols.none {

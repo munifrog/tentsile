@@ -24,8 +24,8 @@ enum Units: String {
 enum Symbols: Int, Comparable {
     case none = 0
     case cannot
-    case tricky
     case warn
+    case tricky
 
     static func < (left: Symbols, right: Symbols) -> Bool {
         return left.rawValue < right.rawValue
@@ -36,10 +36,10 @@ enum Symbols: Int, Comparable {
         case none:
             symbol = Symbols.cannot
         case cannot:
-            symbol = Symbols.tricky
-        case tricky:
             symbol = Symbols.warn
         case warn:
+            symbol = Symbols.tricky
+        case tricky:
             // Do nothing
             return
         }
@@ -47,9 +47,9 @@ enum Symbols: Int, Comparable {
 
     static postfix func -- (symbol: inout Symbols) {
         switch symbol {
-        case warn:
-            symbol = Symbols.tricky
         case tricky:
+            symbol = Symbols.warn
+        case warn:
             symbol = Symbols.cannot
         case cannot:
             symbol = Symbols.none
