@@ -113,7 +113,7 @@ struct Configuration {
         }
     }
 
-    private var radiusSquared: Float = 225
+    private var radiusSquared: Float = 3600
     private var distanceScale: Float = 25.0
     private var drawable: DrawableSetup?
     private var imageScale: Float = 0.04
