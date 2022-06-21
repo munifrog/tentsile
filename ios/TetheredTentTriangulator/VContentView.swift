@@ -16,7 +16,7 @@ struct VContentView: View {
             HStack {
                 Text("Tethered Tents")
                     .font(.headline)
-                    .colorInvert()
+                    .foregroundColor(Color.white)
                 Spacer()
                 MenuView(
                     config: $config,

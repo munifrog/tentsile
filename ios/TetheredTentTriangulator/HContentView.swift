@@ -20,7 +20,7 @@ struct HContentView: View {
             HStack {
                 Text("Tethered Tent Triangulator")
                     .font(.headline)
-                    .colorInvert()
+                    .foregroundColor(Color.white)
                 Spacer()
                 MenuView(
                     config: $config,
