@@ -36,6 +36,7 @@ struct FAQView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     // https://stackoverflow.com/a/58349215
                     .fixedSize(horizontal: false, vertical: true)
+                    .onTapGesture { show.toggle() }
                     .background(Color.white)
             }
             Divider()

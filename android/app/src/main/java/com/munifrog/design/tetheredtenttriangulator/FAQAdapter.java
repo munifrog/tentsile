@@ -56,8 +56,10 @@ class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.ViewHolder> {
          setVisibility();
 
          vQuestion.setOnClickListener(view -> {
-            isShowing = !isShowing;
-            setVisibility();
+            toggleVisibility();
+         });
+         vAnswer.setOnClickListener(view -> {
+            toggleVisibility();
          });
       }
 
@@ -67,6 +69,11 @@ class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.ViewHolder> {
 
       public TextView getAnswer() {
          return vAnswer;
+      }
+
+      private void toggleVisibility() {
+         isShowing = !isShowing;
+         setVisibility();
       }
 
       private void setVisibility() {
