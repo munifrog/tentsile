@@ -20,28 +20,28 @@ struct FAQView: View {
             Text(Q)
                 .font(.system(size: 20))
                 .bold()
-                .colorInvert()
+                .foregroundColor(Color.white)
                 .padding(16)
                 .frame(maxWidth: .infinity, alignment: .center)
                 // https://stackoverflow.com/a/58349215
                 .fixedSize(horizontal: false, vertical: true)
                 .onTapGesture { show.toggle() }
-                .background(Color("Clearing"))
+                .background(Color("FAQ"))
             if show {
                 Text(A)
                     .font(.system(size: 16))
+                    .foregroundColor(Color.black)
                     .padding([.horizontal,.bottom], 24)
                     .padding(.top, 12)
                     .frame(maxWidth: .infinity, alignment: .center)
                     // https://stackoverflow.com/a/58349215
                     .fixedSize(horizontal: false, vertical: true)
-                    .background(Color.clear)
+                    .background(Color.white)
             }
             Divider()
                 .frame(height: 2, alignment: .center)
                 .background(Color.white)
         }
-        .background(Color.white)
     }
 }
 
