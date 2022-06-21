@@ -23,6 +23,7 @@ struct VContentView: View {
                     showFaq: $showFaq
                 )
             }
+            .padding(.vertical, 16)
             .padding(.horizontal)
             .background(Color("ThemePrimary"))
             PlatformPicker(config: $config)
