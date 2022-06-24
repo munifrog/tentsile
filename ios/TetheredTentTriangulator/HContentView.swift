@@ -27,7 +27,7 @@ struct HContentView: View {
                     showFaq: $showFaq
                 )
             }
-            .padding(.vertical, 16)
+            .padding(.vertical, 12)
             .padding(.horizontal)
             .background(Color("ThemePrimary"))
             ZStack {

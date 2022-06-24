@@ -9,17 +9,17 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var config = Configuration()
-    @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
+    @State private var isPortrait: Bool = true
     @State private var showFaq: Bool = false
 
     init() {
-        self.orientation = getCurrentOrientation()
+        self.isPortrait = getIsPortrait()
     }
 
     var body: some View {
         ZStack {
             Group {
-                if orientation.isPortrait {
+                if isPortrait {
                     VContentView(
                         config: $config,
                         showFaq: $showFaq
@@ -33,11 +33,7 @@ struct ContentView: View {
             }
             .background(Color("ThemeLight"))
             .onReceive(NotificationCenter.Publisher(center: .default, name: UIDevice.orientationDidChangeNotification)) { _ in
-                // See https://stackoverflow.com/a/58738150
-                let orientation = UIDevice.current.orientation
-                if orientation != UIDeviceOrientation.portraitUpsideDown {
-                    self.orientation = orientation
-                }
+                self.isPortrait = getIsPortrait()
             }
             if showFaq {
                 DraggableView(isPresented: $showFaq)
@@ -45,13 +41,11 @@ struct ContentView: View {
         }
     }
 
-    func getCurrentOrientation() -> UIDeviceOrientation {
-        let orientation = UIDevice.current.orientation
-        if orientation == UIDeviceOrientation.portraitUpsideDown {
-            return UIDeviceOrientation.portrait
-        } else {
-            return orientation
-        }
+    func getIsPortrait() -> Bool {
+        // https://stackoverflow.com/a/65586833
+        guard let scene = UIApplication.shared.windows.first?.windowScene
+        else { return true }
+        return scene.interfaceOrientation.isPortrait
     }
 }
 
