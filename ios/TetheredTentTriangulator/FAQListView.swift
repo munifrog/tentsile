@@ -11,9 +11,11 @@ struct FAQListView: View {
 
     @State private var faqs: [FAQView] = [
         FAQView(
+            Q: "How do I close this FAQ page?",
+            A: "Swipe left or right to dismiss this page.\n\nIf your swipe gesture is more up or down than left or right you will engage the scroll feature instead. In that case try swiping again."),
+        FAQView(
             Q: "How accurately do I need to measure?",
-            A: "The App itself is accurate to one decimeter or imperial foot.\n\nYou can use the app to get the measurements sufficiently close to then be able to align the tent according to the manufacturers instructions."
-        ),
+            A: "The App itself is accurate to one decimeter or imperial foot.\n\nYou can use the app to get the measurements sufficiently close to then be able to align the tent according to the manufacturers instructions."),
         FAQView(
             Q: "What if my measurement goes off the screen?",
             A: "Depending on the issue, you have a few options. You can ...\n\n... drag the tether intersection point (if visible) to move all the anchors simultaneously.\n\n... tilt the device and modify anchors in that orientation.\n\n... reset the anchors using the menu option.\n\n... change the scale of the units using the slider."),
@@ -39,8 +41,17 @@ struct FAQListView: View {
             Q: "What does the red circle and slash indicate?",
             A: "The red circle and slash indicates that (ideal) setup is not possible.\n\nThe tree with the red circle and slash over it is too close."),
         FAQView(
-            Q: "How do I close this FAQ page?",
-            A: "Swipe left or right to dismiss this page.\n\nIf your swipe gesture is more up or down than left or right you will engage the scroll feature instead. In that case try swiping again.")
+            Q: "What are the small circles shown on the tethers?",
+            A: "The small circles are supposed to represent transition points, where the tethers change. For example, the tent corners, ratchets, and straps."),
+        FAQView(
+            Q: "Why are some tents shown with an indentation?",
+            A: "The indentation is there to clearly indicate the short edge of the tent. In a future release all tent edges will appear curved."),
+        FAQView(
+            Q: "Why are the tent edges shown as straight lines?",
+            A: "The edges are drawn straight for simplicity in drawing the tents and hammocks. In a future release all tent edges will appear curved."),
+        FAQView(
+            Q: "Why do some tents not show every tether splitting the angle down the middle?",
+            A: "This is a result of drawing straight edges for the tents and hammocks. In a real setup the fabric stretches, forming curved edges, and the tether splits the angle down the middle. This will be attempted in a future release.")
     ]
 
     var body: some View {

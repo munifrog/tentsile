@@ -66,6 +66,21 @@
         \n\nThe tree with the red X over it is too close.</string>
     <string name="faq_exiting_faq_page_question">How do I close this FAQ page?</string>
     <string name="faq_exiting_faq_page_answer">Press the back button to close this page.</string>
+    <string name="faq_small_circles_on_tethers_question">What are the small circles shown on the tethers?</string>
+    <string name="faq_small_circles_on_tethers_answer">The small circles are supposed to represent
+        transition points, where the tethers change. For example, the tent corners, ratchets, and
+        straps.</string>
+    <string name="faq_notch_question">Why are some tents shown with an indentation?</string>
+    <string name="faq_notch_answer">The indentation is there to clearly indicate the short edge of
+        the tent. In a future release all tent edges will appear curved.</string>
+    <string name="faq_curved_edges_question">Why are the tent edges shown as straight lines?</string>
+    <string name="faq_curved_edges_answer">The edges are drawn straight for simplicity in drawing
+        the tents and hammocks. In a future release all tent edges will appear curved.</string>
+    <string name="faq_tether_bisection_question">Why do some tents not show every tether splitting
+        the angle down the middle?</string>
+    <string name="faq_tether_bisection_answer">This is a result of drawing straight edges for the
+        tents and hammocks. In a real setup the fabric stretches, forming curved edges, and the
+        tether splits the angle down the middle. This will be attempted in a future release.</string>
 
     <string name="url_source_code_android">https://github.com/munifrog/tentsile/tree/master/android/app/src</string>
     <string name="url_tentsile_website_main">https://www.tentsile.com/</string>
