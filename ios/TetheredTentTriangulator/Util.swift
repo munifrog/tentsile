@@ -32,12 +32,17 @@ struct TetherDetails {
 class Util {
     private static let ANGLE_ALLOWANCE = Float(0.001)
     private static let ANGLE_ONE_FULL_CIRCLE = Float(2.0 * .pi)
+    private static let ANGLE_ONE_HALF_CIRCLE = Float(ANGLE_ONE_FULL_CIRCLE / 2.0)
     private static let ANGLE_ONE_SIXTH_CIRCLE = Float(ANGLE_ONE_FULL_CIRCLE / 6.0)
     private static let ANGLE_ONE_THIRD_CIRCLE = Float(ANGLE_ONE_FULL_CIRCLE / 3.0)
     private static let MATH_FEET_TO_METERS_CONVERSION = Float(0.3048)
     private static let SINE_TWO_PI_DIV_THREE = Float(sqrt(3.0) / 2.0)
 
     static func getTetherCenter(_ anchors: Anchors) -> TetherCenter? {
+        let smallAngle = ANGLE_ONE_THIRD_CIRCLE
+        let largeAngle = (ANGLE_ONE_FULL_CIRCLE - smallAngle) / 2.0
+        let sineLargeAngle = sin(largeAngle)
+
         // Compute where the tether center will exist
         let diffAB_x = anchors.a.x - anchors.b.x
         let diffAB_y = anchors.a.y - anchors.b.y
@@ -59,43 +64,34 @@ class Util {
         let angleCBA = acos((sqLengthAB + sqLengthBC - sqLengthCA) / 2.0 / lengthAB / lengthBC) // B
         let angleACB = acos((sqLengthBC + sqLengthCA - sqLengthAB) / 2.0 / lengthBC / lengthCA) // C
 
-        if angleBAC < ANGLE_ONE_THIRD_CIRCLE && angleCBA < ANGLE_ONE_THIRD_CIRCLE && angleACB < ANGLE_ONE_THIRD_CIRCLE {
+        if (angleBAC < smallAngle) && (angleCBA < largeAngle) && (angleACB < largeAngle) {
             // The tether center exists, so we can compute lengths from it to the anchors
-            let angleTheta = ANGLE_ONE_THIRD_CIRCLE - angleACB
-            let anglePBC = atan(lengthCA * sin(angleTheta) / (lengthBC + lengthCA * cos(angleTheta)))
-            let anglePCB = ANGLE_ONE_SIXTH_CIRCLE - anglePBC
-            let anglePCA = angleACB - anglePCB
+            let angleTheta = smallAngle - angleBAC
+            let anglePBA = atan(lengthCA * sin(angleTheta) / (lengthAB + lengthCA * cos(angleTheta))) // beta1
+            let anglePAB = ANGLE_ONE_HALF_CIRCLE - largeAngle - anglePBA // alpha2
+            let anglePAC = angleBAC - anglePAB // alpha1
 
-            //let lengthPA = lengthCA * sin(anglePCA) / SINE_TWO_PI_DIV_THREE
-            //let lengthPB = lengthAB * sin(anglePCB) / SINE_TWO_PI_DIV_THREE
-            let lengthPC = lengthBC * sin(anglePBC) / SINE_TWO_PI_DIV_THREE
+            let lengthPA = lengthAB * sin(anglePBA) / sineLargeAngle // d
+            let lengthPB = lengthAB * sin(anglePAB) / sineLargeAngle // e
+            let lengthPC = lengthCA * sin(anglePAC) / sineLargeAngle // f
 
-            // Determine the location of the platform center (Q is for quadrant or Y=0 line)
-            let angleQCB = getDirection(h: lengthBC, delta_x:  diffBC_x, delta_y:  diffBC_y)
-            let angleQCA = getDirection(h: lengthCA, delta_x: -diffCA_x, delta_y: -diffCA_y)
+            // Determine the location of the platform center (Q is for quadrant or Y=0 line) relative to the screen
+            // These vectors need to be pointing towards A for the next step to work
+            let angleQAB = getDirection(h: lengthAB, delta_x:  -diffAB_x, delta_y: -diffAB_y)
+            let angleQAC = getDirection(h: lengthCA, delta_x: diffCA_x, delta_y: diffCA_y)
 
             // This tells us whether the anchors switched from ABC to ACB orientation
             // Angle PCA needs to match angle PCB, which occurs when adding on one side and subtracting on other.
-            let anglePCA_option1 = angleQCA + anglePCA
-            let anglePCA_option2 = angleQCA - anglePCA
-            let anglePCB_option1 = angleQCB + anglePCB
-            //let anglePCB_option2 = angleQCB - anglePCB
+            let anglePAC_a = angleQAC + anglePAC
+            let anglePAB_m = angleQAB - anglePAB
+            //let anglePAC_m = angleQAC - anglePAC
+            let anglePAB_a = angleQAB + anglePAB
 
-            let flipped = getAngleEquivalency(anglePCA_option2, anglePCB_option1)
-            let angleToP = flipped ? anglePCB_option1 : anglePCA_option1
+            let flipped = getAngleEquivalency(anglePAC_a, anglePAB_m)
+            let angleToP = flipped ? anglePAC_a : anglePAB_a
 
-            let p_x = anchors.c.x + lengthPC * cos(angleToP)
-            let p_y = anchors.c.y + lengthPC * sin(angleToP)
-
-            let diffPA_x = p_x - anchors.a.x
-            let diffPA_y = p_y - anchors.a.y
-            let lengthPA = sqrt(diffPA_x * diffPA_x + diffPA_y * diffPA_y)
-            let diffPB_x = p_x - anchors.b.x
-            let diffPB_y = p_y - anchors.b.y
-            let lengthPB = sqrt(diffPB_x * diffPB_x + diffPB_y * diffPB_y)
-            //let diffPC_x = p_x - anchors.c.x
-            //let diffPC_y = p_y - anchors.c.y
-            //let lengthPC = sqrt(diffPC_x * diffPC_x + diffPC_y * diffPC_y)
+            let p_x = anchors.a.x + lengthPA * cos(angleToP)
+            let p_y = anchors.a.y + lengthPA * sin(angleToP)
 
             return TetherCenter(
                 p: Coordinate(x: p_x, y: p_y),
