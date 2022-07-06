@@ -5,12 +5,20 @@ import android.graphics.Path;
 class Platform {
     private final Path mPath;
     private final double [][] mTetherPoints;
+    private final double mTetherAngle;
     private final double mStrap;
     private final double mCircumference;
 
-    Platform(Path path, double[][] tetherPoints, double straps, double circumference) {
+    Platform(
+            Path path,
+            double[][] tetherPoints,
+            double tetherAngle,
+            double straps,
+            double circumference
+    ) {
         mPath = path;
         mTetherPoints = tetherPoints;
+        mTetherAngle = tetherAngle;
         mStrap = straps;
         mCircumference = circumference;
     }
@@ -21,6 +29,10 @@ class Platform {
 
     double [][] getTetherPoints() {
         return mTetherPoints;
+    }
+
+    double getTetherAngle() {
+        return mTetherAngle;
     }
 
     double getStrapLength() {

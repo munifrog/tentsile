@@ -6,6 +6,7 @@ import android.graphics.Path;
 class Util {
     private static final double MATH_ANGLE_FOUR_THIRDS_PI = 4 * Math.PI / 3;
     private static final double MATH_ANGLE_FULL_CIRCLE = Math.PI * 2;
+    private static final double MATH_ANGLE_QUARTER_CIRCLE = MATH_ANGLE_FULL_CIRCLE / 4;
     private static final double MATH_ANGLE_PRECISION_ALLOWANCE = 0.001;
     private static final double MATH_ANGLE_TWO_THIRDS_PI = 2 * Math.PI / 3;
     private static final double MATH_DIVIDE_BY_SQRT_THREE = Math.sqrt(3) / 3;
@@ -137,23 +138,30 @@ class Util {
         );
         path.close();
 
-        return new Platform(path, extremities, TENTSILE_STRAPS_DEFAULT, TENTSILE_CIRCUMFERENCE_DEFAULT);
+        return new Platform(
+                path,
+                extremities,
+                MATH_ANGLE_TWO_THIRDS_PI,
+                TENTSILE_STRAPS_DEFAULT,
+                TENTSILE_CIRCUMFERENCE_DEFAULT
+        );
     }
 
     static Platform getTentsileIsosceles(
-            double point,
-            double barb,
-            double notch,
+            double hypotenuse,
+            double base,
+            double tetherangle,
             double strap,
             double circumference
     ) {
-        double [][] extremities = new double[3][2];
-        extremities[0][0] = point * MATH_COS_ZERO;
-        extremities[0][1] = point * MATH_SIN_ZERO;
-        extremities[1][0] = barb * MATH_COS_TWO_THIRDS_PI;
-        extremities[1][1] = barb * MATH_SIN_TWO_THIRDS_PI;
-        extremities[2][0] = barb * MATH_COS_FOUR_THIRDS_PI;
-        extremities[2][1] = barb * MATH_SIN_FOUR_THIRDS_PI;
+        double [] measurements = Util.getIsoscelesMeasurements(hypotenuse, base, tetherangle);
+
+        double [][] extremities = new double[][]{
+                { measurements[0], 0 },
+                { -measurements[1], measurements[2] },
+                { -measurements[1], -measurements[2] }
+        };
+        double[] notch = new double[] { -measurements[3], 0 };
 
         Path path = new Path();
         path.moveTo(
@@ -161,21 +169,12 @@ class Util {
                 (float)extremities[0][1]
         );
         path.lineTo(
-                (float)(notch * TENTSILE_NOTCH_SCALED_COS_PI),
-                (float)(notch * TENTSILE_NOTCH_SCALED_SIN_PI)
-        );
-        path.lineTo(
                 (float)extremities[1][0],
                 (float)extremities[1][1]
         );
-        path.close();
-        path.moveTo(
-                (float)extremities[0][0],
-                (float)extremities[0][1]
-        );
         path.lineTo(
-                (float)(notch * TENTSILE_NOTCH_SCALED_COS_PI),
-                (float)(notch * TENTSILE_NOTCH_SCALED_SIN_PI)
+                (float)(notch[0]),
+                (float)(notch[1])
         );
         path.lineTo(
                 (float)extremities[2][0],
@@ -183,24 +182,25 @@ class Util {
         );
         path.close();
 
-        return new Platform(path, extremities, strap, circumference);
+        return new Platform(path, extremities, tetherangle, strap, circumference);
     }
 
-    static Platform getTentsileTrilogy(double hypotenuse, double base) {
-        double [] measurements = getIsoscelesMeasurements(hypotenuse, base);
+    static Platform getTentsileTrilogy(double hypotenuse, double base, double tetherangle) {
+        double [] measurements = getIsoscelesMeasurements(hypotenuse, base, tetherangle);
         Path path = new Path();
-        double [][] extremities = new double[3][2];
 
         Matrix matrix = new Matrix();
         matrix.postRotate(120);
 
-        double distal = measurements[1] + measurements[0];
-        extremities[0][0] = distal * MATH_COS_ZERO;
-        extremities[0][1] = distal * MATH_SIN_ZERO;
-        extremities[1][0] = distal * MATH_COS_TWO_THIRDS_PI;
-        extremities[1][1] = distal * MATH_SIN_TWO_THIRDS_PI;
-        extremities[2][0] = distal * MATH_COS_FOUR_THIRDS_PI;
-        extremities[2][1] = distal * MATH_SIN_FOUR_THIRDS_PI;
+        double translation = base * MATH_DIVIDE_BY_SQRT_THREE / 2.0 + measurements[1];
+        double distal = translation + measurements[0];
+        double [][] extremities = new double[][] {
+                { distal * MATH_COS_ZERO, distal * MATH_SIN_ZERO },
+                { distal * MATH_COS_TWO_THIRDS_PI, distal * MATH_SIN_TWO_THIRDS_PI },
+                { distal * MATH_COS_FOUR_THIRDS_PI, distal * MATH_SIN_FOUR_THIRDS_PI }
+        };
+        double[] notch = new double[] { translation - measurements[3], 0 };
+        double[] barb = new double[] { translation - measurements[1], measurements[2] };
 
         for (int i = 0; i < 3; i++) {
             path.transform(matrix);
@@ -209,39 +209,56 @@ class Util {
                     (float)extremities[0][1]
             );
             path.lineTo(
-                    (float)(measurements[1] + measurements[2] * TENTSILE_NOTCH_SCALED_COS_PI),
-                    (float)(measurements[2] * TENTSILE_NOTCH_SCALED_SIN_PI)
+                    (float)(barb[0]),
+                    (float)(barb[1])
             );
             path.lineTo(
-                    (float)(measurements[1] + measurements[1] * MATH_COS_TWO_THIRDS_PI),
-                    (float)(measurements[1] * MATH_SIN_TWO_THIRDS_PI)
-            );
-            path.close();
-            path.moveTo(
-                    (float)extremities[0][0],
-                    (float)extremities[0][1]
+                    (float)(notch[0]),
+                    (float)(notch[1])
             );
             path.lineTo(
-                    (float)(measurements[1] + measurements[2] * TENTSILE_NOTCH_SCALED_COS_PI),
-                    (float)(measurements[2] * TENTSILE_NOTCH_SCALED_SIN_PI)
-            );
-            path.lineTo(
-                    (float)(measurements[1] + measurements[1] * MATH_COS_FOUR_THIRDS_PI),
-                    (float)(measurements[1] * MATH_SIN_FOUR_THIRDS_PI)
+                    (float)(barb[0]),
+                    (float)(-barb[1])
             );
             path.close();
         }
 
-        return new Platform(path, extremities, TENTSILE_STRAPS_DEFAULT, TENTSILE_CIRCUMFERENCE_DEFAULT);
+        return new Platform(
+                path,
+                extremities,
+                MATH_ANGLE_TWO_THIRDS_PI,
+                TENTSILE_STRAPS_DEFAULT,
+                TENTSILE_CIRCUMFERENCE_DEFAULT
+        );
     }
 
-    static double [] getIsoscelesMeasurements(double hypotenuse, double base) {
-        // point[0], barb[1], notch[2]
-        double [] measurements = new double[3];
-        measurements[2] = base * MATH_DIVIDE_BY_SQRT_THREE / 2;
-        measurements[1] = measurements[2] * 2;
-        measurements[0] = Math.sqrt(hypotenuse * hypotenuse - 3 * measurements[2] * measurements[2]) - measurements[2];
-        return measurements;
+    static double[] getIsoscelesMeasurements(
+            double hypotenuse,
+            double base,
+            double tetherangle
+    ) {
+        double largeAngle = (MATH_ANGLE_FULL_CIRCLE - tetherangle) / 2.0;
+        double sineLargeAngle = Math.sin(largeAngle);
+        double centerHeight = Math.sqrt(hypotenuse * hypotenuse - base * base / 4.0);
+
+        // barbSide : distance away from center line to short tip
+        double barbSide = base / 2.0;
+        // barbTether : distance between tether center and short tip
+        double barbTether = barbSide / sineLargeAngle;
+        // barbCenter : distance from tether center to short tip
+        double barbCenter = Math.sqrt(barbTether * barbTether - barbSide * barbSide);
+        // pointTether : distance between tether center and long tip
+        double pointTether = centerHeight - barbCenter;
+
+        double betaAngle = Math.asin(pointTether * sineLargeAngle / hypotenuse);
+        double gammaAngle = Math.asin(barbSide / hypotenuse);
+        double alphaAngle = MATH_ANGLE_QUARTER_CIRCLE - gammaAngle - betaAngle - betaAngle;
+
+        double indent = barbSide * Math.tan(alphaAngle);
+        // gap : distance between tether center and indentation
+        double gap = centerHeight - pointTether - indent;
+
+        return new double[] { pointTether, barbCenter, barbSide, gap };
     }
 
     static Knots getTetherKnots(

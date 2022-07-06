@@ -38,8 +38,7 @@ class Util {
     private static let MATH_FEET_TO_METERS_CONVERSION = Float(0.3048)
     private static let SINE_TWO_PI_DIV_THREE = Float(sqrt(3.0) / 2.0)
 
-    static func getTetherCenter(_ anchors: Anchors) -> TetherCenter? {
-        let smallAngle = ANGLE_ONE_THIRD_CIRCLE
+    static func getTetherCenter(_ anchors: Anchors, smallAngle: Float) -> TetherCenter? {
         let largeAngle = (ANGLE_ONE_FULL_CIRCLE - smallAngle) / 2.0
         let sineLargeAngle = sin(largeAngle)
 

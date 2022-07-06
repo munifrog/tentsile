@@ -80,6 +80,7 @@ public class Clearing
     private boolean mComputingTetherCenter = false;
     private double mStrapLength;
     private double mTreeCircumference;
+    private double mPlatformTetherAngle = MATH_ANGLE_ONE_THIRD_CIRCLE;
 
     private int mStateTether = TETHER_SELECTION_NONE;
     private int mDrawTethers = DRAW_TETHERS_ENABLED;
@@ -707,7 +708,7 @@ public class Clearing
     }
 
     private void computePlatformCenter() {
-        mViewOwner.computePlatformCenter(new PlatformCenterRun(this, mTethers));
+        mViewOwner.computePlatformCenter(new PlatformCenterRun(this, mTethers, mPlatformTetherAngle));
     }
 
     @Override
@@ -750,7 +751,6 @@ public class Clearing
 
     public void setPlatformSymmetricAngle() {
         getPlatformCenterOccasionally();
-        invalidateSelf();
     }
 
     public void setPlatformDrawPath(Platform platform) {
@@ -758,11 +758,13 @@ public class Clearing
         mPlatformExtremities = platform.getTetherPoints();
         mStrapLength = platform.getStrapLength();
         mTreeCircumference = platform.getCircumference();
+        mPlatformTetherAngle = platform.getTetherAngle();
+        getPlatformCenterOccasionally();
     }
 
     public void rotatePlatform() {
         configRotate();
-        invalidateSelf();
+        getPlatformCenterOccasionally();
     }
 
     public boolean getIsImperial() {

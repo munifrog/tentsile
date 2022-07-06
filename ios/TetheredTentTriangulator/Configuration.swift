@@ -407,7 +407,7 @@ struct Configuration {
     }
 
     mutating func updateTetherCenter() {
-        self.center = Util.getTetherCenter(self.anchors)
+        self.center = Util.getTetherCenter(self.anchors,  smallAngle: getPlatform().tetherangle)
         self.drawable = computeDrawableSetup()
     }
 }

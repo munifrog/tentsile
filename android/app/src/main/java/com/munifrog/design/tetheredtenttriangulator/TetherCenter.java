@@ -22,8 +22,7 @@ class TetherCenter {
         mTethers[2][1] = tetherPoints[2][1];
     }
 
-    void process() {
-        double smallAngle = MATH_ANGLE_ONE_THIRD_CIRCLE;
+    void process(double smallAngle) {
         double largeAngle = (MATH_ANGLE_FULL_CIRCLE - smallAngle) / 2.0;
         double sineLargeAngle = Math.sin(largeAngle);
 

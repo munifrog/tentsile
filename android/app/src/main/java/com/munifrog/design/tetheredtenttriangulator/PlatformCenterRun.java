@@ -7,19 +7,22 @@ class PlatformCenterRun implements Runnable {
 
     private final PlatformCenterListener mListener;
     private final TetherCenter mTetherCenter;
+    private final double mTetherAngle;
 
     PlatformCenterRun(
             PlatformCenterListener listener,
-            final float[][] tetherPoints
+            final float[][] tetherPoints,
+            double tetherAngle
     ) {
         mListener = listener;
         mTetherCenter = new TetherCenter(
                 tetherPoints
         );
+        mTetherAngle = tetherAngle;
     }
 
     public void run() {
-        mTetherCenter.process();
+        mTetherCenter.process(mTetherAngle);
         mListener.onPlatformComputed(
                 mTetherCenter.getCenter(),
                 mTetherCenter.getOrientationFlip()
