@@ -40,6 +40,8 @@ public class Clearing
     private static final double MATH_METERS_TOO_CLOSE = 0.7;
     private static final double MATH_METERS_TOO_CLOSE_SQUARED =
             MATH_METERS_TOO_CLOSE * MATH_METERS_TOO_CLOSE;
+    private static final double MATH_INCLINATION_DEGREES = 10;
+    private static final double MATH_INCLINATION_MULTIPLIER = 1.0 / Math.cos(MATH_INCLINATION_DEGREES * Math.PI / 180.0);
 
     private final Paint mTetherPaintPlatform;
     private final Paint mTetherPaintStraps;
@@ -585,7 +587,7 @@ public class Clearing
             int[] indices = getIndexOrder();
             if (distances[0] > -1) {
                 canvas.drawText(
-                        String.format(units, scaledDimension(distances[0])),
+                        String.format(units, scaledInclinedDimension(distances[0])),
                         (float) (mTransExtremities[0][0] + mTethers[0][0]) / 2f,
                         (float) (mTransExtremities[0][1] + mTethers[0][1]) / 2f,
                         mLabelPlatformPaint
@@ -594,7 +596,7 @@ public class Clearing
             int index1 = indices[1];
             if (distances[index1] > -1) {
                 canvas.drawText(
-                        String.format(units, scaledDimension(distances[index1])),
+                        String.format(units, scaledInclinedDimension(distances[index1])),
                         (float) (mTransExtremities[index1][0] + mTethers[1][0]) / 2f,
                         (float) (mTransExtremities[index1][1] + mTethers[1][1]) / 2f,
                         mLabelPlatformPaint
@@ -603,7 +605,7 @@ public class Clearing
             int index2 = indices[2];
             if (distances[index2] > -1) {
                 canvas.drawText(
-                        String.format(units, scaledDimension(distances[index2])),
+                        String.format(units, scaledInclinedDimension(distances[index2])),
                         (float) (mTransExtremities[index2][0] + mTethers[2][0]) / 2f,
                         (float) (mTransExtremities[index2][1] + mTethers[2][1]) / 2f,
                         mLabelPlatformPaint
@@ -783,6 +785,11 @@ public class Clearing
     public void setSliderScale(double slider) {
         mScaleSlider = slider;
         invalidateSelf();
+    }
+
+    private double scaledInclinedDimension(double pixels) {
+        // Convert the level-length to hypotenuse-length
+        return MATH_INCLINATION_MULTIPLIER * scaledDimension(pixels);
     }
 
     private double scaledDimension(double pixels) {

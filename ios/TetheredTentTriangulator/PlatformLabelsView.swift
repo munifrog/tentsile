@@ -13,17 +13,17 @@ struct PlatformLabelsView: View {
 
     var body: some View {
         if let k = setup.knots {
-            let metersA = Util.getMetersFromPixels(
+            let metersA = Util.getInclinedMetersFromPixels(
                 pixels: k.pixels_a,
                 meterScale: setup.scaleMeters,
                 units: units
             )
-            let metersB = Util.getMetersFromPixels(
+            let metersB = Util.getInclinedMetersFromPixels(
                 pixels: k.pixels_b,
                 meterScale: setup.scaleMeters,
                 units: units
             )
-            let metersC = Util.getMetersFromPixels(
+            let metersC = Util.getInclinedMetersFromPixels(
                 pixels: k.pixels_c,
                 meterScale: setup.scaleMeters,
                 units: units

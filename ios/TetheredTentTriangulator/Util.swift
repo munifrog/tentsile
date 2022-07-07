@@ -9,6 +9,8 @@ import Foundation
 
 private let STRAP_EXTENSION_LENGTH: Float = 6.0
 private let MATH_METERS_TO_FEET_CONVERSION: Float = 3.2808399;
+private let MATH_INCLINATION_DEGREES: Float = 10.0
+private let MATH_INCLINATION_MULTIPLIER: Float = 1.0 / cos(MATH_INCLINATION_DEGREES * .pi / 180)
 
 enum AnchorIcon {
     case impossible
@@ -197,5 +199,14 @@ class Util {
         units: Units
     ) -> Float {
         return pixels * meterScale * (units == .metric ? 1.0 : MATH_METERS_TO_FEET_CONVERSION)
+    }
+
+    static func getInclinedMetersFromPixels(
+        pixels: Float,
+        meterScale: Float,
+        units: Units
+    ) -> Float {
+        // Convert the level-length to hypotenuse-length
+        return MATH_INCLINATION_MULTIPLIER * getMetersFromPixels(pixels: pixels, meterScale: meterScale, units: units)
     }
 }
