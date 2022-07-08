@@ -16,7 +16,7 @@
         <item>@string/faq_small_circles_on_tethers_question</item>
         <item>@string/faq_notch_question</item>
         <item>@string/faq_curved_edges_question</item>
-        <item>@string/faq_tether_bisection_question</item>
+        <item>@string/faq_sight_indicator_question</item>
     </string-array>
 
     <string-array name="faq_answers">
@@ -33,7 +33,6 @@
         <item>@string/faq_small_circles_on_tethers_answer</item>
         <item>@string/faq_notch_answer</item>
         <item>@string/faq_curved_edges_answer</item>
-        <item>@string/faq_tether_bisection_answer</item>
+        <item>@string/faq_sight_indicator_answer</item>
     </string-array>
-
 </resources>

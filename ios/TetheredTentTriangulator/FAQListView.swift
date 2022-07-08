@@ -50,8 +50,8 @@ struct FAQListView: View {
             Q: "Why are the tent edges shown as straight lines?",
             A: "The edges are drawn straight for simplicity in drawing the tents and hammocks. In a future release all tent edges will appear curved."),
         FAQView(
-            Q: "Why do some tents not show every tether splitting the angle down the middle?",
-            A: "This is a result of drawing straight edges for the tents and hammocks. In a real setup the fabric stretches, forming curved edges, and the tether splits the angle down the middle. This will be attempted in a future release.")
+            Q: "Do I still need to use the tabs on the sides of my tent?",
+            A: "That would be best. This app tries to get you close to the point where you can then align the tethers with the sight-indicator tabs on the sides of the non-equal-sided tents and hammocks.")
     ]
 
     var body: some View {
