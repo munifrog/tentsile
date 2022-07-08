@@ -11,10 +11,13 @@ import static com.munifrog.design.tetheredtenttriangulator.UnitTestUtil.TETHERS_
 import static org.junit.Assert.*;
 
 public class TetherCenterUnitTests {
+
+    final double MATH_ANGLE_BALANCED = Math.PI * 2.0 / 3.0;
+
     @Test
     public void PlatformCenterRun_equilateral_isWorking() {
         TetherCenter platformCenter = new TetherCenter(TETHERS_EQUILATERAL);
-        platformCenter.process();
+        platformCenter.process(MATH_ANGLE_BALANCED);
         float[] actual = platformCenter.getCenter();
         float[] expected = { (float) MATH_CENTER_X, (float) MATH_CENTER_Y };
         assertArrayEquals(expected, actual, (float)ALLOWANCE_DELTA_THREE);
@@ -23,7 +26,7 @@ public class TetherCenterUnitTests {
     @Test
     public void PlatformCenterRun_isosceles_isWorking() {
         TetherCenter platformCenter = new TetherCenter(TETHERS_ISOSCELES);
-        platformCenter.process();
+        platformCenter.process(MATH_ANGLE_BALANCED);
         float[] actual = platformCenter.getCenter();
         float[] expected = { (float) MATH_CENTER_X, (float) MATH_CENTER_Y };
         assertArrayEquals(expected, actual, (float)ALLOWANCE_DELTA_THREE);
@@ -32,7 +35,7 @@ public class TetherCenterUnitTests {
     @Test
     public void PlatformCenterRun_scalene_isWorking() {
         TetherCenter platformCenter = new TetherCenter(TETHERS_SCALENE);
-        platformCenter.process();
+        platformCenter.process(MATH_ANGLE_BALANCED);
         float[] actual = platformCenter.getCenter();
         float[] expected = { (float) MATH_CENTER_X, (float) MATH_CENTER_Y };
         assertArrayEquals(expected, actual, (float)ALLOWANCE_DELTA_THREE);

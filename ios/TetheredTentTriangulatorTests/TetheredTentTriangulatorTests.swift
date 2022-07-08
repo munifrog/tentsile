@@ -17,6 +17,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
     let MATH_SQUARE_ROOT_OF_THIRTEEN: Float = sqrt(13)
     let MATH_SQUARE_ROOT_OF_NINETEEN: Float = sqrt(19)
     let MATH_TREE_CIRCUMFERENCE: Float = 0.785398163397448 // pi * 25cm or 10inch diameter
+    let MATH_ANGLE_ONE_THIRD_CIRCLE: Float = .pi * 2 / 3
 
     let ALLOWANCE_DELTA_ONE: Float = 0.1;
     let ALLOWANCE_DELTA_TWO: Float = 0.01;
@@ -97,7 +98,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
     func testEquilateralTetherCenter() throws {
         let solution = Coordinate(x: CENTER_X, y: CENTER_Y)
         let anchors = setupEquilateralAnchors(center: solution)
-        let tetherCenter: TetherCenter? = Util.getTetherCenter(anchors)
+        let tetherCenter: TetherCenter? = Util.getTetherCenter(anchors, smallAngle: MATH_ANGLE_ONE_THIRD_CIRCLE)
         if let center = tetherCenter {
             XCTAssertEqual(solution.x, center.p.x, accuracy: ALLOWANCE_DELTA_THREE)
             XCTAssertEqual(solution.y, center.p.y, accuracy: ALLOWANCE_DELTA_THREE)
@@ -109,7 +110,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
     func testIsoscelesTetherCenter() throws {
         let solution = Coordinate(x: CENTER_X, y: CENTER_Y)
         let anchors = setupIsoscelesAnchors(center: solution)
-        let tetherCenter: TetherCenter? = Util.getTetherCenter(anchors)
+        let tetherCenter: TetherCenter? = Util.getTetherCenter(anchors, smallAngle: MATH_ANGLE_ONE_THIRD_CIRCLE)
         if let center = tetherCenter {
             XCTAssertEqual(solution.x, center.p.x, accuracy: ALLOWANCE_DELTA_THREE)
             XCTAssertEqual(solution.y, center.p.y, accuracy: ALLOWANCE_DELTA_THREE)
@@ -121,7 +122,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
     func testScaleneTetherCenter() throws {
         let solution = Coordinate(x: CENTER_X, y: CENTER_Y)
         let anchors = setupScaleneAnchors(center: solution)
-        let tetherCenter: TetherCenter? = Util.getTetherCenter(anchors)
+        let tetherCenter: TetherCenter? = Util.getTetherCenter(anchors, smallAngle: MATH_ANGLE_ONE_THIRD_CIRCLE)
         if let center = tetherCenter {
             XCTAssertEqual(solution.x, center.p.x, accuracy: ALLOWANCE_DELTA_THREE)
             XCTAssertEqual(solution.y, center.p.y, accuracy: ALLOWANCE_DELTA_THREE)
@@ -133,7 +134,7 @@ class TetheredTentTriangulatorTests: XCTestCase {
     func testNoTetherCenter() throws {
         let solution = Coordinate(x: CENTER_X, y: CENTER_Y)
         let anchors = setupNoCenterAnchors(center: solution)
-        let tetherCenter: TetherCenter? = Util.getTetherCenter(anchors)
+        let tetherCenter: TetherCenter? = Util.getTetherCenter(anchors, smallAngle: MATH_ANGLE_ONE_THIRD_CIRCLE)
         XCTAssertTrue(tetherCenter == nil)
     }
 

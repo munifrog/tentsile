@@ -389,7 +389,7 @@ public class UtilUnitTests {
         );
         float[][] results = knots.knots;
 
-        assertEquals(1, results.length);
+        assertEquals(2, results.length);
         float[][] expected = { { 50, 50 } };
         assertArrayEquals(expected[0], results[0], (float) ALLOWANCE_DELTA_TWO);
 
