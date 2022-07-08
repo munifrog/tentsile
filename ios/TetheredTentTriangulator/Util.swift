@@ -11,6 +11,7 @@ private let STRAP_EXTENSION_LENGTH: Float = 6.0
 private let MATH_METERS_TO_FEET_CONVERSION: Float = 3.2808399;
 private let MATH_INCLINATION_DEGREES: Float = 10.0
 private let MATH_INCLINATION_MULTIPLIER: Float = 1.0 / cos(MATH_INCLINATION_DEGREES * .pi / 180)
+private let MATH_ANGLE_QUARTER_CIRCLE: Float = .pi / 2
 
 enum AnchorIcon {
     case impossible
@@ -208,5 +209,15 @@ class Util {
     ) -> Float {
         // Convert the level-length to hypotenuse-length
         return MATH_INCLINATION_MULTIPLIER * getMetersFromPixels(pixels: pixels, meterScale: meterScale, units: units)
+    }
+
+    static func getSmallAngleGivenIndent(
+        hypotenuse: Float,
+        base: Float,
+        indent: Float
+    ) -> Float {
+        let alpha = atan(2 * indent / base)
+        let gamma = asin( base / 2 / hypotenuse)
+        return Float(MATH_ANGLE_QUARTER_CIRCLE + gamma - alpha)
     }
 }

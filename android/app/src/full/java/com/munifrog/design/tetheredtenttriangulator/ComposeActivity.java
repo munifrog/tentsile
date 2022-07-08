@@ -5,27 +5,39 @@ import android.widget.AdapterView;
 
 public class ComposeActivity extends ComposeBaseActivity {
     private static final double TENTSILE_BASE_CONNECT = 2.7;
-    private static final double TENTSILE_BASE_DUO = 2.7;
+    private static final double TENTSILE_BASE_DUO = TENTSILE_BASE_CONNECT;
     private static final double TENTSILE_BASE_FLITE = 2.7;
-    private static final double TENTSILE_BASE_T_MINI = 2.7;
+    private static final double TENTSILE_BASE_T_MINI = TENTSILE_BASE_FLITE;
     private static final double TENTSILE_BASE_UNA = 1.6;
     private static final double TENTSILE_BASE_TRILOGY = TENTSILE_BASE_CONNECT;
     private static final double TENTSILE_HYPOTENUSE_CONNECT = 4.0;
-    private static final double TENTSILE_HYPOTENUSE_DUO = 4.0;
+    private static final double TENTSILE_HYPOTENUSE_DUO = TENTSILE_HYPOTENUSE_CONNECT;
     private static final double TENTSILE_HYPOTENUSE_FLITE = 3.25;
     private static final double TENTSILE_HYPOTENUSE_STINGRAY = 4.1;
-    private static final double TENTSILE_HYPOTENUSE_T_MINI = 3.25;
+    private static final double TENTSILE_HYPOTENUSE_T_MINI = TENTSILE_HYPOTENUSE_FLITE;
     private static final double TENTSILE_HYPOTENUSE_TRILLIUM = 4.1;
     private static final double TENTSILE_HYPOTENUSE_TRILLIUM_XL = 6.0;
     private static final double TENTSILE_HYPOTENUSE_VISTA = 4.1;
     private static final double TENTSILE_HYPOTENUSE_UNA = 2.9;
     private static final double TENTSILE_HYPOTENUSE_UNIVERSE = 4.4;
     private static final double TENTSILE_HYPOTENUSE_TRILOGY = TENTSILE_HYPOTENUSE_CONNECT;
-    private static final double TENTSILE_TETHER_ANGLE_CONNECT = 1.69638705; // indented 30cm
-    private static final double TENTSILE_TETHER_ANGLE_DUO = 1.69638705; // indented 30cm
-    private static final double TENTSILE_TETHER_ANGLE_FLITE = 1.7804929; // indented 30cm
-    private static final double TENTSILE_TETHER_ANGLE_T_MINI = 1.7804929; // indented 30cm
-    private static final double TENTSILE_TETHER_ANGLE_UNA = 1.6053040; // indented 20cm
+    private static final double TENTSILE_TETHER_ANGLE_CONNECT = Util.getSmallAngleGivenIndent(
+            TENTSILE_HYPOTENUSE_CONNECT,
+            TENTSILE_BASE_CONNECT,
+            0.3
+    );
+    private static final double TENTSILE_TETHER_ANGLE_DUO = TENTSILE_TETHER_ANGLE_CONNECT;
+    private static final double TENTSILE_TETHER_ANGLE_FLITE = Util.getSmallAngleGivenIndent(
+            TENTSILE_HYPOTENUSE_FLITE,
+            TENTSILE_BASE_FLITE,
+            0.3
+    );
+    private static final double TENTSILE_TETHER_ANGLE_T_MINI = TENTSILE_TETHER_ANGLE_FLITE;
+    private static final double TENTSILE_TETHER_ANGLE_UNA = Util.getSmallAngleGivenIndent(
+            TENTSILE_HYPOTENUSE_UNA,
+            TENTSILE_BASE_UNA,
+            0.2
+    );
     private static final double TENTSILE_TETHER_ANGLE_TRILOGY = TENTSILE_TETHER_ANGLE_CONNECT;
 
     private static final double TENTSILE_STRAPS_DEFAULT = 6.0;

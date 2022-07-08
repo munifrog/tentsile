@@ -357,4 +357,14 @@ class Util {
         }
         return newPoints;
     }
+
+    static double getSmallAngleGivenIndent(
+            double hypotenuse,
+            double base,
+            double indent
+    ) {
+        double alpha = Math.atan(2 * indent / base);
+        double gamma = Math.asin( base / 2 / hypotenuse);
+        return MATH_ANGLE_QUARTER_CIRCLE + gamma - alpha;
+    }
 }

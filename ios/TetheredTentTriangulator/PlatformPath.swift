@@ -15,9 +15,9 @@ private let MATH_COS_TWO_THIRDS_PI: Float = cos(MATH_TWO_THIRDS_PI)
 private let MATH_SIN_TWO_THIRDS_PI: Float = sin(MATH_TWO_THIRDS_PI)
 
 private let TENTSILE_BASE_CONNECT: Float = 2.7
-private let TENTSILE_BASE_DUO: Float = 2.7
+private let TENTSILE_BASE_DUO: Float = TENTSILE_BASE_CONNECT
 private let TENTSILE_BASE_FLITE: Float = 2.7
-private let TENTSILE_BASE_T_MINI: Float = 2.7
+private let TENTSILE_BASE_T_MINI: Float = TENTSILE_BASE_FLITE
 private let TENTSILE_BASE_UNA: Float = 1.6
 private let TENTSILE_BASE_TRILOGY: Float = TENTSILE_BASE_CONNECT
 private let TENTSILE_CENTER_HOLE_HYPOTENUSE: Float = 0.6
@@ -25,10 +25,10 @@ private let TENTSILE_CIRCUMFERENCE_DEFAULT: Float = 0.785398163397448 // pi * 25
 private let TENTSILE_CIRCUMFERENCE_UNA: Float = 0.628318530717959 // pi * 20cm or 8inch diameter
 private let TENTSILE_NOTCH_SCALE: Float = 0.5
 private let TENTSILE_HYPOTENUSE_CONNECT: Float = 4.0
-private let TENTSILE_HYPOTENUSE_DUO: Float = 4.0
+private let TENTSILE_HYPOTENUSE_DUO: Float = TENTSILE_HYPOTENUSE_CONNECT
 private let TENTSILE_HYPOTENUSE_FLITE: Float = 3.25
 private let TENTSILE_HYPOTENUSE_STINGRAY: Float = 4.1
-private let TENTSILE_HYPOTENUSE_T_MINI: Float = 3.25
+private let TENTSILE_HYPOTENUSE_T_MINI: Float = TENTSILE_HYPOTENUSE_FLITE
 private let TENTSILE_HYPOTENUSE_TRILLIUM: Float = 4.1
 private let TENTSILE_HYPOTENUSE_TRILLIUM_XL: Float = 6.0
 private let TENTSILE_HYPOTENUSE_VISTA: Float = 4.1
@@ -39,11 +39,20 @@ private let TENTSILE_STRAPS_DEFAULT: Float = 6.0
 private let TENTSILE_STRAPS_UNA: Float = 4.0
 
 private let TENTSILE_TETHER_ANGLE_BALANCED: Float = MATH_TWO_THIRDS_PI
-private let TENTSILE_TETHER_ANGLE_CONNECT: Float = 1.69638705 // indented 30cm
-private let TENTSILE_TETHER_ANGLE_DUO: Float = 1.69638705 // indented 30cm
-private let TENTSILE_TETHER_ANGLE_FLITE: Float = 1.7804929 // indented 30cm
-private let TENTSILE_TETHER_ANGLE_T_MINI: Float = 1.7804929 // indented 30cm
-private let TENTSILE_TETHER_ANGLE_UNA: Float = 1.6053040 // indented 20cm
+private let TENTSILE_TETHER_ANGLE_CONNECT: Float = Util.getSmallAngleGivenIndent(
+    hypotenuse: TENTSILE_HYPOTENUSE_CONNECT,
+    base: TENTSILE_BASE_CONNECT,
+    indent: 0.3)
+private let TENTSILE_TETHER_ANGLE_DUO: Float = TENTSILE_TETHER_ANGLE_CONNECT
+private let TENTSILE_TETHER_ANGLE_FLITE: Float = Util.getSmallAngleGivenIndent(
+    hypotenuse: TENTSILE_HYPOTENUSE_FLITE,
+    base: TENTSILE_BASE_FLITE,
+    indent: 0.3)
+private let TENTSILE_TETHER_ANGLE_T_MINI: Float = TENTSILE_TETHER_ANGLE_FLITE
+private let TENTSILE_TETHER_ANGLE_UNA: Float =  Util.getSmallAngleGivenIndent(
+    hypotenuse: TENTSILE_HYPOTENUSE_UNA,
+    base: TENTSILE_BASE_UNA,
+    indent: 0.2)
 private let TENTSILE_TETHER_ANGLE_TRILOGY: Float = TENTSILE_TETHER_ANGLE_CONNECT
 
 struct PlatformDetails {
