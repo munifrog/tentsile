@@ -15,7 +15,7 @@ struct FAQListView: View {
             A: "Swipe left or right to dismiss this page.\n\nIf your swipe gesture is more up or down than left or right you will engage the scroll feature instead. In that case try swiping again."),
         FAQView(
             Q: "How accurately do I need to measure?",
-            A: "The App itself is accurate to one decimeter or imperial foot.\n\nYou can use the app to get the measurements sufficiently close to then be able to align the tent according to the manufacturers instructions."),
+            A: "The App itself is accurate to one decimeter or four imperial inches.\n\nYou can use the app to get the measurements sufficiently close to then be able to align the tent according to the manufacturers instructions."),
         FAQView(
             Q: "What if my measurement goes off the screen?",
             A: "Depending on the issue, you have a few options. You can ...\n\n... drag the tether intersection point (if visible) to move all the anchors simultaneously.\n\n... tilt the device and modify anchors in that orientation.\n\n... reset the anchors using the menu option.\n\n... change the scale of the units using the slider."),

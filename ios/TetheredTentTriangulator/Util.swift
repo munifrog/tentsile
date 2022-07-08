@@ -194,7 +194,23 @@ class Util {
         return TetherDetails(knots: knots, pixels: pixelTetherAmount, icon: anchorIcon)
     }
 
-    static func getMetersFromPixels(
+    static func getLimitedPrecision(
+        _ measure: Float,
+        units: Units
+    ) -> Float {
+        // This function is meant for labels only
+        if units == .metric {
+            return measure
+        } else {
+            let whole: Float = floor(measure)
+            let fraction: Float = measure - whole
+            // 0.1 meter is about 4 inches or 1/3 foot
+            let fractionLimited = round(fraction * 3) / 3
+            return whole + fractionLimited
+        }
+    }
+
+    static func getMeasureFromPixels(
         pixels: Float,
         meterScale: Float,
         units: Units
@@ -202,13 +218,13 @@ class Util {
         return pixels * meterScale * (units == .metric ? 1.0 : MATH_METERS_TO_FEET_CONVERSION)
     }
 
-    static func getInclinedMetersFromPixels(
+    static func getInclinedMeasureFromPixels(
         pixels: Float,
         meterScale: Float,
         units: Units
     ) -> Float {
         // Convert the level-length to hypotenuse-length
-        return MATH_INCLINATION_MULTIPLIER * getMetersFromPixels(pixels: pixels, meterScale: meterScale, units: units)
+        return MATH_INCLINATION_MULTIPLIER * getMeasureFromPixels(pixels: pixels, meterScale: meterScale, units: units)
     }
 
     static func getSmallAngleGivenIndent(

@@ -318,19 +318,19 @@ public class Clearing
     private void drawConnectionLabels(Canvas canvas) {
         String units = (mIsImperial ? mStringImperial : mStringMeters);
         canvas.drawText(
-                String.format(units, scaledDimension(mDist01)),
+                String.format(units, precisionLimitedDimension(scaledDimension(mDist01))),
                 (mTethers[0][0] + mTethers[1][0]) / 2,
                 (mTethers[0][1] + mTethers[1][1]) / 2,
                 mLabelConnectionPaint
         );
         canvas.drawText(
-                String.format(units, scaledDimension(mDist12)),
+                String.format(units, precisionLimitedDimension(scaledDimension(mDist12))),
                 (mTethers[1][0] + mTethers[2][0]) / 2,
                 (mTethers[1][1] + mTethers[2][1]) / 2,
                 mLabelConnectionPaint
         );
         canvas.drawText(
-                String.format(units, scaledDimension(mDist20)),
+                String.format(units, precisionLimitedDimension(scaledDimension(mDist20))),
                 (mTethers[2][0] + mTethers[0][0]) / 2,
                 (mTethers[2][1] + mTethers[0][1]) / 2,
                 mLabelConnectionPaint
@@ -514,9 +514,6 @@ public class Clearing
         double[] distances = new double[3];
         if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
             // Draw the platform and distances if platform not too far past the tether point
-            // Label the distances at the platform extremities (corners)
-            String units = (mIsImperial ? mStringImperial : mStringMeters);
-            // Determine the distance between the platform corner and tether location
             int[] indices = getIndexOrder();
             int index1 = indices[1], index2 = indices[2];
             float diffExtremityAx = mPlatformCoordinates[0] - (float) mTransExtremities[0][0];
@@ -584,10 +581,11 @@ public class Clearing
     private void drawPlatformLabels(Canvas canvas, double[] distances) {
         if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
             String units = (mIsImperial ? mStringImperial : mStringMeters);
+            // Label the distance between the platform corner and tether location
             int[] indices = getIndexOrder();
             if (distances[0] > -1) {
                 canvas.drawText(
-                        String.format(units, scaledInclinedDimension(distances[0])),
+                        String.format(units, precisionLimitedDimension(scaledInclinedDimension(distances[0]))),
                         (float) (mTransExtremities[0][0] + mTethers[0][0]) / 2f,
                         (float) (mTransExtremities[0][1] + mTethers[0][1]) / 2f,
                         mLabelPlatformPaint
@@ -596,7 +594,7 @@ public class Clearing
             int index1 = indices[1];
             if (distances[index1] > -1) {
                 canvas.drawText(
-                        String.format(units, scaledInclinedDimension(distances[index1])),
+                        String.format(units, precisionLimitedDimension(scaledInclinedDimension(distances[index1]))),
                         (float) (mTransExtremities[index1][0] + mTethers[1][0]) / 2f,
                         (float) (mTransExtremities[index1][1] + mTethers[1][1]) / 2f,
                         mLabelPlatformPaint
@@ -605,7 +603,7 @@ public class Clearing
             int index2 = indices[2];
             if (distances[index2] > -1) {
                 canvas.drawText(
-                        String.format(units, scaledInclinedDimension(distances[index2])),
+                        String.format(units, precisionLimitedDimension(scaledInclinedDimension(distances[index2]))),
                         (float) (mTransExtremities[index2][0] + mTethers[2][0]) / 2f,
                         (float) (mTransExtremities[index2][1] + mTethers[2][1]) / 2f,
                         mLabelPlatformPaint
@@ -785,6 +783,19 @@ public class Clearing
     public void setSliderScale(double slider) {
         mScaleSlider = slider;
         invalidateSelf();
+    }
+
+    private double precisionLimitedDimension(double measure) {
+        // This function is meant for labels only
+        if (mIsImperial) {
+            double whole = Math.floor(measure);
+            double fraction = measure - whole;
+            // 0.1 meter is about 4 inches or 1/3 foot
+            double fractionLimited = Math.round(fraction * 3.0) / 3.0;
+            return whole + fractionLimited;
+        } else {
+            return measure;
+        }
     }
 
     private double scaledInclinedDimension(double pixels) {

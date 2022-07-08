@@ -13,32 +13,35 @@ struct PlatformLabelsView: View {
 
     var body: some View {
         if let k = setup.knots {
-            let metersA = Util.getInclinedMetersFromPixels(
+            let measureA = Util.getInclinedMeasureFromPixels(
                 pixels: k.pixels_a,
                 meterScale: setup.scaleMeters,
                 units: units
             )
-            let metersB = Util.getInclinedMetersFromPixels(
+            let precisionA = Util.getLimitedPrecision(measureA, units: self.units)
+            let measureB = Util.getInclinedMeasureFromPixels(
                 pixels: k.pixels_b,
                 meterScale: setup.scaleMeters,
                 units: units
             )
-            let metersC = Util.getInclinedMetersFromPixels(
+            let precisionB = Util.getLimitedPrecision(measureB, units: self.units)
+            let measureC = Util.getInclinedMeasureFromPixels(
                 pixels: k.pixels_c,
                 meterScale: setup.scaleMeters,
                 units: units
             )
+            let precisionC = Util.getLimitedPrecision(measureC, units: self.units)
 
             let lastA = k.a.count - 1
             let lastB = k.b.count - 1
             let lastC = k.c.count - 1
             ZStack {
-                if metersA > 0 {
+                if measureA > 0 {
                     Rectangle()
                         .foregroundColor(.clear)
                         .overlay(
                             LabelView(
-                                value: metersA,
+                                value: precisionA,
                                 offset_x: 0,
                                 offset_y: 0,
                                 a_x: k.a[1].x,
@@ -50,12 +53,12 @@ struct PlatformLabelsView: View {
                             )
                         )
                 }
-                if metersB > 0 {
+                if measureB > 0 {
                     Rectangle()
                         .foregroundColor(.clear)
                         .overlay(
                             LabelView(
-                                value: metersB,
+                                value: precisionB,
                                 offset_x: 0,
                                 offset_y: 0,
                                 a_x: k.b[1].x,
@@ -67,12 +70,12 @@ struct PlatformLabelsView: View {
                             )
                         )
                 }
-                if metersC > 0 {
+                if measureC > 0 {
                     Rectangle()
                         .foregroundColor(.clear)
                         .overlay(
                             LabelView(
-                                value: metersC,
+                                value: precisionC,
                                 offset_x: 0,
                                 offset_y: 0,
                                 a_x: k.c[1].x,
