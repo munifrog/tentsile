@@ -123,6 +123,7 @@ struct Configuration {
     private var initial_c: Coordinate?
     private var limits: Coordinate = Coordinate()
     private var path: PlatformPath = PlatformPath()
+    private var latestFlip: Bool = false
 
     init() {
         if let storedPlatform = UserDefaults.standard.string(forKey: USER_DEFAULTS_STORED_PLATFORM) {
@@ -158,10 +159,7 @@ struct Configuration {
 
     mutating func rotate() {
         self.anchors.rotate()
-        if var c = center {
-            c.rotate()
-            updateTetherCenter()
-        }
+        updateTetherCenter()
     }
 
     mutating func setLimits(screen: Coordinate) {
@@ -408,6 +406,17 @@ struct Configuration {
 
     mutating func updateTetherCenter() {
         self.center = Util.getTetherCenter(self.anchors,  smallAngle: getPlatform().tetherangle)
+        updateFlip()
         self.drawable = computeDrawableSetup()
+    }
+
+    func getFlip() -> Bool {
+        return latestFlip
+    }
+
+    mutating func updateFlip() {
+        if let center = self.center {
+            self.latestFlip = center.flips
+        }
     }
 }
