@@ -18,25 +18,22 @@ struct PerimeterLabels: View {
             meterScale: setup.scaleMeters,
             units: units
         )
-        let precisionA = Util.getLimitedPrecision(measureA, units: self.units)
         let measureB = Util.getMeasureFromPixels(
             pixels: setup.anchors.bc,
             meterScale: setup.scaleMeters,
             units: units
         )
-        let precisionB = Util.getLimitedPrecision(measureB, units: self.units)
         let measureC = Util.getMeasureFromPixels(
             pixels: setup.anchors.ca,
             meterScale: setup.scaleMeters,
             units: units
         )
-        let precisionC = Util.getLimitedPrecision(measureC, units: self.units)
 
         Rectangle()
             .foregroundColor(.clear)
             .overlay(
                 LabelView(
-                    value: precisionA,
+                    value: measureA,
                     offset_x: limits.x,
                     offset_y: limits.y,
                     a_x: setup.anchors.a.x,
@@ -49,7 +46,7 @@ struct PerimeterLabels: View {
             )
             .overlay(
                 LabelView(
-                    value: precisionB,
+                    value: measureB,
                     offset_x: limits.x,
                     offset_y: limits.y,
                     a_x: setup.anchors.b.x,
@@ -62,7 +59,7 @@ struct PerimeterLabels: View {
             )
             .overlay(
                 LabelView(
-                    value: precisionC,
+                    value: measureC,
                     offset_x: limits.x,
                     offset_y: limits.y,
                     a_x: setup.anchors.c.x,

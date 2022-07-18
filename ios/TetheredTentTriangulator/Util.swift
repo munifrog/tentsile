@@ -194,19 +194,31 @@ class Util {
         return TetherDetails(knots: knots, pixels: pixelTetherAmount, icon: anchorIcon)
     }
 
-    static func getLimitedPrecision(
-        _ measure: Float,
+    static func getMeasurementString(
+        measure: Float,
         units: Units
-    ) -> Float {
+    ) -> String {
         // This function is meant for labels only
         if units == .metric {
-            return measure
+            return String(format: "%3.1f m", measure)
         } else {
-            let whole: Float = floor(measure)
-            let fraction: Float = measure - whole
-            // 0.1 meter is about 4 inches or 1/3 foot
-            let fractionLimited = round(fraction * 3) / 3
-            return whole + fractionLimited
+            var feet: Float = floor(measure)
+            let fraction: Float = measure - feet
+            // One imperial foot equals twelve inches.
+            // And 4 inches (1/3 foot) is about 1/10 meter.
+            // To convert 1/10 of a foot to 1/12 of a foot:
+            //   fraction / 10 = inches / 12 OR inches = 12 * fraction / 10
+            // Similarly, to convert 1/10 of a foot to 1/3 of a foot:
+            //   fraction / 10 = inches / 3 OR inches = 3 * fraction / 10
+            // (Note that the fraction portion is already divided by 10 here.)
+            // Rounding after multiplying discards further precision.
+            // Multiplying by 4 puts the 1/3 foot value back into inches (1/12)
+            var inches: Float = round(fraction * 3) * 4
+            if inches == 12 {
+                feet = feet + 1
+                inches = 0
+            }
+            return String(format: "%1.0f' %1.0f\"", feet, inches)
         }
     }
 

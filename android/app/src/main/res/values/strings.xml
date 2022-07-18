@@ -10,7 +10,7 @@
     <string name="desc_meters">Meters</string>
 
     <string name="unit_imperial">ft</string>
-    <string name="unit_imperial_with_number">%1.1f ft</string>
+    <string name="unit_imperial_with_number">%1.0f\' %1.0f\"</string>
     <string name="desc_imperial">Imperial (feet)</string>
 
     <string name="menu_default_tether">Reset Tether Points</string>

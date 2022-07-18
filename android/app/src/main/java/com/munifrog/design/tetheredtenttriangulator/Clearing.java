@@ -316,21 +316,20 @@ public class Clearing
     }
 
     private void drawConnectionLabels(Canvas canvas) {
-        String units = (mIsImperial ? mStringImperial : mStringMeters);
         canvas.drawText(
-                String.format(units, precisionLimitedDimension(scaledDimension(mDist01))),
+                getMeasurementString(scaledDimension(mDist01)),
                 (mTethers[0][0] + mTethers[1][0]) / 2,
                 (mTethers[0][1] + mTethers[1][1]) / 2,
                 mLabelConnectionPaint
         );
         canvas.drawText(
-                String.format(units, precisionLimitedDimension(scaledDimension(mDist12))),
+                getMeasurementString(scaledDimension(mDist12)),
                 (mTethers[1][0] + mTethers[2][0]) / 2,
                 (mTethers[1][1] + mTethers[2][1]) / 2,
                 mLabelConnectionPaint
         );
         canvas.drawText(
-                String.format(units, precisionLimitedDimension(scaledDimension(mDist20))),
+                getMeasurementString(scaledDimension(mDist20)),
                 (mTethers[2][0] + mTethers[0][0]) / 2,
                 (mTethers[2][1] + mTethers[0][1]) / 2,
                 mLabelConnectionPaint
@@ -585,7 +584,7 @@ public class Clearing
             int[] indices = getIndexOrder();
             if (distances[0] > -1) {
                 canvas.drawText(
-                        String.format(units, precisionLimitedDimension(scaledInclinedDimension(distances[0]))),
+                        getMeasurementString(scaledInclinedDimension(distances[0])),
                         (float) (mTransExtremities[0][0] + mTethers[0][0]) / 2f,
                         (float) (mTransExtremities[0][1] + mTethers[0][1]) / 2f,
                         mLabelPlatformPaint
@@ -594,7 +593,7 @@ public class Clearing
             int index1 = indices[1];
             if (distances[index1] > -1) {
                 canvas.drawText(
-                        String.format(units, precisionLimitedDimension(scaledInclinedDimension(distances[index1]))),
+                        getMeasurementString(scaledInclinedDimension(distances[index1])),
                         (float) (mTransExtremities[index1][0] + mTethers[1][0]) / 2f,
                         (float) (mTransExtremities[index1][1] + mTethers[1][1]) / 2f,
                         mLabelPlatformPaint
@@ -603,7 +602,7 @@ public class Clearing
             int index2 = indices[2];
             if (distances[index2] > -1) {
                 canvas.drawText(
-                        String.format(units, precisionLimitedDimension(scaledInclinedDimension(distances[index2]))),
+                        getMeasurementString(scaledInclinedDimension(distances[index2])),
                         (float) (mTransExtremities[index2][0] + mTethers[2][0]) / 2f,
                         (float) (mTransExtremities[index2][1] + mTethers[2][1]) / 2f,
                         mLabelPlatformPaint
@@ -785,16 +784,28 @@ public class Clearing
         invalidateSelf();
     }
 
-    private double precisionLimitedDimension(double measure) {
+    private String getMeasurementString(double measure) {
         // This function is meant for labels only
         if (mIsImperial) {
-            double whole = Math.floor(measure);
-            double fraction = measure - whole;
-            // 0.1 meter is about 4 inches or 1/3 foot
-            double fractionLimited = Math.round(fraction * 3.0) / 3.0;
-            return whole + fractionLimited;
+            double feet = Math.floor(measure);
+            double fraction = measure - feet;
+            // One imperial foot equals twelve inches.
+            // And 4 inches (1/3 foot) is about 1/10 meter.
+            // To convert 1/10 of a foot to 1/12 of a foot:
+            //   fraction / 10 = inches / 12 OR inches = 12 * fraction / 10
+            // Similarly, to convert 1/10 of a foot to 1/3 of a foot:
+            //   fraction / 10 = inches / 3 OR inches = 3 * fraction / 10
+            // (Note that the fraction portion is already divided by 10 here.)
+            // Rounding after multiplying discards further precision.
+            // Multiplying by 4 puts the 1/3 foot value back into inches (1/12)
+            double inches = Math.round(fraction * 3) * 4;
+            if (inches == 12) {
+                feet++;
+                inches = 0;
+            }
+            return String.format(mStringImperial, feet, inches);
         } else {
-            return measure;
+            return String.format(mStringMeters, measure);
         }
     }
 

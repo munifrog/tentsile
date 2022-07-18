@@ -19,7 +19,7 @@ struct LabelView: View {
     var color: Color = .white
 
     var body: some View {
-        Text(String(format: (units == .imperial ? "%3.1f ft" : "%3.1f m"), value))
+        Text(Util.getMeasurementString(measure: value, units: units))
             .font(.title)
             .foregroundColor(color)
             .position(

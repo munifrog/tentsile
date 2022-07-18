@@ -18,19 +18,16 @@ struct PlatformLabelsView: View {
                 meterScale: setup.scaleMeters,
                 units: units
             )
-            let precisionA = Util.getLimitedPrecision(measureA, units: self.units)
             let measureB = Util.getInclinedMeasureFromPixels(
                 pixels: k.pixels_b,
                 meterScale: setup.scaleMeters,
                 units: units
             )
-            let precisionB = Util.getLimitedPrecision(measureB, units: self.units)
             let measureC = Util.getInclinedMeasureFromPixels(
                 pixels: k.pixels_c,
                 meterScale: setup.scaleMeters,
                 units: units
             )
-            let precisionC = Util.getLimitedPrecision(measureC, units: self.units)
 
             let lastA = k.a.count - 1
             let lastB = k.b.count - 1
@@ -41,7 +38,7 @@ struct PlatformLabelsView: View {
                         .foregroundColor(.clear)
                         .overlay(
                             LabelView(
-                                value: precisionA,
+                                value: measureA,
                                 offset_x: 0,
                                 offset_y: 0,
                                 a_x: k.a[1].x,
@@ -58,7 +55,7 @@ struct PlatformLabelsView: View {
                         .foregroundColor(.clear)
                         .overlay(
                             LabelView(
-                                value: precisionB,
+                                value: measureB,
                                 offset_x: 0,
                                 offset_y: 0,
                                 a_x: k.b[1].x,
@@ -75,7 +72,7 @@ struct PlatformLabelsView: View {
                         .foregroundColor(.clear)
                         .overlay(
                             LabelView(
-                                value: precisionC,
+                                value: measureC,
                                 offset_x: 0,
                                 offset_y: 0,
                                 a_x: k.c[1].x,
