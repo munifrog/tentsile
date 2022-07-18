@@ -82,7 +82,8 @@ public class Clearing
     private boolean mComputingTetherCenter = false;
     private double mStrapLength;
     private double mTreeCircumference;
-    private double mPlatformTetherAngle = MATH_ANGLE_ONE_THIRD_CIRCLE;
+    private double mPlatformTetherAngleSmall = MATH_ANGLE_ONE_THIRD_CIRCLE;
+    private double mPlatformTetherAngleLarge = MATH_ANGLE_ONE_THIRD_CIRCLE;
 
     private int mStateTether = TETHER_SELECTION_NONE;
     private int mDrawTethers = DRAW_TETHERS_ENABLED;
@@ -693,9 +694,9 @@ public class Clearing
         double angle021 = Math.acos((perimeter[4] + perimeter[5] - perimeter[3]) / 2.0 / mDist12 / mDist20);  // C = 2
 
         if (
-                angle102 < MATH_ANGLE_ONE_THIRD_CIRCLE &&
-                angle210 < MATH_ANGLE_ONE_THIRD_CIRCLE &&
-                angle021 < MATH_ANGLE_ONE_THIRD_CIRCLE
+                angle102 < mPlatformTetherAngleSmall &&
+                angle210 < mPlatformTetherAngleLarge &&
+                angle021 < mPlatformTetherAngleLarge
         ) {
             mDrawTethers = DRAW_TETHERS_ENABLED;
             computePlatformCenter();
@@ -707,7 +708,7 @@ public class Clearing
     }
 
     private void computePlatformCenter() {
-        mViewOwner.computePlatformCenter(new PlatformCenterRun(this, mTethers, mPlatformTetherAngle));
+        mViewOwner.computePlatformCenter(new PlatformCenterRun(this, mTethers, mPlatformTetherAngleSmall));
     }
 
     @Override
@@ -757,7 +758,8 @@ public class Clearing
         mPlatformExtremities = platform.getTetherPoints();
         mStrapLength = platform.getStrapLength();
         mTreeCircumference = platform.getCircumference();
-        mPlatformTetherAngle = platform.getTetherAngle();
+        mPlatformTetherAngleSmall = platform.getTetherAngle();
+        mPlatformTetherAngleLarge = (MATH_ANGLE_FULL_CIRCLE - mPlatformTetherAngleSmall) / 2.0;
         getPlatformCenterOccasionally();
     }
 
