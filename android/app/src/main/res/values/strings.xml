@@ -53,9 +53,12 @@
         consistent units.</string>
     <string name="faq_symbol_orange_triangle_question">What does the orange triangle indicate?</string>
     <string name="faq_symbol_orange_triangle_answer">The orange triangle indicates that setup is
-        possible, but involves a non-intuitive \"trick\".\n\nWrap the strap around the tree, as you
-        usually do. Pass the ratchet, rather than the loose end of the strap, through the strap loop.
-        Then tighten the strap as usual.</string>
+        possible, but involves a non-intuitive \"trick\".\n\nWith the ratchet detached from the
+        tent, simultaneously pass the ratchet through the strap loop and the strap through the
+        ratchet loop to cinch them together. Then pass the strap through the tent D-ring, around the
+        tree, and into the ratchet. Tighten as usual.\n\nAlternatively, with the ratchet attached to
+        the tent D-ring, pass the ratchet through the strap loop. Then wrap the strap around the
+        tree and into the ratchet. Tighten as usual.</string>
     <string name="faq_symbol_yellow_triangle_question">What does the yellow triangle indicate?</string>
     <string name="faq_symbol_yellow_triangle_answer">The yellow triangle indicates that you will not
         have sufficient strap length to wrap around the tree according to recommendations.\n\nSetup
