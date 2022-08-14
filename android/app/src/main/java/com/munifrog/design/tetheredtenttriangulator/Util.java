@@ -22,9 +22,7 @@ class Util {
     private static final double MATH_SIN_FOUR_THIRDS_PI = Math.sin(MATH_ANGLE_FOUR_THIRDS_PI);
 
     private static final double TENTSILE_CENTER_HOLE_HYPOTENUSE = 0.6;
-    private static final double TENTSILE_NOTCH_SCALE = 0.5;
-    private static final double TENTSILE_NOTCH_SCALED_COS_PI = TENTSILE_NOTCH_SCALE * MATH_COS_THREE_THIRDS_PI;
-    private static final double TENTSILE_NOTCH_SCALED_SIN_PI = TENTSILE_NOTCH_SCALE * MATH_SIN_THREE_THIRDS_PI;
+    private static final double TENTSILE_NOTCH_APPARENT = 0.25; // Una indents by 20cm; Flite and Connect indents by 30cm
 
     private static final double TENTSILE_STRAPS_DEFAULT = 6.0;
     private static final double TENTSILE_CIRCUMFERENCE_DEFAULT = 0.785398163397448; // pi * 25cm or 10inch diameter
@@ -161,7 +159,8 @@ class Util {
                 { -measurements[1], measurements[2] },
                 { -measurements[1], -measurements[2] }
         };
-        double[] notch = new double[] { -measurements[3], 0 };
+        // We want the indentation to appear even when we have assumed none
+        double[] notch = new double[] { TENTSILE_NOTCH_APPARENT - measurements[1], 0 };
 
         Path path = new Path();
         path.moveTo(

@@ -24,19 +24,19 @@ public class ComposeActivity extends ComposeBaseActivity {
     private static final double TENTSILE_TETHER_ANGLE_CONNECT = Util.getSmallAngleGivenIndent(
             TENTSILE_HYPOTENUSE_CONNECT,
             TENTSILE_BASE_CONNECT,
-            0.3
+            0.0
     );
     private static final double TENTSILE_TETHER_ANGLE_DUO = TENTSILE_TETHER_ANGLE_CONNECT;
     private static final double TENTSILE_TETHER_ANGLE_FLITE = Util.getSmallAngleGivenIndent(
             TENTSILE_HYPOTENUSE_FLITE,
             TENTSILE_BASE_FLITE,
-            0.3
+            0.0
     );
     private static final double TENTSILE_TETHER_ANGLE_T_MINI = TENTSILE_TETHER_ANGLE_FLITE;
     private static final double TENTSILE_TETHER_ANGLE_UNA = Util.getSmallAngleGivenIndent(
             TENTSILE_HYPOTENUSE_UNA,
             TENTSILE_BASE_UNA,
-            0.2
+            0.0
     );
     private static final double TENTSILE_TETHER_ANGLE_TRILOGY = TENTSILE_TETHER_ANGLE_CONNECT;
 

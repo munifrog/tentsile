@@ -23,7 +23,7 @@ private let TENTSILE_BASE_TRILOGY: Float = TENTSILE_BASE_CONNECT
 private let TENTSILE_CENTER_HOLE_HYPOTENUSE: Float = 0.6
 private let TENTSILE_CIRCUMFERENCE_DEFAULT: Float = 0.785398163397448 // pi * 25cm or 10inch diameter
 private let TENTSILE_CIRCUMFERENCE_UNA: Float = 0.628318530717959 // pi * 20cm or 8inch diameter
-private let TENTSILE_NOTCH_SCALE: Float = 0.5
+private let TENTSILE_NOTCH_APPARENT: Float = 0.25 // Una indents by 20cm; Flite and Connect indents by 30cm
 private let TENTSILE_HYPOTENUSE_CONNECT: Float = 4.0
 private let TENTSILE_HYPOTENUSE_DUO: Float = TENTSILE_HYPOTENUSE_CONNECT
 private let TENTSILE_HYPOTENUSE_FLITE: Float = 3.25
@@ -42,17 +42,17 @@ private let TENTSILE_TETHER_ANGLE_BALANCED: Float = MATH_TWO_THIRDS_PI
 private let TENTSILE_TETHER_ANGLE_CONNECT: Float = Util.getSmallAngleGivenIndent(
     hypotenuse: TENTSILE_HYPOTENUSE_CONNECT,
     base: TENTSILE_BASE_CONNECT,
-    indent: 0.3)
+    indent: 0.0)
 private let TENTSILE_TETHER_ANGLE_DUO: Float = TENTSILE_TETHER_ANGLE_CONNECT
 private let TENTSILE_TETHER_ANGLE_FLITE: Float = Util.getSmallAngleGivenIndent(
     hypotenuse: TENTSILE_HYPOTENUSE_FLITE,
     base: TENTSILE_BASE_FLITE,
-    indent: 0.3)
+    indent: 0.0)
 private let TENTSILE_TETHER_ANGLE_T_MINI: Float = TENTSILE_TETHER_ANGLE_FLITE
 private let TENTSILE_TETHER_ANGLE_UNA: Float =  Util.getSmallAngleGivenIndent(
     hypotenuse: TENTSILE_HYPOTENUSE_UNA,
     base: TENTSILE_BASE_UNA,
-    indent: 0.2)
+    indent: 0.0)
 private let TENTSILE_TETHER_ANGLE_TRILOGY: Float = TENTSILE_TETHER_ANGLE_CONNECT
 
 struct PlatformDetails {
@@ -197,7 +197,8 @@ private func getTenstsileIsosceles(
     let barb_x: Float = -measurements[1]
     let barb_y: Float = measurements[2]
 
-    let notch_x: Float = -measurements[3]
+    // We want the indentation to appear even when we have assumed none
+    let notch_x: Float = TENTSILE_NOTCH_APPARENT - measurements[1]
     let notch_y: Float = 0
 
     var path = [Coordinate]()
