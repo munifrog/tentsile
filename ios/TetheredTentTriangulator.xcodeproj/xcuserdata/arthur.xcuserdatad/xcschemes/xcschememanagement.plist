@@ -6,8 +6,28 @@
 	<dict>
 		<key>TetheredTentTriangulator.xcscheme_^#shared#^_</key>
 		<dict>
+			<key>isShown</key>
+			<true/>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>8E8C065626E5797400F47062</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8E8C066726E5797600F47062</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8E8C067226E5797600F47062</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>
