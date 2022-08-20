@@ -373,4 +373,114 @@ class TetheredTentTriangulatorTests: XCTestCase {
         )
         XCTAssertTrue(details.icon == AnchorIcon.warning)
     }
+
+    func testGetMeasurementString() throws {
+        let inchDecimal: Float = 1.0 / 12.0
+        let eighthInchDecimal: Float = inchDecimal / 8.0
+        let offset: Float = inchDecimal / 64.0 // 1/64 of an inch; Before and after offset that should round to the target
+
+        var expectations: [[Float]]
+        var expectedString: String
+        var actualString: String
+
+        expectations =
+        [
+            // Use different feet so it is obvious which one fails
+            //   [0] target            // [1] -feet // [2] +feet
+            [  (1.0 +  1 * inchDecimal),   1,           1 ],
+            [  (2.0 +  2 * inchDecimal),   2,           2 ],
+            [  (3.0 +  3 * inchDecimal),   3,           3 ],
+            [  (4.0 +  4 * inchDecimal),   4,           4 ],
+            [  (5.0 +  5 * inchDecimal),   5,           5 ],
+            [  (6.0 +  6 * inchDecimal),   6,           7 ],
+            [  (7.0 +  7 * inchDecimal),   8,           8 ],
+            [  (8.0 +  8 * inchDecimal),   9,           9 ],
+            [  (9.0 +  9 * inchDecimal),  10,          10 ],
+            [ (10.0 + 10 * inchDecimal),  11,          11 ],
+            [ (11.0 + 11 * inchDecimal),  12,          12 ],
+            [ (12.0 + 12 * inchDecimal),  13,          13 ],
+        ]
+        for row in expectations {
+            actualString = Util.getMeasurementString(measure: (row[0] - offset), precision: Precision.units, units: Units.imperial)
+            expectedString = String(format: "%1.0f'", row[1])
+            XCTAssertEqual(actualString, expectedString)
+            actualString = Util.getMeasurementString(measure: (row[0] + offset), precision: Precision.units, units: Units.imperial)
+            expectedString = String(format: "%1.0f'", row[2])
+            XCTAssertEqual(actualString, expectedString)
+        }
+
+        expectations =
+        [
+            // Use different feet so it can be obvious which one fails
+            // [0] target             // [1] -feet // [2] -inches // [3] +feet // [4] +inches
+            [ ( 1.0 +  1 * inchDecimal),  1,           0,             1,           0 ],
+            [ ( 2.0 +  2 * inchDecimal),  2,           0,             2,           4 ],
+            [ ( 3.0 +  3 * inchDecimal),  3,           4,             3,           4 ],
+            [ ( 4.0 +  4 * inchDecimal),  4,           4,             4,           4 ],
+            [ ( 5.0 +  5 * inchDecimal),  5,           4,             5,           4 ],
+            [ ( 6.0 +  6 * inchDecimal),  6,           4,             6,           8 ],
+            [ ( 7.0 +  7 * inchDecimal),  7,           8,             7,           8 ],
+            [ ( 8.0 +  8 * inchDecimal),  8,           8,             8,           8 ],
+            [ ( 9.0 +  9 * inchDecimal),  9,           8,             9,           8 ],
+            [ (10.0 + 10 * inchDecimal), 10,           8,            11,           0 ],
+            [ (11.0 + 11 * inchDecimal), 12,           0,            12,           0 ],
+            [ (12.0 + 12 * inchDecimal), 13,           0,            13,           0 ],
+        ]
+        for row in expectations {
+            actualString = Util.getMeasurementString(measure: (row[0] - offset), precision: Precision.tenths, units: Units.imperial)
+            expectedString = String(format: "%1.0f' %1.0f\"", row[1], row[2])
+            XCTAssertEqual(actualString, expectedString)
+            actualString = Util.getMeasurementString(measure: (row[0] + offset), precision: Precision.tenths, units: Units.imperial)
+            expectedString = String(format: "%1.0f' %1.0f\"", row[3], row[4])
+            XCTAssertEqual(actualString, expectedString)
+        }
+
+        expectations =
+        [
+            // Use different feet so it can be obvious which one fails
+            // |..;..;.|;..;..;|.;..;..|
+            // [0] target                       // [1] -feet // [2] -inches // [3] -eighths // [4] +feet // [5] +inches // [6] +eighths
+            [  (1.0 +    0 * eighthInchDecimal),    1,           0,             0,              1,           0,             0 ],
+            [  (1.0 +    1 * eighthInchDecimal),    1,           0,             0,              1,           0,             0 ],
+            [  (2.0 +  1.5 * eighthInchDecimal),    2,           0,             0,              2,           0,             3 ],
+            [  (3.0 +    2 * eighthInchDecimal),    3,           0,             3,              3,           0,             3 ],
+            [  (4.0 +    3 * eighthInchDecimal),    4,           0,             3,              4,           0,             3 ],
+            [  (5.0 +    4 * eighthInchDecimal),    5,           0,             3,              5,           0,             3 ],
+            [  (6.0 +  4.5 * eighthInchDecimal),    6,           0,             3,              6,           0,             6 ],
+            [  (7.0 +    5 * eighthInchDecimal),    7,           0,             6,              7,           0,             6 ],
+            [  (8.0 +    6 * eighthInchDecimal),    8,           0,             6,              8,           0,             6 ],
+            [  (9.0 +    7 * eighthInchDecimal),    9,           0,             6,              9,           0,             6 ],
+            [ (10.0 +  7.5 * eighthInchDecimal),   10,           0,             6,             10,           1,             1 ],
+            [ (11.0 +    8 * eighthInchDecimal),   11,           1,             1,             11,           1,             1 ],
+            [ (12.0 +    9 * eighthInchDecimal),   12,           1,             1,             12,           1,             1 ],
+            [ (13.0 +   10 * eighthInchDecimal),   13,           1,             1,             13,           1,             1 ],
+            [ (14.0 + 10.5 * eighthInchDecimal),   14,           1,             1,             14,           1,             4 ],
+            [ (15.0 +   11 * eighthInchDecimal),   15,           1,             4,             15,           1,             4 ],
+            [ (16.0 +   12 * eighthInchDecimal),   16,           1,             4,             16,           1,             4 ],
+            [ (17.0 +   13 * eighthInchDecimal),   17,           1,             4,             17,           1,             4 ],
+            [ (18.0 + 13.5 * eighthInchDecimal),   18,           1,             4,             18,           1,             7 ],
+            [ (19.0 +   14 * eighthInchDecimal),   19,           1,             7,             19,           1,             7 ],
+            [ (20.0 +   15 * eighthInchDecimal),   20,           1,             7,             20,           1,             7 ],
+            [ (21.0 +   16 * eighthInchDecimal),   21,           1,             7,             21,           1,             7 ],
+            [ (22.0 + 16.5 * eighthInchDecimal),   22,           1,             7,             22,           2,             2 ],
+            [ (23.0 +   17 * eighthInchDecimal),   23,           2,             2,             23,           2,             2 ],
+            [ (24.0 +   18 * eighthInchDecimal),   24,           2,             2,             24,           2,             2 ],
+            [ (25.0 +   19 * eighthInchDecimal),   25,           2,             2,             25,           2,             2 ],
+            [ (26.0 + 19.5 * eighthInchDecimal),   26,           2,             2,             26,           2,             5 ],
+            [ (27.0 +   20 * eighthInchDecimal),   27,           2,             5,             27,           2,             5 ],
+            [ (28.0 +   21 * eighthInchDecimal),   28,           2,             5,             28,           2,             5 ],
+            [ (29.0 +   22 * eighthInchDecimal),   29,           2,             5,             29,           2,             5 ],
+            [ (30.0 + 22.5 * eighthInchDecimal),   30,           2,             5,             30,           3,             0 ],
+            [ (31.0 +   23 * eighthInchDecimal),   31,           3,             0,             31,           3,             0 ],
+            [ (32.0 +   24 * eighthInchDecimal),   32,           3,             0,             32,           3,             0 ],
+        ]
+        for row in expectations {
+            actualString = Util.getMeasurementString(measure: (row[0] - offset), precision: Precision.hundredths, units: Units.imperial)
+            expectedString = String(format: "%1.0f' %1.0f\" %1.0f/8", row[1], row[2], row[3])
+            XCTAssertEqual(actualString, expectedString)
+            actualString = Util.getMeasurementString(measure: (row[0] + offset), precision: Precision.hundredths, units: Units.imperial)
+            expectedString = String(format: "%1.0f' %1.0f\" %1.0f/8", row[4], row[5], row[6])
+            XCTAssertEqual(actualString, expectedString)
+        }
+    }
 }

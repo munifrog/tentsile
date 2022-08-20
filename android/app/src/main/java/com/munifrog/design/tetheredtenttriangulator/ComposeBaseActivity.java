@@ -65,6 +65,7 @@ public class ComposeBaseActivity
             (MATH_SEEKBAR_POINT_03 - MATH_SEEKBAR_POINT_02);
 
     private static final int MATH_SEEKBAR_INITIAL = 25;
+    private static final int UNIT_PRECISION = Util.MATH_PRECISION_HUNDREDTHS;
 
     public ImageButton mPlatformRotation;
     private Menu mToolbarMenu;
@@ -87,9 +88,22 @@ public class ComposeBaseActivity
         Rect actualSize = mVersionSupport.getBounds();
         mClearing.setFullWindowBounds(actualSize);
 
+        int meterReference;
+        int imperialReference;
+        if (UNIT_PRECISION == Util.MATH_PRECISION_HUNDREDTHS) {
+            meterReference = R.string.unit_meters_with_number_hundredths;
+            imperialReference = R.string.unit_imperial_with_number_hundredths;
+        } else if (UNIT_PRECISION == Util.MATH_PRECISION_TENTHS) {
+            meterReference = R.string.unit_meters_with_number_tenths;
+            imperialReference = R.string.unit_imperial_with_number_tenths;
+        } else { // UNIT_PRECISION = Util.MATH_PRECISION_UNITS
+            meterReference = R.string.unit_meters_with_number_units;
+            imperialReference = R.string.unit_imperial_with_number_units;
+        }
         mClearing.setUnitStrings(
-                getString(R.string.unit_meters_with_number),
-                getString(R.string.unit_imperial_with_number)
+                getString(meterReference),
+                getString(imperialReference),
+                UNIT_PRECISION
         );
 
         Resources r = getResources();

@@ -21,6 +21,10 @@ class Util {
     private static final double MATH_SIN_THREE_THIRDS_PI = Math.sin(Math.PI);
     private static final double MATH_SIN_FOUR_THIRDS_PI = Math.sin(MATH_ANGLE_FOUR_THIRDS_PI);
 
+    public static final int MATH_PRECISION_UNITS = 0;
+    public static final int MATH_PRECISION_TENTHS = 1;
+    public static final int MATH_PRECISION_HUNDREDTHS = 2;
+
     private static final double TENTSILE_CENTER_HOLE_HYPOTENUSE = 0.6;
     private static final double TENTSILE_NOTCH_APPARENT = 0.25; // Una indents by 20cm; Flite and Connect indents by 30cm
 
@@ -365,5 +369,65 @@ class Util {
         double alpha = Math.atan(2 * indent / base);
         double gamma = Math.asin( base / 2 / hypotenuse);
         return MATH_ANGLE_QUARTER_CIRCLE + gamma - alpha;
+    }
+
+    static double[] getImperialWithMeterPrecision(double measure, int degree) {
+        // In order to make meters and feet measurements about the same accuracy, we try to match
+        // with foot and inch fractions. (We could do similarly with meters, but those are so clean!)
+        double[] split;
+        double[] wholeAndPart;
+        switch (degree) {
+            case MATH_PRECISION_UNITS:
+                // We only care about the nearest imperial foot (not use floor like the other cases)
+                split = new double[1];
+                split[0] = Math.round(measure);
+                break;
+            default:
+            case MATH_PRECISION_TENTHS:
+                // One imperial foot equals twelve inches.
+                // And 4 inches (1/3 foot) is about 1/10 meter.
+                // To convert 1/10 of a foot to 1/12 of a foot:
+                //   fraction / 10 = inches / 12 OR inches = 12 * fraction / 10
+                // Similarly, to convert 1/10 of a foot to 1/3 of a foot:
+                //   fraction / 10 = inches / 3 OR inches = 3 * fraction / 10
+                // (Note that the fraction portion is already divided by 10 here.)
+                // Rounding after multiplying discards further precision and spreads units equally.
+                // Multiplying by 4 afterwards stretches the 3 inches to full foot.
+                split = new double[2];
+                wholeAndPart = getSplit(measure); // feet
+                split[0] = wholeAndPart[0];
+                split[1] = Math.round(wholeAndPart[1] * 3) * 4; // 4 inch precision
+                if (split[1] == 12) {
+                    split[0] += 1;
+                    split[1] = 0;
+                }
+                break;
+            case MATH_PRECISION_HUNDREDTHS:
+                // One imperial foot equals twelve inches.
+                // One centimeter is about 3/8 inches.
+                // 3/8 inches fits into 3 inches 8 times or 32 times in 1 foot.
+                // Either way, we can deal with feet separately.
+                split = new double[3];
+                wholeAndPart = getSplit(measure);
+                split[0] = wholeAndPart[0]; // feet
+                // Multiply by 32 to get 32 equally-spaced units (for the 3/8) and snap to the
+                // nearest using round(). Then stretch the results (multiplying by 3) to entire foot.
+                double numEighths = Math.round(wholeAndPart[1] * 32) * 3;
+                split[1] = Math.floor(numEighths / 8.0);
+                split[2] = numEighths - (split[1] * 8);
+                if (split[1] >= 12) {
+                    split[0] += 1;
+                    split[1] -= 12;
+                }
+                break;
+        }
+        return split;
+    }
+
+    private static double[] getSplit(double measure) {
+        double[] split = new double[2];
+        split[0] = Math.floor(measure);
+        split[1] = measure - split[0];
+        return split;
     }
 }

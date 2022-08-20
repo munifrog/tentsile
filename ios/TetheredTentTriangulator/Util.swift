@@ -20,6 +20,12 @@ enum AnchorIcon {
     case warning
 }
 
+enum Precision {
+    case units
+    case tenths
+    case hundredths
+}
+
 struct TetherDetails {
     let icon: AnchorIcon
     let knots: [Coordinate]
@@ -196,29 +202,51 @@ class Util {
 
     static func getMeasurementString(
         measure: Float,
+        precision: Precision,
         units: Units
     ) -> String {
         // This function is meant for labels only
         if units == .metric {
-            return String(format: "%3.1f m", measure)
-        } else {
-            var feet: Float = floor(measure)
-            let fraction: Float = measure - feet
-            // One imperial foot equals twelve inches.
-            // And 4 inches (1/3 foot) is about 1/10 meter.
-            // To convert 1/10 of a foot to 1/12 of a foot:
-            //   fraction / 10 = inches / 12 OR inches = 12 * fraction / 10
-            // Similarly, to convert 1/10 of a foot to 1/3 of a foot:
-            //   fraction / 10 = inches / 3 OR inches = 3 * fraction / 10
-            // (Note that the fraction portion is already divided by 10 here.)
-            // Rounding after multiplying discards further precision.
-            // Multiplying by 4 puts the 1/3 foot value back into inches (1/12)
-            var inches: Float = round(fraction * 3) * 4
-            if inches == 12 {
-                feet = feet + 1
-                inches = 0
+            if precision == .hundredths {
+                return String(format: "%3.2f m", measure)
+            } else if precision == .tenths {
+                return String(format: "%3.1f m", measure)
+            } else { //if precision == Precision.units {
+                return String(format: "%3.0f m", measure)
             }
-            return String(format: "%1.0f' %1.0f\"", feet, inches)
+        } else {
+            var feet: Float
+            var inches: Float
+            var eighths: Float
+            let fraction: Float
+
+            if precision == .hundredths {
+                feet = floor(measure)
+                fraction = measure - feet
+                // Multiply fraction into 32 equal units (3/8 inch apart). Round to snap to closest.
+                // Then multiply by 3 to stretch to a full foot.
+                eighths = round(fraction * 32) * 3
+                inches = floor(eighths / 8.0)
+                eighths -= inches * 8
+                if inches == 12 {
+                    feet += 1
+                    inches = 0
+                }
+                return String(format: "%1.0f' %1.0f\" %1.0f/8", feet, inches, eighths)
+            } else if precision == .tenths {
+                feet = floor(measure)
+                fraction = measure - feet
+                // Multiply fraction into 3 equal units. Round to snap to closest.
+                // Then multiply by 4 to stretch to a full foot.
+                inches = round(fraction * 3) * 4
+                if inches == 12 {
+                    feet += 1
+                    inches = 0
+                }
+                return String(format: "%1.0f' %1.0f\"", feet, inches)
+            } else { //if precision == Precision.units {
+                return String(format: "%1.0f'", round(measure))
+            }
         }
     }
 

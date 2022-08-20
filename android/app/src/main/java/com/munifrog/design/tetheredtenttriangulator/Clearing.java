@@ -1,5 +1,9 @@
 package com.munifrog.design.tetheredtenttriangulator;
 
+import static com.munifrog.design.tetheredtenttriangulator.Util.MATH_PRECISION_UNITS;
+import static com.munifrog.design.tetheredtenttriangulator.Util.MATH_PRECISION_TENTHS;
+import static com.munifrog.design.tetheredtenttriangulator.Util.MATH_PRECISION_HUNDREDTHS;
+
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.DashPathEffect;
@@ -64,6 +68,7 @@ public class Clearing
 
     private String mStringMeters;
     private String mStringImperial;
+    private int mStringPrecision;
 
     private float [] mPlatformCoordinates = new float[2];
     private final float [] mSnapshotPlatform = new float[2];
@@ -159,9 +164,10 @@ public class Clearing
         invalidateSelf();
     }
 
-    public void setUnitStrings(String meters, String imperial) {
+    public void setUnitStrings(String meters, String imperial, int precision) {
         mStringMeters = meters;
         mStringImperial = imperial;
+        mStringPrecision = precision;
     }
 
     public void selectTether(int x, int y) {
@@ -580,7 +586,6 @@ public class Clearing
 
     private void drawPlatformLabels(Canvas canvas, double[] distances) {
         if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
-            String units = (mIsImperial ? mStringImperial : mStringMeters);
             // Label the distance between the platform corner and tether location
             int[] indices = getIndexOrder();
             if (distances[0] > -1) {
@@ -789,23 +794,14 @@ public class Clearing
     private String getMeasurementString(double measure) {
         // This function is meant for labels only
         if (mIsImperial) {
-            double feet = Math.floor(measure);
-            double fraction = measure - feet;
-            // One imperial foot equals twelve inches.
-            // And 4 inches (1/3 foot) is about 1/10 meter.
-            // To convert 1/10 of a foot to 1/12 of a foot:
-            //   fraction / 10 = inches / 12 OR inches = 12 * fraction / 10
-            // Similarly, to convert 1/10 of a foot to 1/3 of a foot:
-            //   fraction / 10 = inches / 3 OR inches = 3 * fraction / 10
-            // (Note that the fraction portion is already divided by 10 here.)
-            // Rounding after multiplying discards further precision.
-            // Multiplying by 4 puts the 1/3 foot value back into inches (1/12)
-            double inches = Math.round(fraction * 3) * 4;
-            if (inches == 12) {
-                feet++;
-                inches = 0;
+            double [] split = Util.getImperialWithMeterPrecision(measure, mStringPrecision);
+            if (mStringPrecision == MATH_PRECISION_HUNDREDTHS) {
+                return String.format(mStringImperial, split[0], split[1], split[2]);
+            } else if (mStringPrecision == MATH_PRECISION_TENTHS) {
+                return String.format(mStringImperial, split[0], split[1]);
+            } else { //if (mStringPrecision == MATH_PRECISION_UNITS) {
+                return String.format(mStringImperial, split[0]);
             }
-            return String.format(mStringImperial, feet, inches);
         } else {
             return String.format(mStringMeters, measure);
         }
