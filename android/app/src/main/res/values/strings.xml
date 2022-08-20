@@ -27,7 +27,7 @@
     <string name="menu_decrease_symbols">Decrease symbols</string>
 
     <string name="faq_accuracy_question">How accurately do I need to measure?</string>
-    <string name="faq_accuracy_answer">The App itself is accurate to one decimeter or four imperial
+    <string name="faq_accuracy_answer">The App itself is accurate to one centimeter or 3/8 imperial
         inches.\n\nYou can use the app to get the measurements sufficiently close to then be able to
         align the tent according to the manufacturers instructions.</string>
     <string name="faq_all_at_once_question">What if my measurement goes off the screen?</string>
