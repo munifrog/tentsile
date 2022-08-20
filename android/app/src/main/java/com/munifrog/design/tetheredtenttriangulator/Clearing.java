@@ -44,8 +44,9 @@ public class Clearing
     private static final double MATH_METERS_TOO_CLOSE = 0.7;
     private static final double MATH_METERS_TOO_CLOSE_SQUARED =
             MATH_METERS_TOO_CLOSE * MATH_METERS_TOO_CLOSE;
-    private static final double MATH_INCLINATION_DEGREES = 10;
-    private static final double MATH_INCLINATION_MULTIPLIER = 1.0 / Math.cos(MATH_INCLINATION_DEGREES * Math.PI / 180.0);
+    // The tether holds an 8 kilogram tent and is under 300 kilograms of force:
+    private static final double MATH_INCLINATION_RADIANS = Math.asin(8.0 / 300.0);
+    private static final double MATH_INCLINATION_MULTIPLIER = 1.0 / Math.cos(MATH_INCLINATION_RADIANS);
 
     private final Paint mTetherPaintPlatform;
     private final Paint mTetherPaintStraps;
