@@ -26,10 +26,16 @@
     <string name="menu_increase_symbols">Increase symbols</string>
     <string name="menu_decrease_symbols">Decrease symbols</string>
 
-    <string name="faq_accuracy_question">How accurately do I need to measure?</string>
-    <string name="faq_accuracy_answer">The App itself is accurate to one centimeter or 3/8 imperial
+    <string name="faq_accuracy_1_question">How accurately do I need to measure?</string>
+    <string name="faq_accuracy_1_answer">The App itself is accurate to one centimeter or 3/8 imperial
         inches.\n\nYou can use the app to get the measurements sufficiently close to then be able to
         align the tent according to the manufacturers instructions.</string>
+    <string name="faq_accuracy_2_question">How do I get the app to match my measurements?</string>
+    <string name="faq_accuracy_2_answer">Do not worry about matching the measurements exactly. The
+        measurements are probably close enough for what you need to setup.\n\nWhile a future release
+        will make it easier to enter values, the dimensions of your tent or hammock will vary from
+        the models used by this App to predict the tether lengths.\n\nInstead, use this App to get
+        close enough to follow the manufacturers instructions.</string>
     <string name="faq_all_at_once_question">What if my measurement goes off the screen?</string>
     <string name="faq_all_at_once_answer" tools:ignore="TypographyEllipsis">Depending on the issue,
         you have a few options. You can...

@@ -17,6 +17,9 @@ struct FAQListView: View {
             Q: "How accurately do I need to measure?",
             A: "The App itself is accurate to one centimeter or 3/8 imperial inches.\n\nYou can use the app to get the measurements sufficiently close to then be able to align the tent according to the manufacturers instructions."),
         FAQView(
+            Q: "How do I get the app to match my measurements?",
+            A: "Do not worry about matching the measurements exactly. The measurements are probably close enough for what you need to setup.\n\nWhile a future release will make it easier to enter values, the dimensions of your tent or hammock will vary from the models used by this App to predict the tether lengths.\n\nInstead, use this App to get close enough to follow the manufacturers instructions."),
+        FAQView(
             Q: "What if my measurement goes off the screen?",
             A: "Depending on the issue, you have a few options. You can ...\n\n... drag the tether intersection point (if visible) to move all the anchors simultaneously.\n\n... tilt the device and modify anchors in that orientation.\n\n... reset the anchors using the menu option.\n\n... change the scale of the units using the slider."),
         FAQView(

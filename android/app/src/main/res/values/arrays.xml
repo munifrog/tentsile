@@ -4,7 +4,8 @@
 
     <string-array name="faq_questions">
         <item>@string/faq_exiting_faq_page_question</item>
-        <item>@string/faq_accuracy_question</item>
+        <item>@string/faq_accuracy_1_question</item>
+        <item>@string/faq_accuracy_2_question</item>
         <item>@string/faq_all_at_once_question</item>
         <item>@string/faq_measurement_1_question</item>
         <item>@string/faq_measurement_2_question</item>
@@ -21,7 +22,8 @@
 
     <string-array name="faq_answers">
         <item>@string/faq_exiting_faq_page_answer</item>
-        <item>@string/faq_accuracy_answer</item>
+        <item>@string/faq_accuracy_1_answer</item>
+        <item>@string/faq_accuracy_2_answer</item>
         <item>@string/faq_all_at_once_answer</item>
         <item>@string/faq_measurement_1_answer</item>
         <item>@string/faq_measurement_2_answer</item>
