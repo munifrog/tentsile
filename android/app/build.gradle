@@ -50,6 +50,15 @@ android {
             applicationId 'com.munifrog.design.tetheredtenttriangulator.full'
         }
     }
+
+    allprojects {
+        // Uncomment to see Lint warnings
+    /*
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    */
+    }
 }
 
 dependencies {
