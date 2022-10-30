@@ -124,9 +124,9 @@ public class ComposeBaseActivity
 
         Toolbar toolbar = findViewById(R.id.tb_main);
         if (r.getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            toolbar.setTitle(R.string.app_name_long);
+            toolbar.setTitle(R.string.app_name_landscape);
         } else {
-            toolbar.setTitle(R.string.app_name_short);
+            toolbar.setTitle(R.string.app_name_portrait);
         }
         setSupportActionBar(toolbar);
 

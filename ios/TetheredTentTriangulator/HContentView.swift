@@ -18,7 +18,7 @@ struct HContentView: View {
         let limits = config.getLimits()
         VStack(spacing: 0) {
             HStack {
-                Text("Tethered Tent Triangulator")
+                Text("Tentsile Triangulator")
                     .font(.headline)
                     .foregroundColor(Color.white)
                 Spacer()

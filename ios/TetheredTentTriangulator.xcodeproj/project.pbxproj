@@ -548,6 +548,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"TetheredTentTriangulator/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TetheredTentTriangulator/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Tentsile Triangulator";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -571,6 +573,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"TetheredTentTriangulator/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TetheredTentTriangulator/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Tentsile Triangulator";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

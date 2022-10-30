@@ -14,7 +14,7 @@ struct VContentView: View {
     var body: some View {
         VStack(spacing:0) {
             HStack {
-                Text("Tethered Tents")
+                Text("Tentsile Triangulator")
                     .font(.headline)
                     .foregroundColor(Color.white)
                 Spacer()
