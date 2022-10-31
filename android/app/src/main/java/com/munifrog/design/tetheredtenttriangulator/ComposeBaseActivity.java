@@ -438,4 +438,13 @@ public class ComposeBaseActivity
     public void triangleHasFlipped(boolean isFlipped) {
         mPlatformRotation.setScaleX(isFlipped ? -1 : 1);
     }
+
+    private void loadPresets(PreSets setting) {
+        mClearing.setTetherPoints(PreSets.getTethers(setting));
+        mClearing.releaseTether();
+        mClearing.setIsImperial(PreSets.isImperial(setting));
+        setSeekBarPosition(PreSets.getSlider(setting));
+        int platformPosition = mSpinAdapter.getPosition(getString(PreSets.getPlatformStringId(setting)));
+        mSpinner.setSelection(platformPosition);
+    }
 }
