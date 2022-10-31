@@ -202,7 +202,7 @@ class Util {
                 { distal * MATH_COS_TWO_THIRDS_PI, distal * MATH_SIN_TWO_THIRDS_PI },
                 { distal * MATH_COS_FOUR_THIRDS_PI, distal * MATH_SIN_FOUR_THIRDS_PI }
         };
-        double[] notch = new double[] { translation - measurements[3], 0 };
+        double[] notch = new double[] { translation + TENTSILE_NOTCH_APPARENT - measurements[1], 0 };
         double[] barb = new double[] { translation - measurements[1], measurements[2] };
 
         for (int i = 0; i < 3; i++) {
