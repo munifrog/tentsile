@@ -33,6 +33,7 @@ struct VContentView: View {
                 Spacer()
                 Clearing(config: $config)
             }
+            .overlay(FineTuneSliderView(config: $config))
         }
     }
 }

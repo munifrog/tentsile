@@ -43,6 +43,25 @@ struct Anchors {
         return sqrt(ca_x * ca_x + ca_y * ca_y)
     }
 
+    var ab_label: Coordinate {
+        return Coordinate(
+            x: (a.x + b.x) / 2,
+            y: (a.y + b.y) / 2
+        )
+    }
+    var bc_label: Coordinate {
+        return Coordinate(
+            x: (b.x + c.x) / 2,
+            y: (b.y + c.y) / 2
+        )
+    }
+    var ca_label: Coordinate {
+        return Coordinate(
+            x: (c.x + a.x) / 2,
+            y: (c.y + a.y) / 2
+        )
+    }
+
     init(anchors: Anchors) {
         self.a = anchors.a
         self.b = anchors.b

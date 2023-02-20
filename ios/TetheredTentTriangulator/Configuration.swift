@@ -9,8 +9,14 @@ import Foundation
 
 enum Select {
     case anchor_a
+    case ab
+    case ab_waiting
     case anchor_b
+    case bc
+    case bc_waiting
     case anchor_c
+    case ca
+    case ca_waiting
     case missed
     case none
     case point
@@ -63,6 +69,7 @@ enum Symbols: Int, Comparable {
 private let MATH_BASE_PIXELS_PER_METER: Float = 75;
 private let MATH_METERS_CENTER_TO_ANCHOR_MIN: Float = 0.7
 private let MATH_METERS_TO_FEET_CONVERSION: Float = 3.2808399;
+private let MATH_THREE_EIGHTHS_INCH_TO_FEET_CONVERSION: Float = 0.03125;
 private let MATH_SLIDER_POINT_00: Float = 0.0;
 private let MATH_SLIDER_POINT_01: Float = 50.0;
 private let MATH_SLIDER_POINT_02: Float = 75.0;
@@ -102,6 +109,7 @@ struct Configuration {
         }
     }
     var selection: Select = .none
+    var fineTuneOffset: Float = 0
     var symbols: Symbols {
         didSet {
             UserDefaults.standard.set(symbols.rawValue, forKey: USER_DEFAULTS_STORED_SYMBOLS)
@@ -218,9 +226,62 @@ struct Configuration {
         self.initial_c = self.anchors.c
     }
 
-    mutating func endSelection() {
-        self.selection = .none
-        self.resetInitialPositions()
+    mutating func endSelection(touch: Coordinate) {
+        switch selection {
+        case .anchor_a, .anchor_b, .anchor_c :
+            resetInitialPositions()
+            selection = .none
+        case .ab_waiting, .bc_waiting, .ca_waiting:
+            let end_selection = getSelection(touch: touch)
+            if selection == end_selection {
+                if end_selection == .ab_waiting {
+                    selection = .ab
+                } else if end_selection == .bc_waiting {
+                    selection = .bc
+                } else {
+                    selection = .ca
+                }
+                fineTuneOffset = 0
+            } else {
+                selection = .none
+            }
+        case .point, .missed:
+            selection = .none
+        default:
+            // Do nothing
+            break
+        }
+    }
+
+    mutating func isFineTuning() -> Bool {
+        return selection == .ab || selection == .bc || selection == .ca
+    }
+
+    private mutating func getSelectedPerimeterDistance() -> Float {
+        let segment: Float = self.units == .metric ? 0.01 : MATH_THREE_EIGHTHS_INCH_TO_FEET_CONVERSION
+        var pixels: Float = 0.0
+        if selection == .ab {
+            pixels = anchors.ab
+        } else if selection == .bc {
+            pixels = anchors.bc
+        } else if selection == .ca {
+            pixels = anchors.ca
+        } else {
+            pixels = 0.0
+        }
+        return Util.getMeasureFromPixels(
+            pixels: pixels,
+            meterScale: distanceScale,
+            units: self.units
+        ) + fineTuneOffset * segment
+    }
+
+    mutating func getSelectedPerimeterString() -> String {
+        return Util.getMeasurementString(
+            measure: getSelectedPerimeterDistance(),
+            precision: Precision.hundredths,
+            units: self.units
+        )
     }
 
     mutating func updateSelection(touch: Coordinate) {
@@ -235,6 +296,13 @@ struct Configuration {
         case .anchor_c:
             anchors.c = getBoundedTouch(touch: touch)
             updateTetherCenter()
+        case .ab, .bc, .ca:
+            makeAnchorsMatchMeasurements()
+            selection = .none
+            updateTetherCenter()
+        case .ab_waiting, .bc_waiting, .ca_waiting:
+            // Wait for the touch event to end before doing anything
+            break
         case .missed:
             // Do nothing
             break
@@ -243,10 +311,12 @@ struct Configuration {
             // Set selection as missed to ignore any other motion events
             self.selection = .missed
             self.selection = self.getSelection(touch: touch)
+            if self.selection == .point {
+                saveInitialPositions()
+            }
         case .point:
             updateAnchors(touch: touch)
             updateTetherCenter()
-            break
         }
     }
 
@@ -271,7 +341,7 @@ struct Configuration {
     mutating func getSelection(touch: Coordinate) -> Select {
         // Determine if any selection points are close enough to the touch point
         var closestDist = self.radiusSquared
-        var newSelection: Select = self.selection
+        var newSelection: Select = .missed
 
         var diff = touch - self.anchors.a
         var diffSquared = diff.x * diff.x + diff.y * diff.y
@@ -294,17 +364,120 @@ struct Configuration {
             closestDist = diffSquared
         }
 
+        diff = touch - self.anchors.ab_label
+        diffSquared = diff.x * diff.x + diff.y * diff.y
+        if diffSquared < closestDist {
+            newSelection = .ab_waiting
+            closestDist = diffSquared
+        }
+
+        diff = touch - self.anchors.bc_label
+        diffSquared = diff.x * diff.x + diff.y * diff.y
+        if diffSquared < closestDist {
+            newSelection = .bc_waiting
+            closestDist = diffSquared
+        }
+
+        diff = touch - self.anchors.ca_label
+        diffSquared = diff.x * diff.x + diff.y * diff.y
+        if diffSquared < closestDist {
+            newSelection = .ca_waiting
+            closestDist = diffSquared
+        }
+
         if getCanDrawPlatform() {
             diff = touch - center!.p
             diffSquared = diff.x * diff.x + diff.y * diff.y
             if diffSquared < closestDist {
                 newSelection = .point
                 //closestDist = diffSquared
-                saveInitialPositions()
             }
         }
 
         return newSelection
+    }
+
+    mutating func makeAnchorsMatchMeasurements() {
+        // We need two fixed points to determine where to place the third.
+        // One will be opposite the line segment that is changing.
+        // The other will be at the corner next to the shorter side.
+        var shortSide: Float
+        var longSide: Float
+        var pivot: Coordinate
+        var opposite: Coordinate
+        var multiplier: Float = getFlip() ? -1.0 : 1.0
+        var anchorToUpdate: Select
+        if selection == .ab {
+            opposite = anchors.c
+            if anchors.bc < anchors.ca {
+                shortSide = anchors.bc
+                longSide = anchors.ca
+                pivot = anchors.b
+                anchorToUpdate = Select.anchor_a
+            } else {
+                multiplier *= -1.0
+                shortSide = anchors.ca
+                longSide = anchors.bc
+                pivot = anchors.a
+                anchorToUpdate = Select.anchor_b
+            }
+        } else if selection == .bc {
+            opposite = anchors.a
+            if anchors.ab < anchors.ca {
+                multiplier *= -1.0
+                shortSide = anchors.ab
+                longSide = anchors.ca
+                pivot = anchors.b
+                anchorToUpdate = Select.anchor_c
+            } else {
+                shortSide = anchors.ca
+                longSide = anchors.ab
+                pivot = anchors.c
+                anchorToUpdate = Select.anchor_b
+            }
+        } else { //if selection == .ca {
+            opposite = anchors.b
+            if anchors.ab < anchors.bc {
+                shortSide = anchors.ab
+                longSide = anchors.bc
+                pivot = anchors.a
+                anchorToUpdate = Select.anchor_c
+            } else {
+                multiplier *= -1.0
+                shortSide = anchors.bc
+                longSide = anchors.ab
+                pivot = anchors.c
+                anchorToUpdate = Select.anchor_a
+            }
+        }
+        // Determine the angle from pivot to opposite points
+        let delta = opposite - pivot
+        let hypotenuse = sqrt(delta.x * delta.x + delta.y * delta.y)
+        let startingAngle: Float = Util.getDirection(h: hypotenuse, delta_x: delta.x, delta_y: delta.y)
+        // Determine the new angle inside the triangle at the pivot corner
+        let changingSegment: Float = Util.getPixelsFromMeasure(
+            measure: getSelectedPerimeterDistance(),
+            pixelScale: imageScale,
+            units: self.units
+        )
+        let numerator: Float = changingSegment * changingSegment + shortSide * shortSide - longSide * longSide
+        let denominator: Float = 2 * changingSegment * shortSide
+        let insideAngle: Float = acos(numerator / denominator)
+        // The multiplier helps determine whether to add or subtract the inside angle
+        let totalAngle = startingAngle + multiplier * insideAngle
+        // Update moving anchor relative to pivot point
+        let updatedCoordinate = Coordinate(
+            x: pivot.x + changingSegment * cos(totalAngle),
+            y: pivot.y + changingSegment * sin(totalAngle)
+        )
+        // Only change the anchor that moves
+        if anchorToUpdate == Select.anchor_a {
+            anchors.a = updatedCoordinate
+        } else if anchorToUpdate == Select.anchor_b {
+            anchors.b = updatedCoordinate
+        } else { //if anchorToUpdate == Select.anchor_c {
+            anchors.c = updatedCoordinate
+        }
     }
 
     mutating func updateAnchors(touch: Coordinate) {

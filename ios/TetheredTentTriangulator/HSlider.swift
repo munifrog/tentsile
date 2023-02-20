@@ -10,12 +10,14 @@ import SwiftUI
 struct HSlider: View {
     @Binding var position: Float
     @State private var isEditing = false
+    var start: Float = 1
+    var finish: Float = 100
 
     var body: some View {
         VStack {
             Slider(
                 value: $position,
-                in: 1...100,
+                in: start...finish,
                 step: 1,
                 onEditingChanged: { editing in
                     isEditing = editing

@@ -9,6 +9,7 @@ import Foundation
 
 private let STRAP_EXTENSION_LENGTH: Float = 6.0
 private let MATH_METERS_TO_FEET_CONVERSION: Float = 3.2808399;
+private let MATH_FEET_TO_METERS_CONVERSION: Float = 0.3048;
 // The tether holds an 8 kilogram tent and is under 300 kilograms of force:
 private let MATH_INCLINATION_ANGLE: Float = asin(8.0 / 300.0);
 private let MATH_INCLINATION_MULTIPLIER: Float = 1.0 / cos(MATH_INCLINATION_ANGLE);
@@ -257,6 +258,14 @@ class Util {
         units: Units
     ) -> Float {
         return pixels * meterScale * (units == .metric ? 1.0 : MATH_METERS_TO_FEET_CONVERSION)
+    }
+
+    static func getPixelsFromMeasure(
+        measure: Float,
+        pixelScale: Float,
+        units: Units
+    ) -> Float {
+        return measure * pixelScale * (units == .metric ? 1.0 : MATH_FEET_TO_METERS_CONVERSION)
     }
 
     static func getInclinedMeasureFromPixels(

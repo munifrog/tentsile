@@ -40,6 +40,7 @@ struct HContentView: View {
                         offsetY: pickerHeight / 2
                     )
                 }
+                .overlay(FineTuneSliderView(config: $config))
                 VStack {
                     HStack {
                         Spacer()

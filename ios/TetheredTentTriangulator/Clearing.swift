@@ -24,7 +24,9 @@ struct Clearing: View {
             })
             .onEnded({ touch in
                 self.touchPoint = touch.location
-                self.config.endSelection()
+                self.config.endSelection(
+                    touch: touchPoint - dimensions
+                )
             })
     }
 

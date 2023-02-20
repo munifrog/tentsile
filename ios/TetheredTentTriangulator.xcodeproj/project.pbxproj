@@ -39,6 +39,7 @@
 		8EB1CD8727697A84009E2036 /* TetherIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB1CD8627697A83009E2036 /* TetherIconView.swift */; };
 		8EB1CD8927711B17009E2036 /* PlatformLabelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB1CD8827711B15009E2036 /* PlatformLabelsView.swift */; };
 		8EB7061D27C439B6009D56F5 /* DrawableSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB7061C27C439B5009D56F5 /* DrawableSetup.swift */; };
+		8EB9C8FC29A2B88C00CAC226 /* FineTuneSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB9C8FB29A2B88C00CAC226 /* FineTuneSliderView.swift */; };
 		8EBA707D275D6E410084093B /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBA707C275D6E400084093B /* MenuView.swift */; };
 		8EC38315270A086E006D9AE6 /* LabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC38314270A086E006D9AE6 /* LabelView.swift */; };
 		8EC38317270A43D9006D9AE6 /* PlatformPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC38316270A43D9006D9AE6 /* PlatformPath.swift */; };
@@ -102,6 +103,7 @@
 		8EB1CD8627697A83009E2036 /* TetherIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TetherIconView.swift; sourceTree = "<group>"; };
 		8EB1CD8827711B15009E2036 /* PlatformLabelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformLabelsView.swift; sourceTree = "<group>"; };
 		8EB7061C27C439B5009D56F5 /* DrawableSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawableSetup.swift; sourceTree = "<group>"; };
+		8EB9C8FB29A2B88C00CAC226 /* FineTuneSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FineTuneSliderView.swift; sourceTree = "<group>"; };
 		8EBA707C275D6E400084093B /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		8EC38314270A086E006D9AE6 /* LabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelView.swift; sourceTree = "<group>"; };
 		8EC38316270A43D9006D9AE6 /* PlatformPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlatformPath.swift; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 				8E6F727726F7E6620099BB36 /* Extensions.swift */,
 				8EA1FE3028406AC60012E74B /* FAQListView.swift */,
 				8EA1FE2E284067590012E74B /* FAQView.swift */,
+				8EB9C8FB29A2B88C00CAC226 /* FineTuneSliderView.swift */,
 				8E8C068526E57EF100F47062 /* HSlider.swift */,
 				8E3B3A1C277548CC00BEA89B /* HContentView.swift */,
 				8EC38314270A086E006D9AE6 /* LabelView.swift */,
@@ -381,6 +384,7 @@
 				8EA1FE372849B16E0012E74B /* DraggableView.swift in Sources */,
 				8E8C068826E5814A00F47062 /* PlatformPicker.swift in Sources */,
 				8EA1FE3128406AC60012E74B /* FAQListView.swift in Sources */,
+				8EB9C8FC29A2B88C00CAC226 /* FineTuneSliderView.swift in Sources */,
 				8E8C065B26E5797400F47062 /* TetheredTentTriangulatorApp.swift in Sources */,
 				8E8C068A26E65EC200F47062 /* Clearing.swift in Sources */,
 				8E0C687226EE9010003EE614 /* AnchorView.swift in Sources */,
@@ -544,7 +548,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"TetheredTentTriangulator/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TetheredTentTriangulator/Info.plist;
@@ -555,7 +559,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.munifrog.design.TetheredTentTriangulator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -569,7 +573,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"TetheredTentTriangulator/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TetheredTentTriangulator/Info.plist;
@@ -580,7 +584,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.munifrog.design.TetheredTentTriangulator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
