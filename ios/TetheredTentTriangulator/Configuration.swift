@@ -17,7 +17,8 @@ enum Select {
     case anchor_c
     case ca
     case ca_waiting
-    case missed
+    case rotate
+    case ignore
     case none
     case point
 }
@@ -129,6 +130,13 @@ struct Configuration {
     private var initial_a: Coordinate?
     private var initial_b: Coordinate?
     private var initial_c: Coordinate?
+    private var initial_angle_t: Float?
+    private var initial_angle_a: Float?
+    private var initial_angle_b: Float?
+    private var initial_angle_c: Float?
+    private var initial_pa: Float?
+    private var initial_pb: Float?
+    private var initial_pc: Float?
     private var limits: Coordinate = Coordinate()
     private var path: PlatformPath = PlatformPath()
     private var latestFlip: Bool = false
@@ -212,6 +220,39 @@ struct Configuration {
         self.updateTetherCenter()
     }
 
+    mutating private func resetInitialAngles() {
+        self.initial_p = nil
+        self.initial_angle_t = nil
+        self.initial_angle_a = nil
+        self.initial_angle_b = nil
+        self.initial_angle_c = nil
+        self.initial_pa = nil
+        self.initial_pb = nil
+        self.initial_pc = nil
+    }
+
+    mutating private func saveInitialAngles(touch: Coordinate) {
+        if self.center != nil {
+            let p = self.center!.p
+            self.initial_p = p
+            let delta_t = touch - p
+            let hyp_t = sqrt(delta_t.x * delta_t.x + delta_t.y * delta_t.y)
+            self.initial_angle_t = Util.getDirection(h: hyp_t, delta_x: delta_t.x, delta_y: delta_t.y)
+            let delta_a = anchors.a - p
+            let hyp_a = sqrt(delta_a.x * delta_a.x + delta_a.y * delta_a.y)
+            self.initial_pa = hyp_a
+            self.initial_angle_a = Util.getDirection(h: hyp_a, delta_x: delta_a.x, delta_y: delta_a.y)
+            let delta_b = anchors.b - p
+            let hyp_b = sqrt(delta_b.x * delta_b.x + delta_b.y * delta_b.y)
+            self.initial_pb = hyp_b
+            self.initial_angle_b = Util.getDirection(h: hyp_b, delta_x: delta_b.x, delta_y: delta_b.y)
+            let delta_c = anchors.c - p
+            let hyp_c = sqrt(delta_c.x * delta_c.x + delta_c.y * delta_c.y)
+            self.initial_pc = hyp_c
+            self.initial_angle_c = Util.getDirection(h: hyp_c, delta_x: delta_c.x, delta_y: delta_c.y)
+        }
+    }
+
     mutating private func resetInitialPositions() {
         self.initial_p = nil
         self.initial_a = nil
@@ -245,7 +286,10 @@ struct Configuration {
             } else {
                 selection = .none
             }
-        case .point, .missed:
+        case .rotate:
+            resetInitialAngles()
+            selection = .none
+        case .point, .ignore:
             selection = .none
         default:
             // Do nothing
@@ -303,19 +347,24 @@ struct Configuration {
         case .ab_waiting, .bc_waiting, .ca_waiting:
             // Wait for the touch event to end before doing anything
             break
-        case .missed:
+        case .rotate:
+            updateAnchorRotations(touch: touch)
+            updateTetherCenter()
+        case .ignore:
             // Do nothing
             break
         case .none:
             // Assume the user did not touch close enough to any anchor point
-            // Set selection as missed to ignore any other motion events
-            self.selection = .missed
+            // Set selection to ignore any other motion events
+            self.selection = .ignore
             self.selection = self.getSelection(touch: touch)
             if self.selection == .point {
                 saveInitialPositions()
+            } else if self.selection == .rotate {
+                saveInitialAngles(touch: touch)
             }
         case .point:
-            updateAnchors(touch: touch)
+            updateAnchorTranslations(touch: touch)
             updateTetherCenter()
         }
     }
@@ -341,7 +390,7 @@ struct Configuration {
     mutating func getSelection(touch: Coordinate) -> Select {
         // Determine if any selection points are close enough to the touch point
         var closestDist = self.radiusSquared
-        var newSelection: Select = .missed
+        var newSelection: Select = .rotate
 
         var diff = touch - self.anchors.a
         var diffSquared = diff.x * diff.x + diff.y * diff.y
@@ -480,7 +529,38 @@ struct Configuration {
         }
     }
 
-    mutating func updateAnchors(touch: Coordinate) {
+    mutating func updateAnchorRotations(touch: Coordinate) {
+        // Update all of the anchor points by the same rotation
+        guard let initAngleT = self.initial_angle_t else { return }
+        guard let initAngleA = self.initial_angle_a else { return }
+        guard let initAngleB = self.initial_angle_b else { return }
+        guard let initAngleC = self.initial_angle_c else { return }
+        guard let initP = self.initial_p else { return }
+        guard let initPA = self.initial_pa else { return }
+        guard let initPB = self.initial_pb else { return }
+        guard let initPC = self.initial_pc else { return }
+        let delta = touch - initP
+        let hypotenuse = sqrt(delta.x * delta.x + delta.y * delta.y)
+        let angleNow = Util.getDirection(h: hypotenuse, delta_x: delta.x, delta_y: delta.y)
+        let angleDiff = angleNow - initAngleT
+        let angleA = initAngleA + angleDiff
+        let angleB = initAngleB + angleDiff
+        let angleC = initAngleC + angleDiff
+        self.anchors.a = Coordinate(
+            x: initP.x + initPA * cos(angleA),
+            y: initP.y + initPA * sin(angleA)
+        )
+        self.anchors.b = Coordinate(
+            x: initP.x + initPB * cos(angleB),
+            y: initP.y + initPB * sin(angleB)
+        )
+        self.anchors.c = Coordinate(
+            x: initP.x + initPC * cos(angleC),
+            y: initP.y + initPC * sin(angleC)
+        )
+    }
+
+    mutating func updateAnchorTranslations(touch: Coordinate) {
         // Update all of the anchor points by the same vector
         guard let initP = self.initial_p else { return }
         guard let initA = self.initial_a else { return }
