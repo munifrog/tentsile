@@ -123,9 +123,9 @@ struct Configuration {
     }
 
     private var radiusSquared: Float = 3600
-    private var distanceScale: Float = 25.0
+    private var scaledMetersPerPixel: Float = 25.0
     private var drawable: DrawableSetup?
-    private var imageScale: Float = 0.04
+    private var scaledPixelsPerMeter: Float = 0.04
     private var initial_p: Coordinate?
     private var initial_a: Coordinate?
     private var initial_b: Coordinate?
@@ -196,14 +196,14 @@ struct Configuration {
             anchors: self.anchors,
             center: self.center,
             platform: getPlatform(),
-            scale: imageScale,
+            scale: scaledPixelsPerMeter,
             offset: getLimits()
         )
     }
 
     func getCanDrawPlatform() -> Bool {
         if let c = center {
-            let allowance = getImageScale() * MATH_METERS_CENTER_TO_ANCHOR_MIN
+            let allowance = getScaledPixelsPerMeter() * MATH_METERS_CENTER_TO_ANCHOR_MIN
             return c.pa > allowance && c.pb > allowance && c.pc > allowance
         } else {
             return false
@@ -313,7 +313,7 @@ struct Configuration {
         }
         return Util.getMeasureFromPixels(
             pixels: pixels,
-            meterScale: distanceScale,
+            meterScale: scaledMetersPerPixel,
             units: self.units
         ) + fineTuneOffset * segment
     }
@@ -507,7 +507,7 @@ struct Configuration {
         // Determine the new angle inside the triangle at the pivot corner
         let changingSegment: Float = Util.getPixelsFromMeasure(
             measure: getSelectedPerimeterDistance(),
-            pixelScale: imageScale,
+            pixelScale: scaledPixelsPerMeter,
             units: self.units
         )
         let numerator: Float = changingSegment * changingSegment + shortSide * shortSide - longSide * longSide
@@ -628,9 +628,9 @@ struct Configuration {
         self.anchors.c = initC + v + limitedV
     }
 
-    func getImageScale() -> Float {
+    func getScaledPixelsPerMeter() -> Float {
         if let _ = center {
-            return imageScale
+            return scaledPixelsPerMeter
         } else {
             return 0
         }
@@ -654,8 +654,8 @@ struct Configuration {
             slope = MATH_SCALE_SLOPE_02_03;
         }
         let scale = offset + slope * diff
-        distanceScale = scale / MATH_BASE_PIXELS_PER_METER
-        imageScale = MATH_BASE_PIXELS_PER_METER / scale
+        scaledMetersPerPixel = scale / MATH_BASE_PIXELS_PER_METER
+        scaledPixelsPerMeter = MATH_BASE_PIXELS_PER_METER / scale
     }
 
     mutating func updateTetherCenter() {
