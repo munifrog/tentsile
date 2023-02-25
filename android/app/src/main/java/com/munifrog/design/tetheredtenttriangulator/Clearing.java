@@ -32,13 +32,14 @@ public class Clearing
     private static final int TETHER_SELECTION_A = 0;
     private static final int TETHER_SELECTION_B = 1;
     private static final int TETHER_SELECTION_C = 2;
-    private static final int TETHER_SELECTION_ENTIRE = 3;
+    private static final int TETHER_SELECTION_SHIFT = 3;
     private static final int TETHER_SELECTION_AB_WAIT = 4;
     private static final int TETHER_SELECTION_BC_WAIT = 5;
     private static final int TETHER_SELECTION_CA_WAIT = 6;
     private static final int TETHER_SELECTION_AB = 7;
     private static final int TETHER_SELECTION_BC = 8;
     private static final int TETHER_SELECTION_CA = 9;
+    private static final int TETHER_SELECTION_ROTATE = 10;
 
     private static final int DRAW_PLATFORM_TOO_CLOSE = 0;
     private static final int DRAW_PLATFORM_ENABLED = 1;
@@ -101,6 +102,7 @@ public class Clearing
     private float [] mPlatformCoordinates = new float[2];
     private final float [] mSnapshotPlatform = new float[2];
     private final float [][] mSnapshotTethers = new float[3][2];
+    private final float [][] mSnapshotAngles = new float[4][2];
     private final float [][] mTethers = new float[3][2];
     private double [][] mPlatformExtremities = new double[3][2];
     private double [][] mTransExtremities = new double[3][2];
@@ -203,11 +205,26 @@ public class Clearing
     }
 
     public void pointSelection(int x, int y) {
-        int selection = getSelection(x, y);
-        // Officially select the closest tree, now that it is known
-        if (selection != TETHER_SELECTION_DECIDING) {
-            mStateTether = selection;
-            invalidateSelf();
+        switch (mStateTether) {
+            case TETHER_SELECTION_NONE:
+                mStateTether = TETHER_SELECTION_DECIDING;
+                mStateTether = getSelection(x, y);
+                if (mStateTether == TETHER_SELECTION_SHIFT) {
+                    saveInitialPositions();
+                    invalidateSelf();
+                } else if (mStateTether == TETHER_SELECTION_ROTATE) {
+                    saveInitialAngles(x, y);
+                    invalidateSelf();
+                }
+                break;
+            case TETHER_SELECTION_AB:
+            case TETHER_SELECTION_BC:
+            case TETHER_SELECTION_CA:
+                resetSelection();
+                break;
+            default:
+                // This should not happen
+                break;
         }
     }
 
@@ -255,19 +272,67 @@ public class Clearing
             deltaY = y - mPlatformCoordinates[1];
             deltaSquared = deltaX * deltaX + deltaY * deltaY;
             if (deltaSquared < smallestDeltaSquared) {
-                selectState = TETHER_SELECTION_ENTIRE;
-                // Take a "snapshot" of the current configuration
-                mSnapshotPlatform[0] = mPlatformCoordinates[0];
-                mSnapshotPlatform[1] = mPlatformCoordinates[1];
-                mSnapshotTethers[0][0] = mTethers[0][0];
-                mSnapshotTethers[0][1] = mTethers[0][1];
-                mSnapshotTethers[1][0] = mTethers[1][0];
-                mSnapshotTethers[1][1] = mTethers[1][1];
-                mSnapshotTethers[2][0] = mTethers[2][0];
-                mSnapshotTethers[2][1] = mTethers[2][1];
+                selectState = TETHER_SELECTION_SHIFT;
+            }
+            if (selectState == TETHER_SELECTION_DECIDING) {
+                selectState = TETHER_SELECTION_ROTATE;
             }
         }
         return selectState;
+    }
+
+    private void saveInitialPositions() {
+        mSnapshotPlatform[0] = mPlatformCoordinates[0];
+        mSnapshotPlatform[1] = mPlatformCoordinates[1];
+        mSnapshotTethers[0][0] = mTethers[0][0];
+        mSnapshotTethers[0][1] = mTethers[0][1];
+        mSnapshotTethers[1][0] = mTethers[1][0];
+        mSnapshotTethers[1][1] = mTethers[1][1];
+        mSnapshotTethers[2][0] = mTethers[2][0];
+        mSnapshotTethers[2][1] = mTethers[2][1];
+    }
+
+    private void updateConfigurationPositions(int x, int y) {
+        float shiftX = x - mSnapshotPlatform[0];
+        float shiftY = y - mSnapshotPlatform[1];
+        mTethers[0][0] = mSnapshotTethers[0][0] + shiftX;
+        mTethers[0][1] = mSnapshotTethers[0][1] + shiftY;
+        mTethers[1][0] = mSnapshotTethers[1][0] + shiftX;
+        mTethers[1][1] = mSnapshotTethers[1][1] + shiftY;
+        mTethers[2][0] = mSnapshotTethers[2][0] + shiftX;
+        mTethers[2][1] = mSnapshotTethers[2][1] + shiftY;
+        mPlatformCoordinates[0] = x; // mSnapshotPlatform[0] + shiftX
+        mPlatformCoordinates[1] = y; // mSnapshotPlatform[1] + shiftY
+    }
+
+    private void saveInitialAngles(int x, int y) {
+        double deltaX, deltaY, hypotenuse;
+        for (int i = 0; i < 3; i++) {
+            deltaX = mTethers[i][0] - mPlatformCoordinates[0];
+            deltaY = mTethers[i][1] - mPlatformCoordinates[1];
+            hypotenuse = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            mSnapshotAngles[i][1] = (float) hypotenuse;
+            mSnapshotAngles[i][0] = (float) Util.getDirection(hypotenuse, deltaX, deltaY);
+        }
+        deltaX = x - mPlatformCoordinates[0];
+        deltaY = y - mPlatformCoordinates[1];
+        hypotenuse = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        mSnapshotAngles[3][1] = (float) hypotenuse;
+        mSnapshotAngles[3][0] = (float) Util.getDirection(hypotenuse, deltaX, deltaY);
+    }
+
+    private void updateConfigurationAngles(int x, int y) {
+        double deltaX, deltaY, hypotenuse, angleAltered, angleNow, angleDelta;
+        deltaX = x - mPlatformCoordinates[0];
+        deltaY = y - mPlatformCoordinates[1];
+        hypotenuse = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        angleNow = Util.getDirection(hypotenuse, deltaX, deltaY);
+        angleDelta = angleNow - mSnapshotAngles[3][0];
+        for (int i = 0; i < 3; i++) {
+            angleAltered = mSnapshotAngles[i][0] + angleDelta;
+            mTethers[i][0] = (float)(mPlatformCoordinates[0] + mSnapshotAngles[i][1] * Math.cos(angleAltered));
+            mTethers[i][1] = (float)(mPlatformCoordinates[1] + mSnapshotAngles[i][1] * Math.sin(angleAltered));
+        }
     }
 
     public String getOffsetString(int offset) {
@@ -295,9 +360,10 @@ public class Clearing
             case TETHER_SELECTION_A:
             case TETHER_SELECTION_B:
             case TETHER_SELECTION_C:
-            case TETHER_SELECTION_ENTIRE:
+            case TETHER_SELECTION_ROTATE:
+            case TETHER_SELECTION_SHIFT:
             case TETHER_SELECTION_DECIDING:
-                mStateTether = TETHER_SELECTION_NONE;
+                resetSelection();
                 computePlatformCenter(); // In case the last computation was prevented by timing
                 break;
             case TETHER_SELECTION_AB_WAIT:
@@ -308,7 +374,7 @@ public class Clearing
                     mStateTether += 3; // Shifts from _WAIT into _READY
                     mViewOwner.fineTuneLabelStart();
                 } else {
-                    mStateTether = TETHER_SELECTION_NONE;
+                    resetSelection();
                 }
                 break;
             default:
@@ -338,17 +404,12 @@ public class Clearing
                 resetSelection();
                 getPlatformCenterOccasionally();
                 break;
-            case TETHER_SELECTION_ENTIRE:
-                float shiftX = x - mSnapshotPlatform[0];
-                float shiftY = y - mSnapshotPlatform[1];
-                mTethers[0][0] = mSnapshotTethers[0][0] + shiftX;
-                mTethers[0][1] = mSnapshotTethers[0][1] + shiftY;
-                mTethers[1][0] = mSnapshotTethers[1][0] + shiftX;
-                mTethers[1][1] = mSnapshotTethers[1][1] + shiftY;
-                mTethers[2][0] = mSnapshotTethers[2][0] + shiftX;
-                mTethers[2][1] = mSnapshotTethers[2][1] + shiftY;
-                mPlatformCoordinates[0] = x; // mSnapshotPlatform[0] + shiftX
-                mPlatformCoordinates[1] = y; // mSnapshotPlatform[1] + shiftY
+            case TETHER_SELECTION_SHIFT:
+                updateConfigurationPositions(x, y);
+                invalidateSelf();
+                break;
+            case TETHER_SELECTION_ROTATE:
+                updateConfigurationAngles(x, y);
                 invalidateSelf();
                 break;
             default:
@@ -463,7 +524,7 @@ public class Clearing
                 mRadiusTetherSize,
                 mRadiusTetherSize
         };
-        if ((mStateTether >= TETHER_SELECTION_A) && (mStateTether <= TETHER_SELECTION_ENTIRE)) {
+        if ((mStateTether >= TETHER_SELECTION_A) && (mStateTether <= TETHER_SELECTION_SHIFT)) {
             radii[mStateTether] = mRadiusSelectionSize;
         }
         for (int i = 0; i < 3; i++) {
@@ -480,7 +541,7 @@ public class Clearing
             canvas.drawCircle(
                     mPlatformCoordinates[0],
                     mPlatformCoordinates[1],
-                    radii[TETHER_SELECTION_ENTIRE],
+                    radii[TETHER_SELECTION_SHIFT],
                     mTetherPaintStraps
             );
         }
