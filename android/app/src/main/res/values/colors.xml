@@ -18,5 +18,8 @@
     <color name="colorTextButton">#FFFFFF</color>
     <color name="colorSeparator">#FFFFFF</color>
 
+    <color name="colorPerimeterLabel">#FEFF39</color>
+    <color name="colorFineTuneBackground">#80000000</color>
+
     <color name="ic_launcher_background">#36461E</color>
 </resources>

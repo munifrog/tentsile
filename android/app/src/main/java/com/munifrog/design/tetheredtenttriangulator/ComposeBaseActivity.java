@@ -28,6 +28,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
+
 import androidx.preference.PreferenceManager;
 
 import java.util.Objects;
@@ -49,34 +51,24 @@ public class ComposeBaseActivity
 
     public final Clearing mClearing = new Clearing(this);
 
-    private static final double MATH_SEEKBAR_POINT_00 = 0.0;
-    private static final double MATH_SEEKBAR_POINT_01 = 50.0;
-    private static final double MATH_SEEKBAR_POINT_02 = 75.0;
-    private static final double MATH_SEEKBAR_POINT_03 = 100.0;
-    private static final double MATH_SCALE_POINT_00 = 1.0;
-    private static final double MATH_SCALE_POINT_01 = 3.0;
-    private static final double MATH_SCALE_POINT_02 = 8.0;
-    private static final double MATH_SCALE_POINT_03 = 10.0;
-    private static final double MATH_SCALE_SLOPE_00_01 = (MATH_SCALE_POINT_01 - MATH_SCALE_POINT_00) /
-            (MATH_SEEKBAR_POINT_01 - MATH_SEEKBAR_POINT_00);
-    private static final double MATH_SCALE_SLOPE_01_02 = (MATH_SCALE_POINT_02 - MATH_SCALE_POINT_01) /
-            (MATH_SEEKBAR_POINT_02 - MATH_SEEKBAR_POINT_01);
-    private static final double MATH_SCALE_SLOPE_02_03 = (MATH_SCALE_POINT_03 - MATH_SCALE_POINT_02) /
-            (MATH_SEEKBAR_POINT_03 - MATH_SEEKBAR_POINT_02);
-
     private static final int MATH_SEEKBAR_INITIAL = 25;
+    private static final int MATH_FINE_TUNE_SEEKBAR_ALLOWANCE = 25;
     private static final int UNIT_PRECISION = Util.MATH_PRECISION_HUNDREDTHS;
 
     public ImageButton mPlatformRotation;
     private Menu mToolbarMenu;
     private SeekBar mSeekBar;
     private Spinner mSpinner;
+    private View mFineTuneLayout;
+    private SeekBar mFineTuneSeekBar;
+    private TextView mFineTuneText;
     private ArrayAdapter<String> mSpinAdapter;
     private Symbol mSymbolVerbosity = Symbol.safe; // Initially draw the least restrictive symbols
     private VersionSupport mVersionSupport;
 
     private int mCanvasLeft = 0;
     private int mCanvasTop = 0;
+    private boolean mFineTuneActive = false;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
@@ -164,7 +156,30 @@ public class ComposeBaseActivity
             @Override
             public void onProgressChanged(SeekBar seekBar, int position, boolean b) {
                 // Setting minimum requires API 26, so scale values for ourselves:
-                mClearing.setSliderScale(getSeekbarScale(position));
+                mClearing.setSliderPosition(position);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Unnecessary at this time
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Unnecessary at this time
+            }
+        });
+
+        mFineTuneLayout = findViewById(R.id.inc_fine_tune); // TODO: Make visible when label touched
+        mFineTuneText = findViewById(R.id.tx_fine_tune);
+        mFineTuneSeekBar = findViewById(R.id.sk_fine_tune);
+        mFineTuneSeekBar.setMax(2 * MATH_FINE_TUNE_SEEKBAR_ALLOWANCE);
+        mFineTuneSeekBar.setProgress(MATH_FINE_TUNE_SEEKBAR_ALLOWANCE);
+        mFineTuneSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int position, boolean fromUser) {
+                int offset = position - MATH_FINE_TUNE_SEEKBAR_ALLOWANCE;
+                mFineTuneText.setText(mClearing.getOffsetString(offset));
             }
 
             @Override
@@ -210,18 +225,24 @@ public class ComposeBaseActivity
         int x, y;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mVersionSupport.hideVirtualButtons();
-                x = (int) event.getX();
-                y = (int) event.getY();
-                mClearing.selectTether(x - mCanvasLeft,y - mCanvasTop);
+                if (mFineTuneActive) {
+                    fineTuneLabelFinish();
+                } else {
+                    mVersionSupport.hideVirtualButtons();
+                    x = (int) event.getX();
+                    y = (int) event.getY();
+                    mClearing.pointSelection(x - mCanvasLeft,y - mCanvasTop);
+                }
                 break;
             case MotionEvent.ACTION_UP:
-                mClearing.releaseTether();
+                x = (int) event.getX();
+                y = (int) event.getY();
+                mClearing.releaseSelection(x - mCanvasLeft,y - mCanvasTop);
                 break;
             case MotionEvent.ACTION_MOVE:
                 x = (int) event.getX();
                 y = (int) event.getY();
-                mClearing.updateTether(x - mCanvasLeft, y - mCanvasTop);
+                mClearing.updateSelection(x - mCanvasLeft, y - mCanvasTop);
                 break;
         }
         return super.onTouchEvent(event);
@@ -242,7 +263,7 @@ public class ComposeBaseActivity
         int id = item.getItemId();
         if (id == R.id.action_default_tether_points) {
             mClearing.configDefault();
-            mClearing.releaseTether();
+            mClearing.resetSelection();
             return true;
         } else if (id == R.id.action_faq) {
             launchFrequentlyAskedQuestions();
@@ -302,7 +323,6 @@ public class ComposeBaseActivity
         edit.putFloat(SAVE_STATE_TETHERS_1Y, tethers[1][1]);
         edit.putFloat(SAVE_STATE_TETHERS_2X, tethers[2][0]);
         edit.putFloat(SAVE_STATE_TETHERS_2Y, tethers[2][1]);
-        edit.putFloat(SAVE_STATE_SLIDER, (float) mClearing.getSliderScale());
         edit.putInt(SAVE_STATE_SLIDER, mSeekBar.getProgress());
         if (mSpinner.getSelectedItem() != null) {
             edit.putString(SAVE_STATE_PLATFORM, mSpinner.getSelectedItem().toString());
@@ -334,7 +354,7 @@ public class ComposeBaseActivity
             tethers[2][0] = prefs.getFloat(SAVE_STATE_TETHERS_2X, 100);
             tethers[2][1] = prefs.getFloat(SAVE_STATE_TETHERS_2Y, 100);
             mClearing.setTetherPoints(tethers);
-            mClearing.releaseTether();
+            mClearing.resetSelection();
         }
         if (prefs.contains(SAVE_STATE_UNITS)) {
             mClearing.setIsImperial(prefs.getBoolean(SAVE_STATE_UNITS, false));
@@ -361,25 +381,7 @@ public class ComposeBaseActivity
 
     private void setSeekBarPosition(int position) {
         mSeekBar.setProgress(position);
-        mClearing.setSliderScale(getSeekbarScale(position));
-    }
-
-    private double getSeekbarScale(int position) {
-        double diff, offset, slope;
-        if (position < MATH_SEEKBAR_POINT_01) {
-            diff = position - MATH_SEEKBAR_POINT_00;
-            offset = MATH_SCALE_POINT_00;
-            slope = MATH_SCALE_SLOPE_00_01;
-        } else if (position < MATH_SEEKBAR_POINT_02) {
-            diff = position - MATH_SEEKBAR_POINT_01;
-            offset = MATH_SCALE_POINT_01;
-            slope = MATH_SCALE_SLOPE_01_02;
-        } else { // if (position <= MATH_SEEKBAR_POINT_03) {
-            diff = position - MATH_SEEKBAR_POINT_02;
-            offset = MATH_SCALE_POINT_02;
-            slope = MATH_SCALE_SLOPE_02_03;
-        }
-        return offset + slope * diff;
+        mClearing.setSliderPosition(position);
     }
 
     private void launchFrequentlyAskedQuestions() {
@@ -439,9 +441,23 @@ public class ComposeBaseActivity
         mPlatformRotation.setScaleX(isFlipped ? -1 : 1);
     }
 
+    @Override
+    public void fineTuneLabelStart() {
+        mFineTuneActive = true;
+        mFineTuneText.setText(mClearing.getOffsetString(0));
+        mFineTuneLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void fineTuneLabelFinish() {
+        mFineTuneActive = false;
+        mFineTuneLayout.setVisibility(View.GONE);
+        mClearing.updateSelection(0, 0);
+        mFineTuneSeekBar.setProgress(MATH_FINE_TUNE_SEEKBAR_ALLOWANCE);
+    }
+
     private void loadPresets(PreSets setting) {
         mClearing.setTetherPoints(PreSets.getTethers(setting));
-        mClearing.releaseTether();
+        mClearing.resetSelection();
         mClearing.setIsImperial(PreSets.isImperial(setting));
         setSeekBarPosition(PreSets.getSlider(setting));
         int platformPosition = mSpinAdapter.getPosition(getString(PreSets.getPlatformStringId(setting)));

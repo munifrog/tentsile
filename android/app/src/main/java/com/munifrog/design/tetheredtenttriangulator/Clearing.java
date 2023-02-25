@@ -24,11 +24,21 @@ public class Clearing
     interface ClearingListener {
         void computePlatformCenter(PlatformCenterRun run);
         void triangleHasFlipped(boolean isFlipped);
+        void fineTuneLabelStart();
     }
 
     private static final int TETHER_SELECTION_NONE = -1;
     private static final int TETHER_SELECTION_DECIDING = -2;
-    private static final int TETHER_SELECTION_ENTIRE = 3; // Indices 0, 1, and 2 are for anchors
+    private static final int TETHER_SELECTION_A = 0;
+    private static final int TETHER_SELECTION_B = 1;
+    private static final int TETHER_SELECTION_C = 2;
+    private static final int TETHER_SELECTION_ENTIRE = 3;
+    private static final int TETHER_SELECTION_AB_WAIT = 4;
+    private static final int TETHER_SELECTION_BC_WAIT = 5;
+    private static final int TETHER_SELECTION_CA_WAIT = 6;
+    private static final int TETHER_SELECTION_AB = 7;
+    private static final int TETHER_SELECTION_BC = 8;
+    private static final int TETHER_SELECTION_CA = 9;
 
     private static final int DRAW_PLATFORM_TOO_CLOSE = 0;
     private static final int DRAW_PLATFORM_ENABLED = 1;
@@ -39,6 +49,7 @@ public class Clearing
     private static final double MATH_ANGLE_FULL_CIRCLE = Math.PI * 2;
     private static final double MATH_ANGLE_ONE_THIRD_CIRCLE = 2 * Math.PI / 3;
     private static final double MATH_ANGLE_RADIANS_TO_DEGREES = 180 / Math.PI;
+    private static final double MATH_FEET_TO_METERS_CONVERSION = 0.3048;
     private static final double MATH_METERS_TO_FEET_CONVERSION = 3.2808399;
     private static final double MATH_METERS_ACROSS_SMALLEST_DIMEN = 5.0;
     private static final double MATH_METERS_TOO_CLOSE = 0.7;
@@ -47,6 +58,22 @@ public class Clearing
     // The tether holds an 8 kilogram tent and is under 300 kilograms of force:
     private static final double MATH_INCLINATION_RADIANS = Math.asin(8.0 / 300.0);
     private static final double MATH_INCLINATION_MULTIPLIER = 1.0 / Math.cos(MATH_INCLINATION_RADIANS);
+    private static final double MATH_THREE_EIGHTHS_INCH_TO_FEET_CONVERSION = 0.03125;
+
+    private static final double MATH_SEEKBAR_POINT_00 = 0.0;
+    private static final double MATH_SEEKBAR_POINT_01 = 50.0;
+    private static final double MATH_SEEKBAR_POINT_02 = 75.0;
+    private static final double MATH_SEEKBAR_POINT_03 = 100.0;
+    private static final double MATH_SCALE_POINT_00 = 1.0;
+    private static final double MATH_SCALE_POINT_01 = 3.0;
+    private static final double MATH_SCALE_POINT_02 = 8.0;
+    private static final double MATH_SCALE_POINT_03 = 10.0;
+    private static final double MATH_SCALE_SLOPE_00_01 = (MATH_SCALE_POINT_01 - MATH_SCALE_POINT_00) /
+            (MATH_SEEKBAR_POINT_01 - MATH_SEEKBAR_POINT_00);
+    private static final double MATH_SCALE_SLOPE_01_02 = (MATH_SCALE_POINT_02 - MATH_SCALE_POINT_01) /
+            (MATH_SEEKBAR_POINT_02 - MATH_SEEKBAR_POINT_01);
+    private static final double MATH_SCALE_SLOPE_02_03 = (MATH_SCALE_POINT_03 - MATH_SCALE_POINT_02) /
+            (MATH_SEEKBAR_POINT_03 - MATH_SEEKBAR_POINT_02);
 
     private final Paint mTetherPaintPlatform;
     private final Paint mTetherPaintStraps;
@@ -80,8 +107,10 @@ public class Clearing
     private double mDist01; // c
     private double mDist12; // a
     private double mDist20; // b
-    private double mScaleBase; // Units per pixel
-    private double mScaleSlider; // Scaled multiplier
+    private double mMetersPerPixel;
+    private double mPixelsPerMeter;
+    private double mScaledMetersPerPixel;
+    private double mScaledPixelsPerMeter;
     private boolean mLatestFlippedState = false;
     private boolean mTetherOrientationFlips = false;
     private boolean mComputeTetherCenterAgain = false;
@@ -90,6 +119,7 @@ public class Clearing
     private double mTreeCircumference;
     private double mPlatformTetherAngleSmall = MATH_ANGLE_ONE_THIRD_CIRCLE;
     private double mPlatformTetherAngleLarge = MATH_ANGLE_ONE_THIRD_CIRCLE;
+    private double mAlteredValue;
 
     private int mStateTether = TETHER_SELECTION_NONE;
     private int mDrawTethers = DRAW_TETHERS_ENABLED;
@@ -128,12 +158,14 @@ public class Clearing
         mLabelConnectionPaint = new Paint();
         mLabelConnectionPaint.setARGB(255, 254, 255, 57);
         mLabelConnectionPaint.setTextSize(72f);
+        mLabelConnectionPaint.setTextAlign(Paint.Align.CENTER);
         mLabelConnectionPaint.setStrokeWidth(4);
         mLabelConnectionPaint.setTypeface(Typeface.DEFAULT);
 
         mLabelPlatformPaint = new Paint();
         mLabelPlatformPaint.setARGB(255, 255, 255, 255);
         mLabelPlatformPaint.setTextSize(72f);
+        mLabelPlatformPaint.setTextAlign(Paint.Align.CENTER);
         mLabelPlatformPaint.setStrokeWidth(4);
         mLabelPlatformPaint.setTypeface(Typeface.DEFAULT);
 
@@ -155,7 +187,6 @@ public class Clearing
 
         mSetupFreshConfiguration = true;
         mIsImperial = false;
-        mScaleSlider = 1.0;
 
         setPlatformSymmetricAngle();
     }
@@ -171,76 +202,157 @@ public class Clearing
         mStringPrecision = precision;
     }
 
-    public void selectTether(int x, int y) {
-        if (mStateTether == TETHER_SELECTION_NONE) {
-            mStateTether = TETHER_SELECTION_DECIDING;
-
-            float smallestDeltaSquared = mRadiusSelectionRangeSquared;
-            int closestIndex = TETHER_SELECTION_NONE;
-            // Only allow trees within a specified radius to be selected
-            float deltaX;
-            float deltaY;
-            float deltaSquared;
-            for (int i = 0; i < 3; i++) {
-                // Determine which trees are within the range to be selected
-                deltaX = x - mTethers[i][0];
-                deltaY = y - mTethers[i][1];
-                // Square everything to avoid unnecessary (and expensive) square root computation
-                deltaSquared = deltaX * deltaX + deltaY * deltaY;
-                if (deltaSquared < smallestDeltaSquared) {
-                    // Record the closest tree at this stage
-                    closestIndex = i;
-                    smallestDeltaSquared = deltaSquared;
-                }
-            }
-            // ... also allowing the tether-center to be selected
-            if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
-                deltaX = x - mPlatformCoordinates[0];
-                deltaY = y - mPlatformCoordinates[1];
-                deltaSquared = deltaX * deltaX + deltaY * deltaY;
-                if (deltaSquared < smallestDeltaSquared) {
-                    closestIndex = TETHER_SELECTION_ENTIRE;
-                    // Take a "snapshot" of the current configuration
-                    mSnapshotPlatform[0] = mPlatformCoordinates[0];
-                    mSnapshotPlatform[1] = mPlatformCoordinates[1];
-                    mSnapshotTethers[0][0] = mTethers[0][0];
-                    mSnapshotTethers[0][1] = mTethers[0][1];
-                    mSnapshotTethers[1][0] = mTethers[1][0];
-                    mSnapshotTethers[1][1] = mTethers[1][1];
-                    mSnapshotTethers[2][0] = mTethers[2][0];
-                    mSnapshotTethers[2][1] = mTethers[2][1];
-                }
-            }
-            // Officially select the closest tree, now that it is known
-            if (closestIndex != TETHER_SELECTION_NONE) {
-                mStateTether = closestIndex;
-                invalidateSelf();
-            }
+    public void pointSelection(int x, int y) {
+        int selection = getSelection(x, y);
+        // Officially select the closest tree, now that it is known
+        if (selection != TETHER_SELECTION_DECIDING) {
+            mStateTether = selection;
+            invalidateSelf();
         }
     }
 
-    public void releaseTether() {
-        mStateTether = TETHER_SELECTION_NONE;
-        computePlatformCenter(); // In case the last computation was prevented by timing
+    public int getSelection(int x, int y) {
+        int selectState = TETHER_SELECTION_DECIDING;
+        float smallestDeltaSquared = mRadiusSelectionRangeSquared;
+        // Only allow trees within a specified radius to be selected
+        float deltaX;
+        float deltaY;
+        float deltaSquared;
+        for (int i = 0; i < 3; i++) {
+            // Determine which trees are within the range to be selected
+            deltaX = x - mTethers[i][0];
+            deltaY = y - mTethers[i][1];
+            // Square everything to avoid unnecessary (and expensive) square root computation
+            deltaSquared = deltaX * deltaX + deltaY * deltaY;
+            if (deltaSquared < smallestDeltaSquared) {
+                // Record the closest tree at this stage
+                selectState = TETHER_SELECTION_A + i;
+                smallestDeltaSquared = deltaSquared;
+            }
+        }
+        // Allow the perimeter labels to be selected
+        float centerX;
+        float centerY;
+        int secondIndex;
+        for (int i = 0; i < 3; i++) {
+            secondIndex = i < 2 ? i + 1 : 0;
+            // Determine which labels are within the range to be selected
+            centerX = (mTethers[i][0] + mTethers[secondIndex][0]) / 2.0f;
+            centerY = (mTethers[i][1] + mTethers[secondIndex][1]) / 2.0f;
+            deltaX = x - centerX;
+            deltaY = y - centerY;
+            // Square everything to avoid unnecessary (and expensive) square root computation
+            deltaSquared = deltaX * deltaX + deltaY * deltaY;
+            if (deltaSquared < smallestDeltaSquared) {
+                // Record the closest tree at this stage
+                selectState = TETHER_SELECTION_AB_WAIT + i;
+                smallestDeltaSquared = deltaSquared;
+            }
+        }
+        // ... also allowing the tether-center to be selected
+        if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
+            deltaX = x - mPlatformCoordinates[0];
+            deltaY = y - mPlatformCoordinates[1];
+            deltaSquared = deltaX * deltaX + deltaY * deltaY;
+            if (deltaSquared < smallestDeltaSquared) {
+                selectState = TETHER_SELECTION_ENTIRE;
+                // Take a "snapshot" of the current configuration
+                mSnapshotPlatform[0] = mPlatformCoordinates[0];
+                mSnapshotPlatform[1] = mPlatformCoordinates[1];
+                mSnapshotTethers[0][0] = mTethers[0][0];
+                mSnapshotTethers[0][1] = mTethers[0][1];
+                mSnapshotTethers[1][0] = mTethers[1][0];
+                mSnapshotTethers[1][1] = mTethers[1][1];
+                mSnapshotTethers[2][0] = mTethers[2][0];
+                mSnapshotTethers[2][1] = mTethers[2][1];
+            }
+        }
+        return selectState;
     }
 
-    public void updateTether(int x, int y) {
-        if (mStateTether == TETHER_SELECTION_ENTIRE) {
-            float shiftX = x - mSnapshotPlatform[0];
-            float shiftY = y - mSnapshotPlatform[1];
-            mTethers[0][0] = mSnapshotTethers[0][0] + shiftX;
-            mTethers[0][1] = mSnapshotTethers[0][1] + shiftY;
-            mTethers[1][0] = mSnapshotTethers[1][0] + shiftX;
-            mTethers[1][1] = mSnapshotTethers[1][1] + shiftY;
-            mTethers[2][0] = mSnapshotTethers[2][0] + shiftX;
-            mTethers[2][1] = mSnapshotTethers[2][1] + shiftY;
-            mPlatformCoordinates[0] = x; // mSnapshotPlatform[0] + shiftX
-            mPlatformCoordinates[1] = y; // mSnapshotPlatform[1] + shiftY
-            invalidateSelf();
-        } else if (mStateTether >= 0) {
-            mTethers[mStateTether][0] = x;
-            mTethers[mStateTether][1] = y;
-            getPlatformCenterOccasionally();
+    public String getOffsetString(int offset) {
+        double pixels;
+        if (mStateTether == TETHER_SELECTION_AB) {
+            pixels = mDist01;
+        } else if (mStateTether == TETHER_SELECTION_BC) {
+            pixels = mDist12;
+        } else if (mStateTether == TETHER_SELECTION_CA) {
+            pixels = mDist20;
+        } else {
+            pixels = 0.0;
+        }
+        double offsetValue = offset * (mIsImperial ? MATH_THREE_EIGHTHS_INCH_TO_FEET_CONVERSION : 0.01);
+        mAlteredValue = getPixelsToMeasure(pixels) + offsetValue;
+        return getMeasurementString(mAlteredValue);
+    }
+
+    public void resetSelection() {
+        mStateTether = TETHER_SELECTION_NONE;
+    }
+
+    public void releaseSelection(int x, int y) {
+        switch (mStateTether) {
+            case TETHER_SELECTION_A:
+            case TETHER_SELECTION_B:
+            case TETHER_SELECTION_C:
+            case TETHER_SELECTION_ENTIRE:
+            case TETHER_SELECTION_DECIDING:
+                mStateTether = TETHER_SELECTION_NONE;
+                computePlatformCenter(); // In case the last computation was prevented by timing
+                break;
+            case TETHER_SELECTION_AB_WAIT:
+            case TETHER_SELECTION_BC_WAIT:
+            case TETHER_SELECTION_CA_WAIT:
+                int currentSelection = getSelection(x, y);
+                if (currentSelection == mStateTether) {
+                    mStateTether += 3; // Shifts from _WAIT into _READY
+                    mViewOwner.fineTuneLabelStart();
+                } else {
+                    mStateTether = TETHER_SELECTION_NONE;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void updateSelection(int x, int y) {
+        switch (mStateTether) {
+            case TETHER_SELECTION_A:
+            case TETHER_SELECTION_B:
+            case TETHER_SELECTION_C:
+                // TODO: Is this where I can enforce bounds on the touch point?
+                mTethers[mStateTether][0] = x;
+                mTethers[mStateTether][1] = y;
+                getPlatformCenterOccasionally();
+                break;
+            case TETHER_SELECTION_AB_WAIT:
+            case TETHER_SELECTION_BC_WAIT:
+            case TETHER_SELECTION_CA_WAIT:
+                // Wait for the touch event to end before doing anything
+                break;
+            case TETHER_SELECTION_AB:
+            case TETHER_SELECTION_BC:
+            case TETHER_SELECTION_CA:
+                makeAnchorsMatchMeasurements();
+                resetSelection();
+                getPlatformCenterOccasionally();
+                break;
+            case TETHER_SELECTION_ENTIRE:
+                float shiftX = x - mSnapshotPlatform[0];
+                float shiftY = y - mSnapshotPlatform[1];
+                mTethers[0][0] = mSnapshotTethers[0][0] + shiftX;
+                mTethers[0][1] = mSnapshotTethers[0][1] + shiftY;
+                mTethers[1][0] = mSnapshotTethers[1][0] + shiftX;
+                mTethers[1][1] = mSnapshotTethers[1][1] + shiftY;
+                mTethers[2][0] = mSnapshotTethers[2][0] + shiftX;
+                mTethers[2][1] = mSnapshotTethers[2][1] + shiftY;
+                mPlatformCoordinates[0] = x; // mSnapshotPlatform[0] + shiftX
+                mPlatformCoordinates[1] = y; // mSnapshotPlatform[1] + shiftY
+                invalidateSelf();
+                break;
+            default:
+                break;
         }
     }
 
@@ -254,8 +366,8 @@ public class Clearing
         mRadiusTetherSize = mSmallestDimen / 50;
         mRadiusSelectionSize = mRadiusTetherSize * 2;
         mRadiusSelectionRangeSquared = mRadiusTetherSize * mRadiusTetherSize * 9;
-
-        mScaleBase = MATH_METERS_ACROSS_SMALLEST_DIMEN / mSmallestDimen;
+        mMetersPerPixel = MATH_METERS_ACROSS_SMALLEST_DIMEN / mSmallestDimen;
+        mPixelsPerMeter = mSmallestDimen / MATH_METERS_ACROSS_SMALLEST_DIMEN;
 
         mCenter[0] = centerX;
         mCenter[1] = centerY;
@@ -325,19 +437,19 @@ public class Clearing
 
     private void drawConnectionLabels(Canvas canvas) {
         canvas.drawText(
-                getMeasurementString(scaledDimension(mDist01)),
+                getMeasurementString(getPixelsToMeasure(mDist01)),
                 (mTethers[0][0] + mTethers[1][0]) / 2,
                 (mTethers[0][1] + mTethers[1][1]) / 2,
                 mLabelConnectionPaint
         );
         canvas.drawText(
-                getMeasurementString(scaledDimension(mDist12)),
+                getMeasurementString(getPixelsToMeasure(mDist12)),
                 (mTethers[1][0] + mTethers[2][0]) / 2,
                 (mTethers[1][1] + mTethers[2][1]) / 2,
                 mLabelConnectionPaint
         );
         canvas.drawText(
-                getMeasurementString(scaledDimension(mDist20)),
+                getMeasurementString(getPixelsToMeasure(mDist20)),
                 (mTethers[2][0] + mTethers[0][0]) / 2,
                 (mTethers[2][1] + mTethers[0][1]) / 2,
                 mLabelConnectionPaint
@@ -351,7 +463,7 @@ public class Clearing
                 mRadiusTetherSize,
                 mRadiusTetherSize
         };
-        if (mStateTether >= 0) {
+        if ((mStateTether >= TETHER_SELECTION_A) && (mStateTether <= TETHER_SELECTION_ENTIRE)) {
             radii[mStateTether] = mRadiusSelectionSize;
         }
         for (int i = 0; i < 3; i++) {
@@ -397,7 +509,7 @@ public class Clearing
             double angle0 = Util.getDirection(hypotenuse, deltaX, deltaY);
 
             Matrix matrix = new Matrix();
-            long scale = metersToPixels();
+            double scale = metersToPixels();
             matrix.setScale((float) scale, (float) scale);
             matrix.postRotate((float) (angle0 * MATH_ANGLE_RADIANS_TO_DEGREES));
             matrix.postTranslate(mPlatformCoordinates[0], mPlatformCoordinates[1]);
@@ -406,12 +518,12 @@ public class Clearing
             double[] translation = {mPlatformCoordinates[0], mPlatformCoordinates[1]};
             mTransExtremities = Util.shiftedCoordinates(mPlatformExtremities, angle0, metersToPixels(), translation);
 
-            float diffAx = (float) scaledDimensionMeters(mPlatformCoordinates[0] - mTethers[0][0]);
-            float diffAy = (float) scaledDimensionMeters(mPlatformCoordinates[1] - mTethers[0][1]);
-            float diffBx = (float) scaledDimensionMeters(mPlatformCoordinates[0] - mTethers[1][0]);
-            float diffBy = (float) scaledDimensionMeters(mPlatformCoordinates[1] - mTethers[1][1]);
-            float diffCx = (float) scaledDimensionMeters(mPlatformCoordinates[0] - mTethers[2][0]);
-            float diffCy = (float) scaledDimensionMeters(mPlatformCoordinates[1] - mTethers[2][1]);
+            float diffAx = (float) getScaledPixelsToMeters(mPlatformCoordinates[0] - mTethers[0][0]);
+            float diffAy = (float) getScaledPixelsToMeters(mPlatformCoordinates[1] - mTethers[0][1]);
+            float diffBx = (float) getScaledPixelsToMeters(mPlatformCoordinates[0] - mTethers[1][0]);
+            float diffBy = (float) getScaledPixelsToMeters(mPlatformCoordinates[1] - mTethers[1][1]);
+            float diffCx = (float) getScaledPixelsToMeters(mPlatformCoordinates[0] - mTethers[2][0]);
+            float diffCy = (float) getScaledPixelsToMeters(mPlatformCoordinates[1] - mTethers[2][1]);
             float squaredA = (diffAx * diffAx + diffAy * diffAy);
             float squaredB = (diffBx * diffBx + diffBy * diffBy);
             float squaredC = (diffCx * diffCx + diffCy * diffCy);
@@ -450,7 +562,7 @@ public class Clearing
                 // Use strap color for first 1ft (placing knot) then next 6m (or 4m), then extension
                 // color, with knots every 6m
                 Knots knots = Util.getTetherKnots(
-                        scaledDimensionMeters(1.0),
+                        getScaledPixelsToMeters(1.0),
                         mTransExtremities[index][0],
                         mTransExtremities[index][1],
                         mTethers[i][0],
@@ -783,14 +895,31 @@ public class Clearing
         invalidateSelf();
     }
 
-    public double getSliderScale() {
-        return mScaleSlider;
-    }
-
-    public void setSliderScale(double slider) {
-        mScaleSlider = slider;
+    public void setSliderPosition(int position) {
+        updateConvertedScale(position);
         invalidateSelf();
     }
+
+    private void updateConvertedScale(int position) {
+        double diff, offset, slope;
+        if (position < MATH_SEEKBAR_POINT_01) {
+            diff = position - MATH_SEEKBAR_POINT_00;
+            offset = MATH_SCALE_POINT_00;
+            slope = MATH_SCALE_SLOPE_00_01;
+        } else if (position < MATH_SEEKBAR_POINT_02) {
+            diff = position - MATH_SEEKBAR_POINT_01;
+            offset = MATH_SCALE_POINT_01;
+            slope = MATH_SCALE_SLOPE_01_02;
+        } else { // if (position <= MATH_SEEKBAR_POINT_03) {
+            diff = position - MATH_SEEKBAR_POINT_02;
+            offset = MATH_SCALE_POINT_02;
+            slope = MATH_SCALE_SLOPE_02_03;
+        }
+        double scale = offset + slope * diff;
+        mScaledMetersPerPixel = scale / mPixelsPerMeter;
+        mScaledPixelsPerMeter = mPixelsPerMeter / scale;
+    }
+
 
     private String getMeasurementString(double measure) {
         // This function is meant for labels only
@@ -810,19 +939,23 @@ public class Clearing
 
     private double scaledInclinedDimension(double pixels) {
         // Convert the level-length to hypotenuse-length
-        return MATH_INCLINATION_MULTIPLIER * scaledDimension(pixels);
+        return MATH_INCLINATION_MULTIPLIER * getPixelsToMeasure(pixels);
     }
 
-    private double scaledDimension(double pixels) {
-        return scaledDimensionMeters(pixels) * (mIsImperial ? MATH_METERS_TO_FEET_CONVERSION : 1);
+    private double getPixelsToMeasure(double pixels) {
+        return getScaledPixelsToMeters(pixels) * (mIsImperial ? MATH_METERS_TO_FEET_CONVERSION : 1);
     }
 
-    private double scaledDimensionMeters(double pixels) {
-        return pixels * mScaleBase * mScaleSlider;
+    private double getMeasureToPixels(double measure) {
+        return measure * mScaledPixelsPerMeter * (mIsImperial ? MATH_FEET_TO_METERS_CONVERSION : 1);
     }
 
-    private long metersToPixels() {
-        return Math.round(1.0 / mScaleBase / mScaleSlider);
+    private double getScaledPixelsToMeters(double pixels) {
+        return pixels * mScaledMetersPerPixel;
+    }
+
+    private double metersToPixels() {
+        return mScaledPixelsPerMeter;
     }
 
     public float[][] getTetherPoints() {
@@ -860,5 +993,91 @@ public class Clearing
             symbols[i] = Symbol.getMoreRestrictiveSymbol(left[i], right[i]);
         }
         return symbols;
+    }
+
+    private void makeAnchorsMatchMeasurements() {
+        // We need two fixed points to determine where to place the third.
+        // One will be opposite the line segment that is changing.
+        // The other will be at the corner next to the shorter side.
+        double shortSide;
+        double longSide;
+        double[] pivot = new double[2];
+        double[] opposite = new double[2];
+        int multiplier = mLatestFlippedState ? -1 : 1;
+        int anchorToUpdate;
+
+        if (mStateTether == TETHER_SELECTION_AB) {
+            opposite[0] = mTethers[TETHER_SELECTION_C][0];
+            opposite[1] = mTethers[TETHER_SELECTION_C][1];
+
+            if (mDist01 < mDist20) {
+                shortSide = mDist01;
+                longSide = mDist20;
+                pivot[0] = mTethers[TETHER_SELECTION_B][0];
+                pivot[1] = mTethers[TETHER_SELECTION_B][1];
+                anchorToUpdate = TETHER_SELECTION_A;
+            } else {
+                multiplier *= -1;
+                shortSide = mDist20;
+                longSide = mDist01;
+                pivot[0] = mTethers[TETHER_SELECTION_A][0];
+                pivot[1] = mTethers[TETHER_SELECTION_A][1];
+                anchorToUpdate = TETHER_SELECTION_B;
+            }
+        } else if (mStateTether == TETHER_SELECTION_BC) {
+            opposite[0] = mTethers[TETHER_SELECTION_A][0];
+            opposite[1] = mTethers[TETHER_SELECTION_A][1];
+            if (mDist01 < mDist20) {
+                multiplier *= -1;
+                shortSide = mDist01;
+                longSide = mDist20;
+                pivot[0] = mTethers[TETHER_SELECTION_B][0];
+                pivot[1] = mTethers[TETHER_SELECTION_B][1];
+                anchorToUpdate = TETHER_SELECTION_C;
+            } else {
+                shortSide = mDist20;
+                longSide = mDist01;
+                pivot[0] = mTethers[TETHER_SELECTION_C][0];
+                pivot[1] = mTethers[TETHER_SELECTION_C][1];
+                anchorToUpdate = TETHER_SELECTION_B;
+            }
+        } else { //if (mStateTether == TETHER_SELECTION_CA) {
+            opposite[0] = mTethers[TETHER_SELECTION_B][0];
+            opposite[1] = mTethers[TETHER_SELECTION_B][1];
+            if (mDist01 < mDist12) {
+                shortSide = mDist01;
+                longSide = mDist12;
+                pivot[0] = mTethers[TETHER_SELECTION_A][0];
+                pivot[1] = mTethers[TETHER_SELECTION_A][1];
+                anchorToUpdate = TETHER_SELECTION_C;
+            } else {
+                multiplier *= -1;
+                shortSide = mDist12;
+                longSide = mDist01;
+                pivot[0] = mTethers[TETHER_SELECTION_C][0];
+                pivot[1] = mTethers[TETHER_SELECTION_C][1];
+                anchorToUpdate = TETHER_SELECTION_A;
+            }
+        }
+
+        // Determine the angle from pivot to opposite points
+        double deltaX = opposite[0] - pivot[0];
+        double deltaY = opposite[1] - pivot[1];
+        double hypotenuse = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        double startingAngle = Util.getDirection(hypotenuse, deltaX, deltaY);
+
+        // Derive the number of pixels the altered segment should equate to
+        double changingSide = getMeasureToPixels(mAlteredValue);
+
+        // Determine the new angle inside the triangle at the pivot corner
+        double numerator = changingSide * changingSide + shortSide * shortSide - longSide * longSide;
+        double denominator = 2 * changingSide * shortSide;
+        double insideAngle = Math.acos(numerator / denominator);
+
+        // The multiplier helps determine whether to add or subtract the inside angle
+        double totalAngle = startingAngle + multiplier * insideAngle;
+        // Update moving anchor relative to pivot point; Only change the anchor that moves
+        mTethers[anchorToUpdate][0] = (float)(pivot[0] + changingSide * Math.cos(totalAngle));
+        mTethers[anchorToUpdate][1] = (float)(pivot[1] + changingSide * Math.sin(totalAngle));
     }
 }

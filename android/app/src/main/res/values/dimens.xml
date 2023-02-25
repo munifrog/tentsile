@@ -15,4 +15,7 @@
     <dimen name="text_span">20sp</dimen>
     <dimen name="text_faq_question">24sp</dimen>
     <dimen name="text_faq_answer">20sp</dimen>
+
+    <dimen name="text_fine_tune">56sp</dimen>
+
 </resources>
