@@ -221,7 +221,6 @@ struct Configuration {
     }
 
     mutating private func resetInitialAngles() {
-        self.initial_p = nil
         self.initial_angle_t = nil
         self.initial_angle_a = nil
         self.initial_angle_b = nil
@@ -234,7 +233,6 @@ struct Configuration {
     mutating private func saveInitialAngles(touch: Coordinate) {
         if self.center != nil {
             let p = self.center!.p
-            self.initial_p = p
             let delta_t = touch - p
             let hyp_t = sqrt(delta_t.x * delta_t.x + delta_t.y * delta_t.y)
             self.initial_angle_t = Util.getDirection(h: hyp_t, delta_x: delta_t.x, delta_y: delta_t.y)
@@ -531,15 +529,15 @@ struct Configuration {
 
     mutating func updateAnchorRotations(touch: Coordinate) {
         // Update all of the anchor points by the same rotation
+        guard let p = self.center?.p else { return }
         guard let initAngleT = self.initial_angle_t else { return }
         guard let initAngleA = self.initial_angle_a else { return }
         guard let initAngleB = self.initial_angle_b else { return }
         guard let initAngleC = self.initial_angle_c else { return }
-        guard let initP = self.initial_p else { return }
         guard let initPA = self.initial_pa else { return }
         guard let initPB = self.initial_pb else { return }
         guard let initPC = self.initial_pc else { return }
-        let delta = touch - initP
+        let delta = touch - p
         let hypotenuse = sqrt(delta.x * delta.x + delta.y * delta.y)
         let angleNow = Util.getDirection(h: hypotenuse, delta_x: delta.x, delta_y: delta.y)
         let angleDiff = angleNow - initAngleT
@@ -547,16 +545,16 @@ struct Configuration {
         let angleB = initAngleB + angleDiff
         let angleC = initAngleC + angleDiff
         self.anchors.a = Coordinate(
-            x: initP.x + initPA * cos(angleA),
-            y: initP.y + initPA * sin(angleA)
+            x: p.x + initPA * cos(angleA),
+            y: p.y + initPA * sin(angleA)
         )
         self.anchors.b = Coordinate(
-            x: initP.x + initPB * cos(angleB),
-            y: initP.y + initPB * sin(angleB)
+            x: p.x + initPB * cos(angleB),
+            y: p.y + initPB * sin(angleB)
         )
         self.anchors.c = Coordinate(
-            x: initP.x + initPC * cos(angleC),
-            y: initP.y + initPC * sin(angleC)
+            x: p.x + initPC * cos(angleC),
+            y: p.y + initPC * sin(angleC)
         )
     }
 
