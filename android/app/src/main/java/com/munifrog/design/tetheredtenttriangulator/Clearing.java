@@ -1070,9 +1070,8 @@ public class Clearing
         if (mStateTether == TETHER_SELECTION_AB) {
             opposite[0] = mTethers[TETHER_SELECTION_C][0];
             opposite[1] = mTethers[TETHER_SELECTION_C][1];
-
-            if (mDist01 < mDist20) {
-                shortSide = mDist01;
+            if (mDist12 < mDist20) {
+                shortSide = mDist12;
                 longSide = mDist20;
                 pivot[0] = mTethers[TETHER_SELECTION_B][0];
                 pivot[1] = mTethers[TETHER_SELECTION_B][1];
@@ -1080,7 +1079,7 @@ public class Clearing
             } else {
                 multiplier *= -1;
                 shortSide = mDist20;
-                longSide = mDist01;
+                longSide = mDist12;
                 pivot[0] = mTethers[TETHER_SELECTION_A][0];
                 pivot[1] = mTethers[TETHER_SELECTION_A][1];
                 anchorToUpdate = TETHER_SELECTION_B;
