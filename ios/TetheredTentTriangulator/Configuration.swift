@@ -388,7 +388,7 @@ struct Configuration {
     mutating func getSelection(touch: Coordinate) -> Select {
         // Determine if any selection points are close enough to the touch point
         var closestDist = self.radiusSquared
-        var newSelection: Select = .rotate
+        var newSelection: Select = .ignore
 
         var diff = touch - self.anchors.a
         var diffSquared = diff.x * diff.x + diff.y * diff.y
@@ -438,6 +438,9 @@ struct Configuration {
             if diffSquared < closestDist {
                 newSelection = .point
                 //closestDist = diffSquared
+            }
+            if newSelection == .ignore {
+                newSelection = .rotate
             }
         }
 
