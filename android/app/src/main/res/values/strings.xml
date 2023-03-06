@@ -87,12 +87,6 @@
     <string name="faq_small_circles_on_tethers_answer">The small circles are supposed to represent
         transition points, where the tethers change. For example, the tent corners, ratchets, and
         straps.</string>
-    <string name="faq_notch_question">Why are some tents shown with an indentation?</string>
-    <string name="faq_notch_answer">The indentation is there to clearly indicate the short edge of
-        the tent. In a future release all tent edges will appear curved.</string>
-    <string name="faq_curved_edges_question">Why are the tent edges shown as straight lines?</string>
-    <string name="faq_curved_edges_answer">The edges are drawn straight for simplicity in drawing
-        the tents and hammocks. In a future release all tent edges will appear curved.</string>
     <string name="faq_sight_indicator_question">Do I still need to use the tabs on the sides of my
         tent?</string>
     <string name="faq_sight_indicator_answer">That would be best. This app tries to get you close

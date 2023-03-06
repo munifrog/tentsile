@@ -15,8 +15,6 @@
         <item>@string/faq_symbol_yellow_triangle_question</item>
         <item>@string/faq_symbol_red_x_question</item>
         <item>@string/faq_small_circles_on_tethers_question</item>
-        <item>@string/faq_notch_question</item>
-        <item>@string/faq_curved_edges_question</item>
         <item>@string/faq_sight_indicator_question</item>
     </string-array>
 
@@ -33,8 +31,6 @@
         <item>@string/faq_symbol_yellow_triangle_answer</item>
         <item>@string/faq_symbol_red_x_answer</item>
         <item>@string/faq_small_circles_on_tethers_answer</item>
-        <item>@string/faq_notch_answer</item>
-        <item>@string/faq_curved_edges_answer</item>
         <item>@string/faq_sight_indicator_answer</item>
     </string-array>
 </resources>

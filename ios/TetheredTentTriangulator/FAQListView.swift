@@ -47,12 +47,6 @@ struct FAQListView: View {
             Q: "What are the small circles shown on the tethers?",
             A: "The small circles are supposed to represent transition points, where the tethers change. For example, the tent corners, ratchets, and straps."),
         FAQView(
-            Q: "Why are some tents shown with an indentation?",
-            A: "The indentation is there to clearly indicate the short edge of the tent. In a future release all tent edges will appear curved."),
-        FAQView(
-            Q: "Why are the tent edges shown as straight lines?",
-            A: "The edges are drawn straight for simplicity in drawing the tents and hammocks. In a future release all tent edges will appear curved."),
-        FAQView(
             Q: "Do I still need to use the tabs on the sides of my tent?",
             A: "That would be best. This app tries to get you close to the point where you can then align the tethers with the sight-indicator tabs on the sides of the non-equal-sided tents and hammocks.")
     ]

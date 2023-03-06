@@ -24,12 +24,15 @@ class Util {
     public static final int MATH_PRECISION_UNITS = 0;
     public static final int MATH_PRECISION_TENTHS = 1;
     public static final int MATH_PRECISION_HUNDREDTHS = 2;
+    private static final int NUM_ROUNDING_SEGMENTS = 20;
 
     private static final double TENTSILE_CENTER_HOLE_HYPOTENUSE = 0.6;
-    private static final double TENTSILE_NOTCH_APPARENT = 0.25; // Una indents by 20cm; Flite and Connect indents by 30cm
 
     private static final double TENTSILE_STRAPS_DEFAULT = 6.0;
     private static final double TENTSILE_CIRCUMFERENCE_DEFAULT = 0.785398163397448; // pi * 25cm or 10inch diameter
+
+    private static final double TENTSILE_STRAPS_WIDTH = 0.1;
+    private static final double TENTSILE_STRAPS_HALF_WIDTH = TENTSILE_STRAPS_WIDTH / 2.0;
 
     // Arcsine ranges from -pi/2 (Quadrant 4) to +pi/2 (Quadrant 1)
     // When deltaX is positive then we are in Quadrant 1 or 4, corresponding to the arcsine results;
@@ -76,68 +79,47 @@ class Util {
     static Platform getTentsileEquilateral(double baseLength) {
         double distal = baseLength * MATH_DIVIDE_BY_SQRT_THREE;
         double proximal = TENTSILE_CENTER_HOLE_HYPOTENUSE * MATH_DIVIDE_BY_SQRT_THREE;
-
-        double [][] extremities = new double[3][2];
-        extremities[0][0] = distal * MATH_COS_ZERO;
-        extremities[0][1] = distal * MATH_SIN_ZERO;
-        extremities[1][0] = distal * MATH_COS_TWO_THIRDS_PI;
-        extremities[1][1] = distal * MATH_SIN_TWO_THIRDS_PI;
-        extremities[2][0] = distal * MATH_COS_FOUR_THIRDS_PI;
-        extremities[2][1] = distal * MATH_SIN_FOUR_THIRDS_PI;
+        double [] mainTip = { distal * MATH_COS_ZERO, distal * MATH_SIN_ZERO };
+        double[][] mainAdjacent = getAdjacentPoints(mainTip);
+        double [] mainProximal = { proximal * MATH_COS_ZERO, proximal * MATH_SIN_ZERO };
+        double [] rightTip = { distal * MATH_COS_TWO_THIRDS_PI, distal * MATH_SIN_TWO_THIRDS_PI };
+        double[][] rightAdjacent = getAdjacentPoints(rightTip);
+        double [] rightProximal = { proximal * MATH_COS_TWO_THIRDS_PI, proximal * MATH_SIN_TWO_THIRDS_PI };
+        double [] leftTip = { distal * MATH_COS_FOUR_THIRDS_PI, distal * MATH_SIN_FOUR_THIRDS_PI };
+        double[][] leftAdjacent = getAdjacentPoints(leftTip);
+        double [] leftProximal = { proximal * MATH_COS_FOUR_THIRDS_PI, proximal * MATH_SIN_FOUR_THIRDS_PI };
+        double [][] extremities = { mainTip, rightTip, leftTip };
 
         Path path = new Path();
-        path.moveTo(
-                (float)extremities[0][0],
-                (float)extremities[0][1]
-        );
-        path.lineTo(
-                (float)(proximal * MATH_COS_ZERO),
-                (float)(proximal * MATH_SIN_ZERO)
-        );
-        path.lineTo(
-                (float)(proximal * MATH_COS_TWO_THIRDS_PI),
-                (float)(proximal * MATH_SIN_TWO_THIRDS_PI)
-        );
-        path.lineTo(
-                (float)extremities[1][0],
-                (float)extremities[1][1]
-        );
+
+        path.moveTo((float)mainTip[0], (float)mainTip[1]);
+        path.lineTo((float)mainAdjacent[1][0], (float)mainAdjacent[1][1]);
+        double[][] curvature = Util.getIndentedSpan(12.0, mainAdjacent[1], rightAdjacent[0]);
+        for (double[] doubles : curvature) { path.lineTo((float) doubles[0], (float) doubles[1]); }
+        path.lineTo((float)rightAdjacent[0][0], (float)rightAdjacent[0][1]);
+        path.lineTo((float)rightTip[0], (float)rightTip[1]);
+        path.lineTo((float)rightProximal[0], (float)rightProximal[1]);
+        path.lineTo((float)mainProximal[0], (float)mainProximal[1]);
         path.close();
 
-        path.moveTo(
-                (float)extremities[1][0],
-                (float)extremities[1][1]
-        );
-        path.lineTo(
-                (float)(proximal * MATH_COS_TWO_THIRDS_PI),
-                (float)(proximal * MATH_SIN_TWO_THIRDS_PI)
-        );
-        path.lineTo(
-                (float)(proximal * MATH_COS_FOUR_THIRDS_PI),
-                (float)(proximal * MATH_SIN_FOUR_THIRDS_PI)
-        );
-        path.lineTo(
-                (float)extremities[2][0],
-                (float)extremities[2][1]
-        );
+        path.moveTo((float)rightTip[0], (float)rightTip[1]);
+        path.lineTo((float)rightAdjacent[1][0], (float)rightAdjacent[1][1]);
+        curvature = Util.getIndentedSpan(12.0, rightAdjacent[1], leftAdjacent[0]);
+        for (double[] doubles : curvature) { path.lineTo((float) doubles[0], (float) doubles[1]); }
+        path.lineTo((float)leftAdjacent[0][0], (float)leftAdjacent[0][1]);
+        path.lineTo((float)leftTip[0], (float)leftTip[1]);
+        path.lineTo((float)leftProximal[0], (float)leftProximal[1]);
+        path.lineTo((float)rightProximal[0], (float)rightProximal[1]);
         path.close();
 
-        path.moveTo(
-                (float)extremities[2][0],
-                (float)extremities[2][1]
-        );
-        path.lineTo(
-                (float)(proximal * MATH_COS_FOUR_THIRDS_PI),
-                (float)(proximal * MATH_SIN_FOUR_THIRDS_PI)
-        );
-        path.lineTo(
-                (float)(proximal * MATH_COS_ZERO),
-                (float)(proximal * MATH_SIN_ZERO)
-        );
-        path.lineTo(
-                (float)extremities[0][0],
-                (float)extremities[0][1]
-        );
+        path.moveTo((float)leftTip[0], (float)leftTip[1]);
+        path.lineTo((float)leftAdjacent[1][0], (float)leftAdjacent[1][1]);
+        curvature = Util.getIndentedSpan(12.0, leftAdjacent[1], mainAdjacent[0]);
+        for (double[] doubles : curvature) { path.lineTo((float) doubles[0], (float) doubles[1]); }
+        path.lineTo((float)mainAdjacent[0][0], (float)mainAdjacent[0][1]);
+        path.lineTo((float)mainTip[0], (float)mainTip[1]);
+        path.lineTo((float)mainProximal[0], (float)mainProximal[1]);
+        path.lineTo((float)leftProximal[0], (float)leftProximal[1]);
         path.close();
 
         return new Platform(
@@ -156,36 +138,54 @@ class Util {
             double strap,
             double circumference
     ) {
+        double [][] coordinates = getTentsileIsoscelesCoordinates(hypotenuse, base, tetherangle);
         double [] measurements = Util.getIsoscelesMeasurements(hypotenuse, base, tetherangle);
-
-        double [][] extremities = new double[][]{
+        double [][] extremities = {
                 { measurements[0], 0 },
                 { -measurements[1], measurements[2] },
                 { -measurements[1], -measurements[2] }
         };
-        // We want the indentation to appear even when we have assumed none
-        double[] notch = new double[] { TENTSILE_NOTCH_APPARENT - measurements[1], 0 };
-
         Path path = new Path();
-        path.moveTo(
-                (float)extremities[0][0],
-                (float)extremities[0][1]
-        );
-        path.lineTo(
-                (float)extremities[1][0],
-                (float)extremities[1][1]
-        );
-        path.lineTo(
-                (float)(notch[0]),
-                (float)(notch[1])
-        );
-        path.lineTo(
-                (float)extremities[2][0],
-                (float)extremities[2][1]
-        );
+        path.moveTo((float) coordinates[0][0], (float) coordinates[0][1]);
+        for (double[] point : coordinates) { path.lineTo((float) point[0], (float) point[1]); }
         path.close();
 
         return new Platform(path, extremities, tetherangle, strap, circumference);
+    }
+
+    private static double[][] getTentsileIsoscelesCoordinates(
+            double hypotenuse,
+            double base,
+            double tetherangle
+    ) {
+        double [] measurements = Util.getIsoscelesMeasurements(hypotenuse, base, tetherangle);
+
+        double [] tip = { measurements[0], 0 };
+        double[][] tipAdjacent = getAdjacentPoints(tip);
+        double [] barbRight = { -measurements[1], measurements[2] };
+        double[][] rightAdjacent = getAdjacentPoints(barbRight);
+        double [] barbLeft = { -measurements[1], -measurements[2] };
+        double[][] leftAdjacent = getAdjacentPoints(barbLeft);
+
+        double[][] curveTipToRight = Util.getIndentedSpan(12.0, tipAdjacent[1], rightAdjacent[0]);
+        double[][] curveRightToLeft = Util.getIndentedSpan(4.0, rightAdjacent[1], leftAdjacent[0]);
+        double[][] curveLeftToTip = Util.getIndentedSpan(12.0, leftAdjacent[1], tipAdjacent[0]);
+
+        int numPoints = 7 + curveTipToRight.length + curveRightToLeft.length + curveLeftToTip.length;
+
+        double[][] path = new double[numPoints][2];
+        int offset = 0;
+        path[offset++] = tip;
+        path[offset++] = tipAdjacent[1];
+        for (double[] point : curveTipToRight) { path[offset++] = point; }
+        path[offset++] = rightAdjacent[0];
+        path[offset++] = rightAdjacent[1];
+        for (double[] point : curveRightToLeft) { path[offset++] = point; }
+        path[offset++] = leftAdjacent[0];
+        path[offset++] = leftAdjacent[1];
+        for (double[] point : curveLeftToTip) { path[offset++] = point; }
+        path[offset] = tipAdjacent[0];
+        return path;
     }
 
     static Platform getTentsileTrilogy(double hypotenuse, double base, double tetherangle) {
@@ -202,27 +202,12 @@ class Util {
                 { distal * MATH_COS_TWO_THIRDS_PI, distal * MATH_SIN_TWO_THIRDS_PI },
                 { distal * MATH_COS_FOUR_THIRDS_PI, distal * MATH_SIN_FOUR_THIRDS_PI }
         };
-        double[] notch = new double[] { translation + TENTSILE_NOTCH_APPARENT - measurements[1], 0 };
-        double[] barb = new double[] { translation - measurements[1], measurements[2] };
 
+        double [][] coordinates = getTentsileIsoscelesCoordinates(hypotenuse, base, tetherangle);
         for (int i = 0; i < 3; i++) {
             path.transform(matrix);
-            path.moveTo(
-                    (float)extremities[0][0],
-                    (float)extremities[0][1]
-            );
-            path.lineTo(
-                    (float)(barb[0]),
-                    (float)(barb[1])
-            );
-            path.lineTo(
-                    (float)(notch[0]),
-                    (float)(notch[1])
-            );
-            path.lineTo(
-                    (float)(barb[0]),
-                    (float)(-barb[1])
-            );
+            path.moveTo((float)(coordinates[0][0] + translation), (float) coordinates[0][1]);
+            for (double[] point : coordinates) { path.lineTo((float)(point[0] + translation), (float) point[1]); }
             path.close();
         }
 
@@ -429,5 +414,53 @@ class Util {
         split[0] = Math.floor(measure);
         split[1] = measure - split[0];
         return split;
+    }
+
+    private static double[][] getAdjacentPoints(double[] point) {
+        double[][] coordinates = new double[2][2];
+        // Assume the center is at (0,0)
+        double hypotenuse = Math.sqrt(point[0] * point[0] + point[1] * point[1]);
+        double direction = Util.getDirection(hypotenuse, point[0], point[1]);
+        double leftAngle = direction - MATH_ANGLE_QUARTER_CIRCLE;
+        coordinates[0][0] = point[0] + TENTSILE_STRAPS_HALF_WIDTH * Math.cos(leftAngle);
+        coordinates[0][1] = point[1] + TENTSILE_STRAPS_HALF_WIDTH * Math.sin(leftAngle);
+        double rightAngle = direction + MATH_ANGLE_QUARTER_CIRCLE;
+        coordinates[1][0] = point[0] + TENTSILE_STRAPS_HALF_WIDTH * Math.cos(rightAngle);
+        coordinates[1][1] = point[1] + TENTSILE_STRAPS_HALF_WIDTH * Math.sin(rightAngle);
+        return coordinates;
+    }
+
+    private static double[][] getIndentedSpan(double radius, double[] start, double[] finish) {
+        // Only return the points between
+        double startToFinishX = finish[0] - start[0];
+        double startToFinishY = finish[1] - start[1];
+
+        double spanSquared = startToFinishX * startToFinishX + startToFinishY * startToFinishY;
+        double span = Math.sqrt(spanSquared);
+        double halfSpan = span / 2.0;
+        if (Math.abs(radius) <= halfSpan) {
+            return new double[][]{{}};
+        }
+        double[][] path = new double[NUM_ROUNDING_SEGMENTS - 1][2];
+        // The math may seem a little odd here because the vertical (y) axis is flipped
+        // on screens. And the angles we would otherwise add are instead subtracted.
+        double angleStartToFinish = Util.getDirection(span, startToFinishX, startToFinishY);
+        double angleFinishStartPivot = Math.acos(halfSpan / radius);
+        double angleStartToPivot = angleStartToFinish - angleFinishStartPivot;
+        double pivotX = start[0] + radius * Math.cos(angleStartToPivot);
+        double pivotY = start[1] + radius * Math.sin(angleStartToPivot);
+        double twoRadiusSquared = 2 * radius * radius;
+        double angleSpanned = Math.acos((twoRadiusSquared - spanSquared) / twoRadiusSquared);
+        double angleDelta = angleSpanned / NUM_ROUNDING_SEGMENTS;
+        double anglePivotToStart = Math.PI + angleStartToPivot;
+        double angle;
+        int index;
+        for (int i = 1; i < NUM_ROUNDING_SEGMENTS; i++) {
+            angle = anglePivotToStart - i * angleDelta;
+            index = i - 1;
+            path[index][0] = pivotX + radius * Math.cos(angle);
+            path[index][1] = pivotY + radius * Math.sin(angle);
+        }
+        return path;
     }
 }

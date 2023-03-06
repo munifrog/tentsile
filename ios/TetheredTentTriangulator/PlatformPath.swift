@@ -9,6 +9,7 @@ import SwiftUI
 
 private let MATH_DIVIDE_BY_SQRT_THREE: Float = sqrt(3) / 3
 private let MATH_FULL_CIRCLE: Float = 2 * .pi
+private let MATH_HALF_CIRCLE: Float = .pi
 private let MATH_QUARTER_CIRCLE: Float = MATH_FULL_CIRCLE / 4
 private let MATH_TWO_THIRDS_PI: Float = MATH_FULL_CIRCLE / 3
 private let MATH_COS_TWO_THIRDS_PI: Float = cos(MATH_TWO_THIRDS_PI)
@@ -23,7 +24,6 @@ private let TENTSILE_BASE_TRILOGY: Float = TENTSILE_BASE_CONNECT
 private let TENTSILE_CENTER_HOLE_HYPOTENUSE: Float = 0.6
 private let TENTSILE_CIRCUMFERENCE_DEFAULT: Float = 0.785398163397448 // pi * 25cm or 10inch diameter
 private let TENTSILE_CIRCUMFERENCE_UNA: Float = 0.628318530717959 // pi * 20cm or 8inch diameter
-private let TENTSILE_NOTCH_APPARENT: Float = 0.25 // Una indents by 20cm; Flite and Connect indents by 30cm
 private let TENTSILE_HYPOTENUSE_CONNECT: Float = 4.0
 private let TENTSILE_HYPOTENUSE_DUO: Float = TENTSILE_HYPOTENUSE_CONNECT
 private let TENTSILE_HYPOTENUSE_FLITE: Float = 3.25
@@ -37,6 +37,10 @@ private let TENTSILE_HYPOTENUSE_UNIVERSE: Float = 4.4
 private let TENTSILE_HYPOTENUSE_TRILOGY: Float = TENTSILE_HYPOTENUSE_CONNECT
 private let TENTSILE_STRAPS_DEFAULT: Float = 6.0
 private let TENTSILE_STRAPS_UNA: Float = 4.0
+private let TENTSILE_STRAPS_WIDTH: Float = 0.1
+private let TENTSILE_STRAPS_HALF_WIDTH: Float = TENTSILE_STRAPS_WIDTH / 2.0
+
+private let NUM_ROUNDING_SEGMENTS: Int = 20
 
 private let TENTSILE_TETHER_ANGLE_BALANCED: Float = MATH_TWO_THIRDS_PI
 private let TENTSILE_TETHER_ANGLE_CONNECT: Float = Util.getSmallAngleGivenIndent(
@@ -127,36 +131,8 @@ struct PlatformPath {
 
 // The Tentsile equilateral triangle tents and hammocks have a hole in the middle
 private func getTentsileEquilateral(longest: Float) -> PlatformDetails {
-    let distal = longest * MATH_DIVIDE_BY_SQRT_THREE
-    let proximal = TENTSILE_CENTER_HOLE_HYPOTENUSE * MATH_DIVIDE_BY_SQRT_THREE
-
-    var shapes = [[Coordinate]]()
-    var coordArray = [Coordinate]()
-    coordArray.append(
-        Coordinate(
-            x: distal,
-            y: 0
-        ))
-    coordArray.append(
-        Coordinate(
-            x: proximal,
-            y: 0
-        ))
-    coordArray.append(
-        Coordinate(
-            x: proximal * MATH_COS_TWO_THIRDS_PI,
-            y: proximal * MATH_SIN_TWO_THIRDS_PI
-        ))
-    coordArray.append(
-        Coordinate(
-            x: distal * MATH_COS_TWO_THIRDS_PI,
-            y: distal * MATH_SIN_TWO_THIRDS_PI
-        ))
-
-    let grouping: [Coordinate] = [Coordinate](coordArray)
-    shapes.append(grouping)
-    shapes.append(grouping.rotated(by: MATH_TWO_THIRDS_PI))
-    shapes.append(grouping.rotated(by: -MATH_TWO_THIRDS_PI))
+    let shapes = getPathCenterHoleMissing(longest: longest)
+    // Assume the very first point is the tip at the middle of the strap
     let extremes: [Coordinate] = [shapes[0][0], shapes[1][0], shapes[2][0]]
 
     return PlatformDetails(
@@ -197,17 +173,12 @@ private func getTenstsileIsosceles(
     let barb_x: Float = -measurements[1]
     let barb_y: Float = measurements[2]
 
-    // We want the indentation to appear even when we have assumed none
-    let notch_x: Float = TENTSILE_NOTCH_APPARENT - measurements[1]
-    let notch_y: Float = 0
-
-    var path = [Coordinate]()
-    path.append(Coordinate(x: point_x, y: point_y))
-    path.append(Coordinate(x: barb_x, y: barb_y))
-    path.append(Coordinate(x: notch_x, y: notch_y))
-    path.append(Coordinate(x: barb_x, y: -barb_y))
+    let tip = Coordinate(x: point_x, y: point_y)
+    let barbRight = Coordinate(x: barb_x, y: barb_y)
+    let barbLeft = Coordinate(x: barb_x, y: -barb_y)
+    let extremes: [Coordinate] = [tip, barbRight, barbLeft]
+    let path = getPathSimple(tip: tip, barbLeft: barbLeft, barbRight: barbRight)
     shapes.append(path)
-    let extremes: [Coordinate] = [path[0], path[1], path[3]]
 
     return PlatformDetails(
         path: shapes,
@@ -216,6 +187,128 @@ private func getTenstsileIsosceles(
         rotates: true,
         strap: strap,
         tetherangle: tetherangle)
+}
+
+private func getPathCenterHoleMissing(longest: Float) -> [[Coordinate]] {
+    // The y-axis flips on screen, causing the coordinates to also reverse
+    let distal = longest * MATH_DIVIDE_BY_SQRT_THREE
+    let proximal = TENTSILE_CENTER_HOLE_HYPOTENUSE * MATH_DIVIDE_BY_SQRT_THREE
+    let distalRight = Coordinate(
+        x: distal,
+        y: 0
+    )
+    let proximalRight = Coordinate(
+        x: proximal,
+        y: 0
+    )
+    let proximalLeft = Coordinate(
+        x: proximal * MATH_COS_TWO_THIRDS_PI,
+        y: proximal * MATH_SIN_TWO_THIRDS_PI
+    )
+    let distalLeft = Coordinate(
+        x: distal * MATH_COS_TWO_THIRDS_PI,
+        y: distal * MATH_SIN_TWO_THIRDS_PI
+    )
+    var adjacents = getAdjacentPoints(point: distalRight)
+    let distalRightRight = adjacents[1]
+    adjacents = getAdjacentPoints(point: distalLeft)
+    let distalLeftLeft = adjacents[0]
+
+    var path = [Coordinate]()
+    path.append(distalRight)
+    path.append(distalRightRight)
+    let rounded = getIndentedSpan(radius: 12.0, start: distalRightRight, finish: distalLeftLeft)
+    for point in rounded { path.append(point) }
+    path.append(distalLeftLeft)
+    path.append(distalLeft)
+    path.append(proximalLeft)
+    path.append(proximalRight)
+    var shapes = [[Coordinate]]()
+    shapes.append(path)
+    shapes.append(path.rotated(by: MATH_TWO_THIRDS_PI))
+    shapes.append(path.rotated(by: -MATH_TWO_THIRDS_PI))
+
+    return shapes
+}
+
+private func getPathSimple(tip: Coordinate, barbLeft: Coordinate, barbRight: Coordinate) -> [Coordinate] {
+    var path = [Coordinate]()
+
+    var adjacents = getAdjacentPoints(point: tip)
+    let tipLeft = adjacents[0]
+    let tipRight = adjacents[1]
+    adjacents = getAdjacentPoints(point: barbRight)
+    let barbRightLeft = adjacents[0]
+    let barbRightRight = adjacents[1]
+    adjacents = getAdjacentPoints(point: barbLeft)
+    let barbLeftLeft = adjacents[0]
+    let barbLeftRight = adjacents[1]
+    path.append(tip)
+    path.append(tipRight)
+    var rounded = getIndentedSpan(radius: 12.0, start: tipRight, finish: barbRightLeft)
+    for point in rounded { path.append(point) }
+    path.append(barbRightLeft)
+    path.append(barbRightRight)
+    rounded = getIndentedSpan(radius: 4.0, start: barbRightRight, finish: barbLeftLeft)
+    for point in rounded { path.append(point) }
+    path.append(barbLeftLeft)
+    path.append(barbLeftRight)
+    rounded = getIndentedSpan(radius: 12.0, start: barbLeftRight, finish: tipLeft)
+    for point in rounded { path.append(point) }
+    path.append(tipLeft)
+
+    return path
+}
+
+private func getAdjacentPoints(point: Coordinate) -> [Coordinate] {
+    // Assume the center is at (0,0)
+    let hypotenuse = Float(sqrt(point.x * point.x + point.y * point.y))
+    let direction = Util.getDirection(h: hypotenuse, delta_x: point.x, delta_y: point.y)
+    let leftAngle = direction - MATH_QUARTER_CIRCLE
+    let left = Coordinate(
+        x: point.x + TENTSILE_STRAPS_HALF_WIDTH * cos(leftAngle),
+        y: point.y + TENTSILE_STRAPS_HALF_WIDTH * sin(leftAngle)
+    )
+    let rightAngle = direction + MATH_QUARTER_CIRCLE
+    let right = Coordinate(
+        x: point.x + TENTSILE_STRAPS_HALF_WIDTH * cos(rightAngle),
+        y: point.y + TENTSILE_STRAPS_HALF_WIDTH * sin(rightAngle)
+    )
+    return [left, right]
+}
+
+private func getIndentedSpan(radius: Float, start: Coordinate, finish: Coordinate) -> [Coordinate] {
+    // Only return the points between
+    var path = [Coordinate]()
+    let startToFinish = finish - start
+    let spanSquared = startToFinish.x * startToFinish.x + startToFinish.y * startToFinish.y
+    let span = Float(sqrt(spanSquared))
+    let halfSpan = span / 2
+    if abs(radius) <= halfSpan {
+        return path
+    }
+    // The math may seem a little odd here because the vertical (y) axis is flipped
+    // on screens. And the angles we would otherwise add are instead subtracted.
+    let angleStartToFinish = Util.getDirection(h: span, delta_x: startToFinish.x, delta_y: startToFinish.y)
+    let angleFinishStartPivot = acos(halfSpan / radius)
+    let angleStartToPivot = angleStartToFinish - angleFinishStartPivot
+    let pivot = Coordinate(
+        x: start.x + radius * cos(angleStartToPivot),
+        y: start.y + radius * sin(angleStartToPivot)
+    )
+    let twoRadiusSquared = 2 * radius * radius
+    let angleSpanned = acos((twoRadiusSquared - spanSquared) / twoRadiusSquared)
+    let angleDelta = angleSpanned / Float(NUM_ROUNDING_SEGMENTS)
+    let anglePivotToStart = .pi + angleStartToPivot
+    var angle: Float
+    for i in 1..<NUM_ROUNDING_SEGMENTS  {
+        angle = anglePivotToStart - Float(i) * angleDelta
+        path.append(Coordinate(
+            x: pivot.x + radius * cos(angle),
+            y: pivot.y + radius * sin(angle)
+        ))
+    }
+    return path
 }
 
 private func getIsoscelesMeasurements(
