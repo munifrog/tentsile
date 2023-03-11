@@ -94,7 +94,7 @@ class Util {
 
         path.moveTo((float)mainTip[0], (float)mainTip[1]);
         path.lineTo((float)mainAdjacent[1][0], (float)mainAdjacent[1][1]);
-        double[][] curvature = Util.getIndentedSpan(12.0, mainAdjacent[1], rightAdjacent[0]);
+        double[][] curvature = Util.getRoundedSpanByRadius(12.0, mainAdjacent[1], rightAdjacent[0]);
         for (double[] doubles : curvature) { path.lineTo((float) doubles[0], (float) doubles[1]); }
         path.lineTo((float)rightAdjacent[0][0], (float)rightAdjacent[0][1]);
         path.lineTo((float)rightTip[0], (float)rightTip[1]);
@@ -104,7 +104,7 @@ class Util {
 
         path.moveTo((float)rightTip[0], (float)rightTip[1]);
         path.lineTo((float)rightAdjacent[1][0], (float)rightAdjacent[1][1]);
-        curvature = Util.getIndentedSpan(12.0, rightAdjacent[1], leftAdjacent[0]);
+        curvature = Util.getRoundedSpanByRadius(12.0, rightAdjacent[1], leftAdjacent[0]);
         for (double[] doubles : curvature) { path.lineTo((float) doubles[0], (float) doubles[1]); }
         path.lineTo((float)leftAdjacent[0][0], (float)leftAdjacent[0][1]);
         path.lineTo((float)leftTip[0], (float)leftTip[1]);
@@ -114,7 +114,7 @@ class Util {
 
         path.moveTo((float)leftTip[0], (float)leftTip[1]);
         path.lineTo((float)leftAdjacent[1][0], (float)leftAdjacent[1][1]);
-        curvature = Util.getIndentedSpan(12.0, leftAdjacent[1], mainAdjacent[0]);
+        curvature = Util.getRoundedSpanByRadius(12.0, leftAdjacent[1], mainAdjacent[0]);
         for (double[] doubles : curvature) { path.lineTo((float) doubles[0], (float) doubles[1]); }
         path.lineTo((float)mainAdjacent[0][0], (float)mainAdjacent[0][1]);
         path.lineTo((float)mainTip[0], (float)mainTip[1]);
@@ -167,9 +167,9 @@ class Util {
         double [] barbLeft = { -measurements[1], -measurements[2] };
         double[][] leftAdjacent = getAdjacentPoints(barbLeft);
 
-        double[][] curveTipToRight = Util.getIndentedSpan(12.0, tipAdjacent[1], rightAdjacent[0]);
-        double[][] curveRightToLeft = Util.getIndentedSpan(4.0, rightAdjacent[1], leftAdjacent[0]);
-        double[][] curveLeftToTip = Util.getIndentedSpan(12.0, leftAdjacent[1], tipAdjacent[0]);
+        double[][] curveTipToRight = Util.getRoundedSpanByRadius(12.0, tipAdjacent[1], rightAdjacent[0]);
+        double[][] curveRightToLeft = Util.getRoundedSpanByRadius(4.0, rightAdjacent[1], leftAdjacent[0]);
+        double[][] curveLeftToTip = Util.getRoundedSpanByRadius(12.0, leftAdjacent[1], tipAdjacent[0]);
 
         int numPoints = 7 + curveTipToRight.length + curveRightToLeft.length + curveLeftToTip.length;
 
@@ -430,7 +430,7 @@ class Util {
         return coordinates;
     }
 
-    private static double[][] getIndentedSpan(double radius, double[] start, double[] finish) {
+    private static double[][] getRoundedSpanByRadius(double radius, double[] start, double[] finish) {
         // Only return the points between
         double radiusMagnitude = Math.abs(radius);
         double startToFinishX = finish[0] - start[0];
@@ -440,7 +440,7 @@ class Util {
         double span = Math.sqrt(spanSquared);
         double halfSpan = span / 2.0;
         if (radiusMagnitude <= halfSpan) {
-            return new double[][]{{}};
+            return new double[][]{};
         }
         double[][] path = new double[NUM_ROUNDING_SEGMENTS - 1][2];
         int multiplier = radius < 0 ? 1 : -1;
@@ -464,5 +464,21 @@ class Util {
             path[index][1] = pivotY + radiusMagnitude * Math.sin(angle);
         }
         return path;
+    }
+
+    private static double[][] getRoundedSpanByIndent(double indent, double[] start, double[] finish) {
+        if (indent == 0) {
+            return new double[][]{};
+        } else {
+            int multiplier = indent < 0 ? -1 : 1;
+            double indentMagnitude = Math.abs(indent);
+            double deltaX = finish[0] - start[0];
+            double deltaY = finish[1] - start[1];
+            double length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            double alpha = Math.atan(length / 2.0 / indentMagnitude);
+            double beta = (4 * alpha - Math.PI) / 2.0;
+            double radius = length / 2.0 / Math.cos(beta);
+            return getRoundedSpanByRadius(multiplier * radius, start, finish);
+        }
     }
 }

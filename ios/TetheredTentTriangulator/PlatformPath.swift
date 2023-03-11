@@ -217,7 +217,7 @@ private func getPathCenterHoleMissing(longest: Float) -> [[Coordinate]] {
     var path = [Coordinate]()
     path.append(distalRight)
     path.append(distalRightRight)
-    let rounded = getIndentedSpan(radius: 12.0, start: distalRightRight, finish: distalLeftLeft)
+    let rounded = getRoundedSpanByRadius(radius: 12.0, start: distalRightRight, finish: distalLeftLeft)
     for point in rounded { path.append(point) }
     path.append(distalLeftLeft)
     path.append(distalLeft)
@@ -245,15 +245,15 @@ private func getPathSimple(tip: Coordinate, barbLeft: Coordinate, barbRight: Coo
     let barbLeftRight = adjacents[1]
     path.append(tip)
     path.append(tipRight)
-    var rounded = getIndentedSpan(radius: 12.0, start: tipRight, finish: barbRightLeft)
+    var rounded = getRoundedSpanByRadius(radius: 12.0, start: tipRight, finish: barbRightLeft)
     for point in rounded { path.append(point) }
     path.append(barbRightLeft)
     path.append(barbRightRight)
-    rounded = getIndentedSpan(radius: 4.0, start: barbRightRight, finish: barbLeftLeft)
+    rounded = getRoundedSpanByRadius(radius: 4.0, start: barbRightRight, finish: barbLeftLeft)
     for point in rounded { path.append(point) }
     path.append(barbLeftLeft)
     path.append(barbLeftRight)
-    rounded = getIndentedSpan(radius: 12.0, start: barbLeftRight, finish: tipLeft)
+    rounded = getRoundedSpanByRadius(radius: 12.0, start: barbLeftRight, finish: tipLeft)
     for point in rounded { path.append(point) }
     path.append(tipLeft)
 
@@ -277,7 +277,7 @@ private func getAdjacentPoints(point: Coordinate) -> [Coordinate] {
     return [left, right]
 }
 
-private func getIndentedSpan(radius: Float, start: Coordinate, finish: Coordinate) -> [Coordinate] {
+private func getRoundedSpanByRadius(radius: Float, start: Coordinate, finish: Coordinate) -> [Coordinate] {
     // Only return the points between
     let radiusMagnitude = abs(radius)
     var path = [Coordinate]()
@@ -311,6 +311,21 @@ private func getIndentedSpan(radius: Float, start: Coordinate, finish: Coordinat
         ))
     }
     return path
+}
+
+private func getRoundedSpanByIndent(indent: Float, start: Coordinate, finish: Coordinate) -> [Coordinate] {
+    if indent == 0 {
+        return [Coordinate]()
+    } else {
+        let multiplier: Float = indent < 0 ? -1 : 1
+        let indentMagnitude = abs(indent)
+        let delta: Coordinate = finish - start
+        let length: Float = sqrt(delta.x * delta.x + delta.y * delta.y)
+        let alpha: Float  = atan(length / 2 / indentMagnitude)
+        let beta: Float = (4 * alpha - .pi) / 2
+        let radius: Float = length / 2 / cos(beta)
+        return getRoundedSpanByRadius(radius: multiplier * radius, start: start, finish: finish)
+    }
 }
 
 private func getIsoscelesMeasurements(
