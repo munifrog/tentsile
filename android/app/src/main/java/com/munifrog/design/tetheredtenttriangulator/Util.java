@@ -432,23 +432,25 @@ class Util {
 
     private static double[][] getIndentedSpan(double radius, double[] start, double[] finish) {
         // Only return the points between
+        double radiusMagnitude = Math.abs(radius);
         double startToFinishX = finish[0] - start[0];
         double startToFinishY = finish[1] - start[1];
 
         double spanSquared = startToFinishX * startToFinishX + startToFinishY * startToFinishY;
         double span = Math.sqrt(spanSquared);
         double halfSpan = span / 2.0;
-        if (Math.abs(radius) <= halfSpan) {
+        if (radiusMagnitude <= halfSpan) {
             return new double[][]{{}};
         }
         double[][] path = new double[NUM_ROUNDING_SEGMENTS - 1][2];
+        int multiplier = radius < 0 ? 1 : -1;
         // The math may seem a little odd here because the vertical (y) axis is flipped
         // on screens. And the angles we would otherwise add are instead subtracted.
         double angleStartToFinish = Util.getDirection(span, startToFinishX, startToFinishY);
-        double angleFinishStartPivot = Math.acos(halfSpan / radius);
-        double angleStartToPivot = angleStartToFinish - angleFinishStartPivot;
-        double pivotX = start[0] + radius * Math.cos(angleStartToPivot);
-        double pivotY = start[1] + radius * Math.sin(angleStartToPivot);
+        double angleFinishStartPivot = Math.acos(halfSpan / radiusMagnitude);
+        double angleStartToPivot = angleStartToFinish + multiplier * angleFinishStartPivot;
+        double pivotX = start[0] + radiusMagnitude * Math.cos(angleStartToPivot);
+        double pivotY = start[1] + radiusMagnitude * Math.sin(angleStartToPivot);
         double twoRadiusSquared = 2 * radius * radius;
         double angleSpanned = Math.acos((twoRadiusSquared - spanSquared) / twoRadiusSquared);
         double angleDelta = angleSpanned / NUM_ROUNDING_SEGMENTS;
@@ -456,10 +458,10 @@ class Util {
         double angle;
         int index;
         for (int i = 1; i < NUM_ROUNDING_SEGMENTS; i++) {
-            angle = anglePivotToStart - i * angleDelta;
+            angle = anglePivotToStart + multiplier * i * angleDelta;
             index = i - 1;
-            path[index][0] = pivotX + radius * Math.cos(angle);
-            path[index][1] = pivotY + radius * Math.sin(angle);
+            path[index][0] = pivotX + radiusMagnitude * Math.cos(angle);
+            path[index][1] = pivotY + radiusMagnitude * Math.sin(angle);
         }
         return path;
     }

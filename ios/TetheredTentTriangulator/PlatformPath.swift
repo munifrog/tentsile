@@ -279,22 +279,24 @@ private func getAdjacentPoints(point: Coordinate) -> [Coordinate] {
 
 private func getIndentedSpan(radius: Float, start: Coordinate, finish: Coordinate) -> [Coordinate] {
     // Only return the points between
+    let radiusMagnitude = abs(radius)
     var path = [Coordinate]()
     let startToFinish = finish - start
     let spanSquared = startToFinish.x * startToFinish.x + startToFinish.y * startToFinish.y
     let span = Float(sqrt(spanSquared))
     let halfSpan = span / 2
-    if abs(radius) <= halfSpan {
+    if radiusMagnitude <= halfSpan {
         return path
     }
+    let multiplier: Float = radius < 0 ? 1 : -1
     // The math may seem a little odd here because the vertical (y) axis is flipped
     // on screens. And the angles we would otherwise add are instead subtracted.
     let angleStartToFinish = Util.getDirection(h: span, delta_x: startToFinish.x, delta_y: startToFinish.y)
-    let angleFinishStartPivot = acos(halfSpan / radius)
-    let angleStartToPivot = angleStartToFinish - angleFinishStartPivot
+    let angleFinishStartPivot = acos(halfSpan / radiusMagnitude)
+    let angleStartToPivot = angleStartToFinish + multiplier * angleFinishStartPivot
     let pivot = Coordinate(
-        x: start.x + radius * cos(angleStartToPivot),
-        y: start.y + radius * sin(angleStartToPivot)
+        x: start.x + radiusMagnitude * cos(angleStartToPivot),
+        y: start.y + radiusMagnitude * sin(angleStartToPivot)
     )
     let twoRadiusSquared = 2 * radius * radius
     let angleSpanned = acos((twoRadiusSquared - spanSquared) / twoRadiusSquared)
@@ -302,10 +304,10 @@ private func getIndentedSpan(radius: Float, start: Coordinate, finish: Coordinat
     let anglePivotToStart = .pi + angleStartToPivot
     var angle: Float
     for i in 1..<NUM_ROUNDING_SEGMENTS  {
-        angle = anglePivotToStart - Float(i) * angleDelta
+        angle = anglePivotToStart + multiplier * Float(i) * angleDelta
         path.append(Coordinate(
-            x: pivot.x + radius * cos(angle),
-            y: pivot.y + radius * sin(angle)
+            x: pivot.x + radiusMagnitude * cos(angle),
+            y: pivot.y + radiusMagnitude * sin(angle)
         ))
     }
     return path
