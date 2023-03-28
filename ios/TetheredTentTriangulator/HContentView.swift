@@ -10,6 +10,7 @@ import SwiftUI
 struct HContentView: View {
     @Binding var config: Configuration
     @Binding var showFaq: Bool
+    @Binding var showLevel: Bool
 
     private let pickerHeight = CGFloat(30.0)
     private let sliderWidth = CGFloat(50.0)
@@ -24,7 +25,8 @@ struct HContentView: View {
                 Spacer()
                 MenuView(
                     config: $config,
-                    showFaq: $showFaq
+                    showFaq: $showFaq,
+                    showLevel: $showLevel
                 )
             }
             .padding(.vertical, 12)
@@ -63,7 +65,8 @@ struct HContentView_Previews: PreviewProvider {
     static var previews: some View {
         HContentView(
             config: $config,
-            showFaq: .constant(false)
+            showFaq: .constant(false),
+            showLevel: .constant(false)
         )
     }
 }

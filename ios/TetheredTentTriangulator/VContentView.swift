@@ -10,6 +10,7 @@ import SwiftUI
 struct VContentView: View {
     @Binding var config: Configuration
     @Binding var showFaq: Bool
+    @Binding var showLevel: Bool
 
     var body: some View {
         VStack(spacing:0) {
@@ -20,7 +21,8 @@ struct VContentView: View {
                 Spacer()
                 MenuView(
                     config: $config,
-                    showFaq: $showFaq
+                    showFaq: $showFaq,
+                    showLevel: $showLevel
                 )
             }
             .padding(.vertical, 16)
@@ -46,7 +48,8 @@ struct VContentView_Previews: PreviewProvider {
     static var previews: some View {
         VContentView(
             config: $config,
-            showFaq: .constant(false)
+            showFaq: .constant(false),
+            showLevel: .constant(false)
         )
     }
 }

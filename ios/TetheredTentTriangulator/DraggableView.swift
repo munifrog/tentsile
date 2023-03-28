@@ -12,6 +12,7 @@ struct DraggableView: View {
     @Binding var isPresented: Bool
     @State private var offset = CGSize.zero
 
+    let view: any View
     private let transition: CGFloat = 100
 
     var swipe: some Gesture {
@@ -32,9 +33,7 @@ struct DraggableView: View {
         Rectangle()
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             .background(Color.white)
-            .overlay(
-                FAQListView()
-            )
+            .overlay(AnyView(view))
             .offset(x: offset.width, y: 0)
             .opacity(2 - Double(abs(offset.width / transition)))
             .gesture(swipe)
@@ -42,7 +41,12 @@ struct DraggableView: View {
 }
 
 struct DraggableView_Previews: PreviewProvider {
+    private var isVisible: Bool = true
+
     static var previews: some View {
-        DraggableView(isPresented: .constant(true))
+        DraggableView(
+            isPresented: .constant(true),
+            view: FAQListView()
+        )
     }
 }

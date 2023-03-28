@@ -11,6 +11,7 @@ struct ContentView: View {
     @State private var config = Configuration()
     @State private var isPortrait: Bool = true
     @State private var showFaq: Bool = false
+    @State private var showLevel: Bool = false
 
     init() {
         self.isPortrait = getIsPortrait()
@@ -22,12 +23,14 @@ struct ContentView: View {
                 if isPortrait {
                     VContentView(
                         config: $config,
-                        showFaq: $showFaq
+                        showFaq: $showFaq,
+                        showLevel: $showLevel
                     )
                 } else {
                     HContentView(
                         config: $config,
-                        showFaq: $showFaq
+                        showFaq: $showFaq,
+                        showLevel: $showLevel
                     )
                 }
             }
@@ -36,7 +39,16 @@ struct ContentView: View {
                 self.isPortrait = getIsPortrait()
             }
             if showFaq {
-                DraggableView(isPresented: $showFaq)
+                DraggableView(
+                    isPresented: $showFaq,
+                    view: FAQListView()
+                )
+            }
+            if showLevel {
+                DraggableView(
+                    isPresented: $showLevel,
+                    view: LevelingView()
+                )
             }
         }
     }
