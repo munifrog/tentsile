@@ -20,6 +20,7 @@
 
     <color name="colorPerimeterLabel">#FEFF39</color>
     <color name="colorFineTuneBackground">#80000000</color>
+    <color name="colorLevelBackground">#FF000000</color>
 
     <color name="ic_launcher_background">#36461E</color>
 </resources>

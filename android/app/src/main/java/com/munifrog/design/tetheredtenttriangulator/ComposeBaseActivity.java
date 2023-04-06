@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -13,6 +14,8 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -69,6 +72,7 @@ public class ComposeBaseActivity
     private int mCanvasLeft = 0;
     private int mCanvasTop = 0;
     private boolean mFineTuneActive = false;
+    private boolean mLevelingToolAllowed = true;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
@@ -193,6 +197,10 @@ public class ComposeBaseActivity
             }
         });
 
+        SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mLevelingToolAllowed = (sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY) != null) &&
+                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT);
+
         ImageView iv_clearing = findViewById(R.id.iv_clearing);
         iv_clearing.setImageDrawable(mClearing);
         iv_clearing.setContentDescription(getResources().getString(R.string.desc_clearing));
@@ -267,6 +275,9 @@ public class ComposeBaseActivity
             return true;
         } else if (id == R.id.action_faq) {
             launchFrequentlyAskedQuestions();
+            return true;
+        } else if (id == R.id.action_level) {
+            launchLevelingActivity();
             return true;
         } else if (id == R.id.action_browser_tentsile) {
             launchTentsile();
@@ -389,6 +400,11 @@ public class ComposeBaseActivity
         startActivity(faqIntent);
     }
 
+    private void launchLevelingActivity() {
+        Intent levelingIntent = new Intent(this, LevelingActivity.class);
+        startActivity(levelingIntent);
+    }
+
     private void launchTentsile() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.url_tentsile_website_main)));
         startActivity(browserIntent);
@@ -424,6 +440,7 @@ public class ComposeBaseActivity
         int current = mSymbolVerbosity.ordinal();
         mToolbarMenu.findItem(R.id.action_decrease_symbols).setVisible(current < Symbol.impossible.ordinal());
         mToolbarMenu.findItem(R.id.action_increase_symbols).setVisible(current > Symbol.safe.ordinal());
+        mToolbarMenu.findItem(R.id.action_level).setVisible(mLevelingToolAllowed);
     }
 
     private void updateSymbol(Symbol symbol) {
