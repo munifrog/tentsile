@@ -50,6 +50,9 @@ struct FAQListView: View {
             Q: "What are the small circles shown on the tethers?",
             A: "The small circles are supposed to represent transition points, where the tethers change. For example, the tent corners, ratchets, and straps."),
         FAQView(
+            Q: "How can I use a fourth tree with this app?",
+            A: "If you have an extra ratchet and strap, you can use a fourth tree to redirect the how one of the tethers aligns. To use this technique with this app follow these steps:\n  (1) Measure the distance between two of the trees, placing their markers accordingly.\n  (2) Place the third marker so that its tether passes somewhere between the third and fourth trees. (Note that the position of the third marker does not matter very much as long as the tether direction is correct.)\n  (3) Attach the straps to the first two trees using the measurements computed with the app.\n  (4) Loosely attach the third strap to the third tree.\n  (5) Loop the fourth ratchet around the third strap.\n  (6) Attach the fourth strap to the fourth tree\n  (7) Finally, tighten the third and fourth straps until all tethers are correctly aligned with the tent or hammock."),
+        FAQView(
             Q: "Do I still need to use the tabs on the sides of my tent?",
             A: "That would be best. This app tries to get you close to the point where you can then align the tethers with the sight-indicator tabs on the sides of the non-equal-sided tents and hammocks.")
     ]

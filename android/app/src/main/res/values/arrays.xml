@@ -17,6 +17,7 @@
         <item>@string/faq_symbol_red_x_question</item>
         <item>@string/faq_small_circles_on_tethers_question</item>
         <item>@string/faq_sight_indicator_question</item>
+        <item>@string/faq_fourth_tree_method_question</item>
     </string-array>
 
     <string-array name="faq_answers">
@@ -34,5 +35,6 @@
         <item>@string/faq_symbol_red_x_answer</item>
         <item>@string/faq_small_circles_on_tethers_answer</item>
         <item>@string/faq_sight_indicator_answer</item>
+        <item>@string/faq_fourth_tree_method_answer</item>
     </string-array>
 </resources>
