@@ -94,6 +94,9 @@
     <string name="faq_sight_indicator_answer">That would be best. This app tries to get you close
         to the point where you can then align the tethers with the sight-indicator tabs on the sides
         of the non-equal-sided tents and hammocks.</string>
+    <string name="faq_no_level_question">Where can I find the level tool?</string>
+    <string name="faq_no_level_answer">If your device supports detecting gravity, then \"Level\"
+        will appear in the menu.</string>
 
     <string name="warn_screen_rotation_locked">Disable screen lock for better experience!</string>
 

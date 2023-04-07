@@ -11,6 +11,7 @@
         <item>@string/faq_measurement_2_question</item>
         <item>@string/faq_missing_platform_question</item>
         <item>@string/faq_tools_question</item>
+        <item>@string/faq_no_level_question</item>
         <item>@string/faq_symbol_orange_triangle_question</item>
         <item>@string/faq_symbol_yellow_triangle_question</item>
         <item>@string/faq_symbol_red_x_question</item>
@@ -27,6 +28,7 @@
         <item>@string/faq_measurement_2_answer</item>
         <item>@string/faq_missing_platform_answer</item>
         <item>@string/faq_tools_answer</item>
+        <item>@string/faq_no_level_answer</item>
         <item>@string/faq_symbol_orange_triangle_answer</item>
         <item>@string/faq_symbol_yellow_triangle_answer</item>
         <item>@string/faq_symbol_red_x_answer</item>

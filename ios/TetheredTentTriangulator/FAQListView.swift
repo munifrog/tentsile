@@ -35,6 +35,9 @@ struct FAQListView: View {
             Q: "What tools will I need?",
             A: "It helps to have a measuring tool handy, such as measuring tape or laser measuring tool. But, you could perform the measurements using consistently-spaced units, such as equally-spaced knots in a (low-stretch) string, sufficiently consistent paces, or even the straps that come with the tent. The point here is to measure using consistent units."),
         FAQView(
+            Q: "Where can I find the level tool?",
+            A: "Look for \"Level\" in the menu."),
+        FAQView(
             Q: "What does the orange triangle indicate?",
             A: "The orange triangle indicates that setup is possible, but involves a non-intuitive \"trick\".\n\nWith the ratchet detached from the tent, simultaneously pass the ratchet through the strap loop and the strap through the ratchet loop to cinch them together. Then pass the strap through the tent D-ring, around the tree, and into the ratchet. Tighten as usual.\n\nAlternatively, with the ratchet attached to the tent D-ring, pass the ratchet through the strap loop. Then wrap the strap around the tree and into the ratchet. Tighten as usual."),
         FAQView(
