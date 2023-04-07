@@ -204,6 +204,18 @@ public class ComposeBaseActivity
         ImageView iv_clearing = findViewById(R.id.iv_clearing);
         iv_clearing.setImageDrawable(mClearing);
         iv_clearing.setContentDescription(getResources().getString(R.string.desc_clearing));
+        iv_clearing.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(
+                    View view,
+                    int left, int top, int right, int bottom,
+                    int prevLeft, int prevTop, int prevRight, int prevBottom
+            ) {
+                // Update the image dimensions, but only the first time they change
+                mClearing.setFullWindowBounds(new Rect(left, top, right, bottom));
+                iv_clearing.removeOnLayoutChangeListener(this);
+            }
+        });
     }
 
     @Override
