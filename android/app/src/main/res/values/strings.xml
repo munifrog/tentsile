@@ -95,6 +95,8 @@
         to the point where you can then align the tethers with the sight-indicator tabs on the sides
         of the non-equal-sided tents and hammocks.</string>
 
+    <string name="warn_screen_rotation_locked">Disable screen lock for better experience!</string>
+
     <string name="url_source_code_android">https://github.com/munifrog/tentsile/tree/master/android/app/src</string>
     <string name="url_tentsile_website_main">https://www.tentsile.com/</string>
 </resources>
