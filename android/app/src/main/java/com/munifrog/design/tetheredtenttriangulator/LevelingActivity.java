@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -35,6 +37,9 @@ public class LevelingActivity extends AppCompatActivity implements GravitySensor
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // https://stackoverflow.com/a/2591311
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_leveling);
 
         mDrawableLevel = new LevelingView(getResources().getDisplayMetrics());
@@ -49,6 +54,7 @@ public class LevelingActivity extends AppCompatActivity implements GravitySensor
                     int left, int top, int right, int bottom,
                     int prevLeft, int prevTop, int prevRight, int prevBottom
             ) {
+                // Update the image dimensions, but only the first time they change
                 mDrawableLevel.setDimensions(view.getMeasuredWidth(), view.getMeasuredHeight());
                 viewImage.removeOnLayoutChangeListener(this);
             }
