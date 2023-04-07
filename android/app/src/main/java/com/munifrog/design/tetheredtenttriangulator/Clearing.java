@@ -247,27 +247,27 @@ public class Clearing
                 smallestDeltaSquared = deltaSquared;
             }
         }
-        // Allow the perimeter labels to be selected
-        float centerX;
-        float centerY;
-        int secondIndex;
-        for (int i = 0; i < 3; i++) {
-            secondIndex = i < 2 ? i + 1 : 0;
-            // Determine which labels are within the range to be selected
-            centerX = (mTethers[i][0] + mTethers[secondIndex][0]) / 2.0f;
-            centerY = (mTethers[i][1] + mTethers[secondIndex][1]) / 2.0f;
-            deltaX = x - centerX;
-            deltaY = y - centerY;
-            // Square everything to avoid unnecessary (and expensive) square root computation
-            deltaSquared = deltaX * deltaX + deltaY * deltaY;
-            if (deltaSquared < smallestDeltaSquared) {
-                // Record the closest tree at this stage
-                selectState = TETHER_SELECTION_AB_WAIT + i;
-                smallestDeltaSquared = deltaSquared;
-            }
-        }
-        // ... also allowing the tether-center to be selected
         if (mDrawPlatform == DRAW_PLATFORM_ENABLED) {
+            // Allow the perimeter labels to be selected
+            float centerX;
+            float centerY;
+            int secondIndex;
+            for (int i = 0; i < 3; i++) {
+                secondIndex = i < 2 ? i + 1 : 0;
+                // Determine which labels are within the range to be selected
+                centerX = (mTethers[i][0] + mTethers[secondIndex][0]) / 2.0f;
+                centerY = (mTethers[i][1] + mTethers[secondIndex][1]) / 2.0f;
+                deltaX = x - centerX;
+                deltaY = y - centerY;
+                // Square everything to avoid unnecessary (and expensive) square root computation
+                deltaSquared = deltaX * deltaX + deltaY * deltaY;
+                if (deltaSquared < smallestDeltaSquared) {
+                    // Record the closest tree at this stage
+                    selectState = TETHER_SELECTION_AB_WAIT + i;
+                    smallestDeltaSquared = deltaSquared;
+                }
+            }
+            // ... also allowing the tether-center to be selected
             deltaX = x - mPlatformCoordinates[0];
             deltaY = y - mPlatformCoordinates[1];
             deltaSquared = deltaX * deltaX + deltaY * deltaY;

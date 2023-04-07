@@ -411,28 +411,28 @@ struct Configuration {
             closestDist = diffSquared
         }
 
-        diff = touch - self.anchors.ab_label
-        diffSquared = diff.x * diff.x + diff.y * diff.y
-        if diffSquared < closestDist {
-            newSelection = .ab_waiting
-            closestDist = diffSquared
-        }
-
-        diff = touch - self.anchors.bc_label
-        diffSquared = diff.x * diff.x + diff.y * diff.y
-        if diffSquared < closestDist {
-            newSelection = .bc_waiting
-            closestDist = diffSquared
-        }
-
-        diff = touch - self.anchors.ca_label
-        diffSquared = diff.x * diff.x + diff.y * diff.y
-        if diffSquared < closestDist {
-            newSelection = .ca_waiting
-            closestDist = diffSquared
-        }
-
         if getCanDrawPlatform() {
+            diff = touch - self.anchors.ab_label
+            diffSquared = diff.x * diff.x + diff.y * diff.y
+            if diffSquared < closestDist {
+                newSelection = .ab_waiting
+                closestDist = diffSquared
+            }
+
+            diff = touch - self.anchors.bc_label
+            diffSquared = diff.x * diff.x + diff.y * diff.y
+            if diffSquared < closestDist {
+                newSelection = .bc_waiting
+                closestDist = diffSquared
+            }
+
+            diff = touch - self.anchors.ca_label
+            diffSquared = diff.x * diff.x + diff.y * diff.y
+            if diffSquared < closestDist {
+                newSelection = .ca_waiting
+                closestDist = diffSquared
+            }
+
             diff = touch - center!.p
             diffSquared = diff.x * diff.x + diff.y * diff.y
             if diffSquared < closestDist {
